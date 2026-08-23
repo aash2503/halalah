@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>HALALAH — This one Halal ah?</title>
+
+<!-- ===== PWA =====
+     The host takes ONE html file, so the manifest is generated at runtime as a
+     data: URL (see boot.js) rather than shipped as a sibling. Icons are
+     imported as modules and inlined by Vite. -->
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="HALALAH">
+<meta name="description" content="This one Halal ah? Halal lah! Every MUIS-certified halal establishment in Singapore.">
+</head>
+<body>
+<div class="statusbar">
+  <span class="sb-sub">THIS ONE HALAL AH? <em>HALAL LAH!</em></span>
+  <span class="sb-sync" id="sbSync"></span>
+</div>
+<div class="scanlines"></div>
+
+<div id="app">
+  <div id="map"></div>
+  <div class="map-tint"></div>
+  <div class="map-grid"></div>
+  <div class="map-vignette"></div>
+
+  <div class="hud-top">
+    <div class="title-plate">
+      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V6.3</div>
+    </div>
+    <div class="offline-bar" id="offlineBar">OFFLINE — SHOWING SAVED DATA</div>
+
+    <div class="searchbar panel">
+      <div class="row1">
+        <input type="text" id="searchInput" class="field" placeholder="SEARCH AREA / MALL / NAME" autocomplete="off">
+        <button class="find-btn btn btn-y" id="searchBtn">FIND</button>
+      </div>
+      <div class="filters" id="filterRow">
+        <div class="filter-pill" data-filter="all"  data-active="true">EAT-IN</div>
+        <div class="filter-pill" data-filter="103"  data-active="false">HAWKER</div>
+        <div class="filter-pill" data-filter="106"  data-active="false">RESTAURANT</div>
+        <div class="filter-pill" data-filter="108"  data-active="false">BAKERY</div>
+        <div class="filter-pill" data-filter="109"  data-active="false">CANTEEN</div>
+        <div class="filter-pill" data-filter="hot"  data-active="false">★HOTSPOTS</div>
+        <div class="filter-pill" data-filter="saved" data-active="false">★SAVED</div>
+        <div class="filter-pill" data-filter="new"  data-active="false">NEW</div>
+        <div class="filter-pill" data-filter="prep" data-active="false">KITCHENS</div>
+      </div>
+      <div class="suggest" id="suggest"></div>
+    </div>
+
+    <div class="status-strip" id="statusStrip">
+      <div class="led"></div><span id="statusText">BOOTING...</span>
+    </div>
+  </div>
+
+  <div class="legend" id="legend">
+    <div><i style="background:#10B981"></i>EAT-IN SPOT</div>
+    <div><i style="background:#3B82F6"></i>KITCHEN / CATERER</div>
+    <div><i style="background:#FBBF24"></i>HOTSPOT (5+ HERE)</div>
+    <div><i style="background:#F8FAFC"></i>VENUE CLEARED</div>
+    <div><i style="background:#EF4444;border-radius:50%"></i>YOU</div>
+  </div>
+
+  <div class="rail">
+    <div class="rail-btn btn btn-g" id="openNear"><div class="ico">📍</div><div>NEAR</div></div>
+    <div class="rail-btn spin btn" id="openWheel"><div class="ico">🎡</div><div>SPIN</div></div>
+    <div class="rail-btn ar btn"   id="openAR"><div class="ico">📷</div><div>AR</div></div>
+    <div class="rail-btn btn btn-r" id="openLog"><div class="ico">📕</div><div>LOG</div></div>
+    <div class="rail-btn btn btn-b" id="openCard"><div class="ico">🎫</div><div>CARD</div></div>
+  </div>
+
+  <div class="mini-rail">
+    <div class="mini-btn btn" id="zoomIn">+</div>
+    <div class="mini-btn btn" id="zoomOut">−</div>
+    <div class="mini-btn btn" id="recenter">◎</div>
+    <div class="mini-btn btn" id="legendBtn">?</div>
+  </div>
+
+  <div class="fab" id="fabLocate" data-tracking="false" title="Locate me / live scan">
+    <div class="dish"></div><div class="lbl">SCAN</div>
+  </div>
+
+  <div class="encounter" id="encounter">
+    <div class="flash"></div><div class="wipe"></div><div class="cry" id="encounterText"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <!-- ===== bottom sheet ===== -->
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-x" id="sheetClose">✕</div>
+    <div class="grab" id="sheetGrab"></div>
+    <div class="sheet-inner" id="sheetInner">
+
+      <div id="sheetList" style="display:none;">
+        <div class="bld-hdr" id="blHdr">—</div>
+        <div class="bld-sub prose" id="blSub">—</div>
+        <div class="bld-break" id="blBreak"></div>
+        <div id="blRows"></div>
+        <div class="acts"><div class="a btn btn-w" id="blShare">⤴ SHARE THIS VENUE</div></div>
+      </div>
+
+      <div id="sheetDetail">
+        <div class="sheet-back" id="sheetBack">◀ BACK TO VENUE</div>
+        <div class="sheet-hdr">
+          <div style="min-width:0;">
+            <div class="entry-no" id="sEntryNo">—</div>
+            <div class="sheet-name" id="sName">—</div>
+          </div>
+          <img class="logo-img" id="sLogo" alt="" style="display:none;">
+        </div>
+        <div class="badge-row" id="sBadges"></div>
+        <div class="stats">
+          <div class="stat"><div class="v" id="sDist">—</div><div class="l">DIST</div></div>
+          <div class="stat"><div class="v" id="sZone">—</div><div class="l">ZONE</div></div>
+        </div>
+        <div class="sect"><h4>CERT NUMBER</h4><div class="cert-no" id="sCert">—</div></div>
+        <div class="sect"><h4>CERTIFIED AS</h4><p class="prose" id="sScheme">—</p></div>
+        <div class="sect"><h4>ADDRESS</h4><p class="prose" id="sAddr">—</p></div>
+        <div class="sect" id="sChainSect" style="display:none;">
+          <h4>SAME NAME ELSEWHERE</h4>
+          <div id="sChain"></div>
+        </div>
+        <div class="acts">
+          <div class="a btn btn-y" id="sGo">DIRECTIONS</div>
+          <div class="a catch btn btn-w" id="sCatch" data-caught="false">◎ VISIT</div>
+        </div>
+        <div class="acts">
+          <div class="a btn btn-w" id="sSave">☆ SAVE</div>
+          <div class="a btn btn-g" id="sMoreLike">MORE LIKE THIS</div>
+        </div>
+        <div class="acts"><div class="a btn btn-b" id="sShare">⤴ SHARE THIS SPOT</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== wheel ===== -->
+  <div class="modal" id="wheelModal">
+    <div class="modal-hdr"><div class="mark"></div><h2>WHAT TO EAT?</h2><div class="x" id="wheelClose">✕</div></div>
+    <div class="modal-body">
+      <div class="wheel-stage">
+        <div class="wm-label">CATEGORIES — TAP TO COMBINE</div>
+        <div class="wheel-mode" id="wheelCats">
+          <div class="filter-pill" data-cat="103" data-active="false">HAWKER</div>
+          <div class="filter-pill" data-cat="106" data-active="false">RESTAURANT</div>
+          <div class="filter-pill" data-cat="108" data-active="false">BAKERY</div>
+          <div class="filter-pill" data-cat="109" data-active="false">CANTEEN</div>
+          <div class="filter-pill" data-cat="105" data-active="false">FOOD STN</div>
+        </div>
+        <div class="wm-label">WHERE</div>
+        <div class="wheel-mode" id="wheelScope">
+          <div class="filter-pill" data-scope="near"   data-active="true">NEAR ME</div>
+          <div class="filter-pill" data-scope="view"   data-active="false">THIS MAP VIEW</div>
+          <div class="filter-pill" data-scope="island" data-active="false">ISLAND-WIDE</div>
+          <div class="filter-pill" data-scope="unseen" data-active="false">UNVISITED ONLY</div>
+        </div>
+        <div class="wm-label">RADIUS (NEAR ME)</div>
+        <div class="wheel-mode" id="radiusRow">
+          <div class="filter-pill" data-radius="500"  data-active="false">500 M</div>
+          <div class="filter-pill" data-radius="1000" data-active="true">1 KM</div>
+          <div class="filter-pill" data-radius="2000" data-active="false">2 KM</div>
+          <div class="filter-pill" data-radius="5000" data-active="false">5 KM</div>
+        </div>
+
+        <div class="wheel-box">
+          <div class="wheel-ptr"></div>
+          <svg id="wheelSvg" viewBox="0 0 200 200"></svg>
+          <div class="wheel-hub" id="wheelHub">SPIN</div>
+        </div>
+
+        <div class="wheel-result" id="wheelResult">
+          <div class="rn">READY?</div><div class="rs">PICK YOUR FILTERS</div>
+        </div>
+
+        <div class="wheel-ctrls">
+          <div class="a btn btn-y" id="spinBtn">SPIN!</div>
+          <div class="a btn btn-w" id="wheelGo">VIEW SPOT</div>
+        </div>
+        <div class="wheel-ctrls">
+          <div class="a btn btn-g" id="wheelMore">FIND MORE LIKE THIS</div>
+          <div class="a btn btn-b" id="wheelShare">⤴ SHARE SHORTLIST</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== near me list ===== -->
+  <div class="modal" id="nearModal">
+    <div class="modal-hdr"><div class="mark"></div><h2>NEAR ME</h2><div class="x" id="nearClose">✕</div></div>
+    <div class="meter-wrap">
+      <div class="wheel-mode" id="nearCats">
+        <div class="filter-pill" data-cat="all" data-active="true">ALL EAT-IN</div>
+        <div class="filter-pill" data-cat="103" data-active="false">HAWKER</div>
+        <div class="filter-pill" data-cat="106" data-active="false">RESTAURANT</div>
+        <div class="filter-pill" data-cat="108" data-active="false">BAKERY</div>
+        <div class="filter-pill" data-cat="saved" data-active="false">★ SAVED</div>
+      </div>
+    </div>
+    <div class="modal-body" id="nearBody"></div>
+    <div style="padding:12px; border-top:4px solid var(--deepest); background:var(--dark);">
+      <div class="a btn btn-b" id="nearShare" style="text-align:center; padding:13px; font-size:8px;">⤴ SHARE TOP 10</div>
+    </div>
+  </div>
+
+  <!-- ===== field log ===== -->
+  <div class="modal" id="logModal">
+    <div class="modal-hdr"><div class="mark"></div><h2>FIELD LOG</h2><div class="x" id="logClose">✕</div></div>
+    <div class="meter-wrap">
+      <div class="lbl">DISCOVERED <span id="logProgressText">0 / 0</span></div>
+      <div class="meter-track"><div class="meter-fill" id="logProgressFill"></div></div>
+    </div>
+    <div class="modal-body" id="logBody">
+      <input type="text" id="logSearch" class="field" placeholder="FILTER LOG..." style="width:100%; margin-bottom:12px;">
+      <div id="logList"></div>
+      <button class="btn btn-w" id="logMore">LOAD MORE</button>
+    </div>
+  </div>
+
+  <!-- ===== explorer card ===== -->
+  <div class="modal" id="cardModal">
+    <div class="modal-hdr"><div class="mark"></div><h2>EXPLORER CARD</h2><div class="x" id="cardClose">✕</div></div>
+    <div class="modal-body">
+      <div class="quest" id="questBox">
+        <div class="qh">TODAY'S QUEST</div>
+        <div class="qt" id="questText">—</div>
+        <div class="qp" id="questProg">—</div>
+      </div>
+
+      <div class="xcard">
+        <div class="top">
+          <div>
+            <div class="who">EXPLORER</div>
+            <div class="rank" id="xcRank">—</div>
+            <div class="id" id="xcId">IDNo. 00000</div>
+          </div>
+          <div class="avatar">🧭</div>
+        </div>
+        <div class="grid">
+          <div class="cell"><div class="k">SEEN</div><div class="v" id="xcSeen">0</div></div>
+          <div class="cell"><div class="k">VISITED</div><div class="v" id="xcVisited">0</div></div>
+          <div class="cell"><div class="k">SAVED</div><div class="v" id="xcSaved">0</div></div>
+          <div class="cell"><div class="k">VENUES CLEARED</div><div class="v" id="xcVenues">0</div></div>
+        </div>
+      </div>
+
+      <div class="acts" style="margin-bottom:15px;">
+        <div class="a btn btn-y" id="shareCard">⤴ SHARE CARD</div>
+      </div>
+
+      <h3 class="sect-title">REGION BADGES</h3>
+      <div class="badge-case" id="badgeCase"></div>
+      <div class="hint">EARN A REGION BADGE BY VISITING<br>5 SPOTS IN THAT REGION.</div>
+
+      <h3 class="sect-title" style="margin-top:18px;">DISTRICT PROGRESS</h3>
+      <div id="districtList"></div>
+
+      <h3 class="sect-title" style="margin-top:18px;">VENUE CLEARS</h3>
+      <div id="venueClears"></div>
+    </div>
+  </div>
+
+  <!-- ===== AR ===== -->
+  <div class="ar-modal" id="arModal">
+    <video id="arVideo" playsinline muted autoplay></video>
+    <div class="ar-scene" id="arScene"><div class="ar-crosshair"></div></div>
+    <div class="radar-wrap" id="radarWrap">
+      <div class="radar" id="radar">
+        <div class="sweep"></div>
+        <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="north">N</div><div class="me"></div>
+      </div>
+    </div>
+    <div class="ar-hud">
+      <div class="ttl">FINDER</div>
+      <div class="x" id="arClose">✕</div>
+    </div>
+    <div class="ar-foot">
+      <div class="ar-compass" id="arCompass">HEADING —</div>
+      <div class="wheel-ctrls" style="max-width:330px;">
+        <div class="a btn btn-w" id="arToggle" style="padding:11px 6px; font-size:7px;">RADAR MODE</div>
+        <div class="a btn btn-y" id="arRadius" style="padding:11px 6px; font-size:7px;">500 M</div>
+      </div>
+      <div class="ar-note" id="arNote">POINT YOUR PHONE AROUND</div>
+    </div>
+  </div>
+
+  <!-- ===== centred dialog (boot errors + dataset changes) ===== -->
+  <div class="dialog-wrap" id="dialogWrap">
+    <div class="dialog">
+      <div class="dh"><div class="mark"></div><h3 id="dlgTitle">—</h3></div>
+      <div class="db" id="dlgBody">—</div>
+      <div class="df" id="dlgFoot"></div>
+    </div>
+  </div>
+
+  <!-- ===== landing ===== -->
+  <div class="landing" id="landing">
+    <div class="landing-hero"><div class="inner">
+      <div class="mark"></div>
+      <h1>HALAL<em>AH</em></h1>
+      <div class="tag">THIS ONE HALAL AH?<br><em>HALAL LAH!</em></div>
+    </div></div>
+    <div class="landing-body">
+      <div class="landing-stats">
+        <div class="s"><div class="v" id="lsTotal">—</div><div class="k">CERTIFIED</div></div>
+        <div class="s"><div class="v" id="lsEat">—</div><div class="k">EAT-IN</div></div>
+        <div class="s"><div class="v" id="lsSeen">0</div><div class="k">YOUR LOG</div></div>
+      </div>
+      <div class="feat"><div class="fi">🎡</div><div>
+        <div class="ft">CAN'T DECIDE?</div>
+        <div class="fd">COMBINE CATEGORIES AND SPIN<br>FOR A PICK NEAR YOU</div></div></div>
+      <div class="feat"><div class="fi">📷</div><div>
+        <div class="ft">AR FINDER</div>
+        <div class="fd">POINT YOUR PHONE TO SEE<br>WHAT'S HALAL THAT WAY</div></div></div>
+      <div class="feat"><div class="fi">📕</div><div>
+        <div class="ft">FIELD LOG</div>
+        <div class="fd">CLEAR WHOLE MALLS AND<br>COLLECT REGION BADGES</div></div></div>
+      <button class="start-btn btn btn-y" id="startBtn" disabled>LOADING...</button>
+      <button class="btn btn-w" id="installBtn">⤓ INSTALL APP</button>
+      <div id="loadNote">FETCHING MUIS REGISTRY...</div>
+      <div class="landing-foot" id="landingFoot">DATA FROM MUIS HALAL REGISTRY<br>ALWAYS VERIFY THE CERTIFICATE ON SITE</div>
+      <div class="a btn btn-w" id="aboutBtn" style="width:100%; padding:11px; font-size:7px; margin-top:12px; text-align:center;">ABOUT &amp; PRIVACY</div>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

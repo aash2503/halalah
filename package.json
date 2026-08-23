@@ -1,0 +1,22 @@
+{
+  "name": "halalah",
+  "version": "6.2.0",
+  "private": true,
+  "type": "module",
+  "description": "HALALAH — Singapore halal food locator. Builds to ONE self-contained index.html for canvaslink.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/verify-build.js",
+    "preview": "vite preview",
+    "verify": "node scripts/verify-build.js"
+  },
+  "dependencies": {
+    "leaflet": "1.9.4",
+    "leaflet.markercluster": "1.5.3"
+  },
+  "devDependencies": {
+    "terser": "^5.49.2",
+    "vite": "^5.4.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

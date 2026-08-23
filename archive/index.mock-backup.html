@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>HALALAH — This one Halal ah?</title>
+
+<!-- ===== PWA wiring (fully self-contained) =====
+     Icons are embedded as base64 data URIs and the manifest is generated at
+     runtime as a data: URL (see the PWA block at the bottom of the script),
+     so this file has zero external dependencies of its own.
+     iOS only installs a standalone app when apple-touch-icon AND
+     apple-mobile-web-app-capable are both present — without the icon it
+     degrades to a plain bookmark shortcut. -->
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="HALALAH">
+<meta name="description" content="This one Halal ah? Halal lah! Find halal food across Singapore.">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" sizes="192x192" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" sizes="512x512" href="data:image/png;base64,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">
+<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<style>
+/* ==========================================================================
+   BRAND KIT — 16-bit handheld adventure UI
+   --------------------------------------------------------------------------
+   ONE type system: 'Press Start 2P' for every piece of chrome (labels,
+   buttons, titles, stats) — matching the SEARCH.../FIND treatment. Roboto is
+   used ONLY for long-form body strings (addresses, cert text) where a pixel
+   face would hurt legibility.
+   Every control shares the same recipe: 3px dark outline, 8px radius, hard
+   bottom shadow, press-to-depress.
+   ========================================================================== */
+:root{
+  --red:     #EF4444;
+  --red-dk:  #B91C1C;
+  --dark:    #1F2937;
+  --darker:  #111827;
+  --deepest: #0A0F18;
+  --white:   #F8FAFC;
+  --yellow:  #FBBF24;
+  --green:   #10B981;
+  --blue:    #3B82F6;
+  --muted:   #9CA3AF;
+  --screen:  #0e1726;
+  /* Height of the persistent black status bar, incl. the device notch inset */
+  --sb: calc(env(safe-area-inset-top, 0px) + 26px);
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html,body{
+  margin:0; padding:0; height:100%; width:100%;
+  background:var(--darker); color:var(--white);
+  font-family:'Press Start 2P',cursive;
+  overflow:hidden; overscroll-behavior:none;
+  user-select:none; -webkit-user-select:none;
+}
+/* Long-form readable copy only */
+.prose{ font-family:'Roboto',sans-serif; }
+
+.scanlines{
+  position:fixed; inset:0; z-index:9999; pointer-events:none;
+  background:repeating-linear-gradient(to bottom,
+    rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.05) 3px 4px);
+  opacity:.8;
+}
+/* Persistent black status bar. Fixed to the viewport, sits above every
+   surface (landing, map, modals) and never moves while content scrolls. */
+.statusbar{
+  position:fixed; top:0; left:0; right:0; height:var(--sb); z-index:9998;
+  background:#000; border-bottom:2px solid var(--deepest);
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:0 10px 5px; pointer-events:none;
+}
+.statusbar .sb-sub{ font-size:7px; color:#9CA3AF; letter-spacing:.5px; white-space:nowrap; }
+.statusbar .sb-sub em{ font-style:normal; color:var(--yellow); }
+
+/* Everything else lives beneath the bar */
+#app{ position:fixed; top:var(--sb); left:0; right:0; bottom:0; }
+
+/* ---- Shared primitives -------------------------------------------------- */
+.panel{
+  background:var(--dark); border:3px solid var(--deepest); border-radius:10px;
+  box-shadow:0 4px 0 var(--deepest), inset 0 2px 0 rgba(255,255,255,.06);
+}
+.btn{
+  font-family:'Press Start 2P',cursive; text-transform:uppercase;
+  border:3px solid var(--deepest); border-radius:8px;
+  box-shadow:0 4px 0 var(--deepest); cursor:pointer;
+  transition:transform .08s ease-out, box-shadow .08s ease-out;
+}
+.btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--deepest); }
+.btn-y{ background:var(--yellow); color:var(--dark); }
+.btn-w{ background:var(--white);  color:var(--dark); }
+.btn-r{ background:var(--red);    color:var(--white); }
+.btn-b{ background:var(--blue);   color:var(--white); }
+.btn-g{ background:var(--green);  color:#04352a; }
+/* Recessed field, same family as the FIND button */
+.field{
+  background:var(--darker); border:3px solid var(--deepest); border-radius:8px;
+  color:var(--white); font-family:'Press Start 2P',cursive; font-size:9px;
+  padding:11px 10px; outline:none;
+}
+.field::placeholder{ color:#6B7280; }
+.field:focus{ border-color:var(--yellow); }
+
+/* ==========================================================================
+   MAP — dressed up as a game world, not a plain basemap
+   --------------------------------------------------------------------------
+   Four stacked treatments give the tiles a "world map" feel:
+     1. duotone filter on the tile pane (teal-shifted, punchy contrast)
+     2. a pixel grid ruled over the whole viewport
+     3. a screen vignette so the edges fall off like a CRT
+     4. region zone rectangles drawn as dashed "territories" beneath markers
+   ========================================================================== */
+#map{ position:absolute; inset:0; z-index:0; background:var(--screen); }
+
+/* The CARTO dark basemap is very low-contrast on its own — lift the roads up
+   and push the hue toward teal so the streets read as drawn "paths". */
+.leaflet-tile-pane{
+  filter:brightness(2.1) contrast(1.12) saturate(.55) hue-rotate(150deg);
+}
+/* Duotone wash pinned above tiles, below markers */
+.map-tint{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(160deg, rgba(16,185,129,.13), rgba(59,130,246,.15) 55%, rgba(239,68,68,.10));
+  mix-blend-mode:screen;
+}
+/* Pixel survey grid */
+.map-grid{
+  position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(to right,  rgba(148,163,184,.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148,163,184,.16) 1px, transparent 1px);
+  background-size:34px 34px;
+}
+/* CRT edge falloff */
+.map-vignette{
+  position:absolute; inset:0; z-index:3; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%);
+}
+
+.leaflet-control-zoom{ display:none; }
+.leaflet-control-attribution{
+  background:rgba(17,24,39,.85)!important; color:#6B7280!important;
+  font-family:'Roboto',sans-serif!important; font-size:9px!important;
+  border-top:2px solid var(--deepest);
+}
+.leaflet-control-attribution a{ color:var(--yellow)!important; }
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.hud-top{
+  position:absolute; top:0; left:0; right:0; z-index:500;
+  padding:10px 10px 0;
+  display:flex; flex-direction:column; gap:8px; pointer-events:none;
+}
+.hud-top > *{ pointer-events:auto; }
+
+.title-plate{
+  display:flex; align-items:center; gap:10px;
+  background:var(--red); border:3px solid var(--deepest); border-radius:10px;
+  box-shadow:0 4px 0 var(--deepest), inset 0 -4px 0 rgba(0,0,0,.22);
+  padding:9px 11px;
+}
+/* Pixel compass rose — the app mark */
+.mark{
+  width:22px; height:22px; flex:0 0 auto; position:relative;
+  background:var(--yellow); border:3px solid var(--deepest);
+  transform:rotate(45deg); border-radius:3px;
+}
+.mark::after{
+  content:''; position:absolute; inset:3px; background:var(--white); border-radius:1px;
+}
+.title-plate h1{ margin:0; font-size:11px; letter-spacing:1px; text-shadow:2px 2px 0 rgba(0,0,0,.45); }
+.title-plate h1 span{ color:var(--yellow); }
+.title-plate .ver{ margin-left:auto; font-size:7px; opacity:.9; }
+
+.searchbar{ padding:9px; display:flex; flex-direction:column; gap:9px; }
+.searchbar .row1{ display:flex; gap:8px; }
+.searchbar .field{ flex:1; min-width:0; }
+.find-btn{ font-size:9px; padding:0 13px; }
+
+.filters{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:3px; }
+.filters::-webkit-scrollbar{ display:none; }
+.filter-pill{
+  flex:0 0 auto; background:var(--white); color:var(--dark);
+  font-family:'Press Start 2P',cursive; font-size:7px; padding:7px 9px;
+  border:3px solid var(--deepest); border-radius:8px; box-shadow:0 3px 0 var(--deepest);
+  cursor:pointer; white-space:nowrap; text-transform:uppercase;
+}
+.filter-pill[data-active="true"]{ background:var(--yellow); }
+.filter-pill:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--deepest); }
+
+.status-strip{
+  align-self:flex-start; display:flex; align-items:center; gap:7px;
+  background:var(--darker); border:3px solid var(--deepest); border-radius:8px;
+  padding:6px 9px; font-size:7px; color:var(--green);
+}
+.status-strip .led{ width:6px; height:6px; background:var(--green); border-radius:50%;
+  box-shadow:0 0 6px var(--green); animation:pulse 1.4s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
+.status-strip b{ color:var(--yellow); }
+
+/* ==========================================================================
+   MARKERS
+   ========================================================================== */
+.pix-pin{ width:26px; height:30px; position:relative; filter:drop-shadow(0 2px 0 rgba(0,0,0,.6)); }
+.pix-pin .body{ position:absolute; left:3px; top:0; width:20px; height:20px;
+  border:3px solid var(--deepest); border-radius:4px; }
+.pix-pin .point{ position:absolute; left:9px; top:17px; width:8px; height:8px;
+  border-right:3px solid var(--deepest); border-bottom:3px solid var(--deepest); transform:rotate(45deg); }
+.pix-pin .pip{ position:absolute; left:9px; top:6px; width:8px; height:8px; border-radius:2px; }
+
+.pix-pin.st-verified .body,.pix-pin.st-verified .point{ background:var(--green); }
+.pix-pin.st-verified .pip{ background:#04352a; }
+.pix-pin.st-pending  .body,.pix-pin.st-pending  .point{ background:var(--yellow); }
+.pix-pin.st-pending  .pip{ background:#3d2c00; }
+.pix-pin.st-closed   .body,.pix-pin.st-closed   .point{ background:var(--red); }
+.pix-pin.st-closed   .pip{ background:#3d0000; }
+
+.pix-pin.rar-legendary::before,.pix-pin.rar-legendary::after{
+  content:'✦'; position:absolute; color:var(--yellow); font-size:11px;
+  text-shadow:0 0 6px var(--yellow); animation:sparkle 1.5s ease-in-out infinite;
+}
+.pix-pin.rar-legendary::before{ left:-7px; top:-4px; }
+.pix-pin.rar-legendary::after{ right:-7px; top:5px; animation-delay:.75s; }
+@keyframes sparkle{ 0%,100%{opacity:0; transform:scale(.5);} 50%{opacity:1; transform:scale(1.15);} }
+.pix-pin.rar-rare .body{ box-shadow:0 0 0 2px var(--blue); }
+
+.pix-pin.player .body{
+  width:16px; height:16px; left:5px; border-radius:50%;
+  background:var(--red); border:3px solid var(--white);
+  box-shadow:0 0 0 3px var(--deepest), 0 0 14px rgba(239,68,68,.9);
+}
+.pix-pin.player .point,.pix-pin.player .pip{ display:none; }
+/* Radar sweep pulses out from the player while tracking */
+.pix-pin.player::after{
+  content:''; position:absolute; left:50%; top:50%; width:26px; height:26px;
+  margin:-13px 0 0 -13px; border-radius:50%; border:2px solid rgba(239,68,68,.85);
+  animation:radar 2.4s ease-out infinite;
+}
+@keyframes radar{ 0%{transform:scale(.4); opacity:.9;} 100%{transform:scale(5.5); opacity:0;} }
+
+.cl-badge{
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Press Start 2P',cursive; font-size:10px;
+  border:3px solid var(--deepest); border-radius:50%;
+  box-shadow:0 3px 0 var(--deepest), inset 0 -4px 0 rgba(0,0,0,.22);
+}
+.cl-badge.s{ background:var(--green);  color:#04352a; }
+.cl-badge.m{ background:var(--yellow); color:#3d2c00; }
+.cl-badge.l{ background:var(--red);    color:var(--white); }
+
+/* Region label plaques painted onto the world */
+.zone-label{
+  font-family:'Press Start 2P',cursive; font-size:7px; color:rgba(248,250,252,.5);
+  text-shadow:2px 2px 0 rgba(0,0,0,.8); white-space:nowrap; pointer-events:none;
+}
+
+/* ==========================================================================
+   BADGES (cuisine type + rarity)
+   ========================================================================== */
+.type-badge,.rarity-badge{
+  display:inline-block; font-size:7px; padding:5px 8px; border-radius:20px;
+  border:2px solid var(--deepest); box-shadow:0 2px 0 rgba(0,0,0,.45);
+}
+.type-badge{ color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.55); }
+.rarity-badge.common{ background:#9CA3AF; color:var(--dark); }
+.rarity-badge.rare{ background:var(--blue); color:#fff; }
+.rarity-badge.legendary{
+  background:linear-gradient(90deg,#FBBF24,#F59E0B,#FBBF24); background-size:200% 100%;
+  color:#3d2c00; animation:shimmer 2s linear infinite;
+}
+@keyframes shimmer{ to{ background-position:-200% 0; } }
+
+/* ==========================================================================
+   CONTROLS — right FAB + left rail
+   ========================================================================== */
+.fab{
+  position:absolute; right:14px; bottom:calc(24px + env(safe-area-inset-bottom)); z-index:600;
+  width:66px; height:66px; border-radius:12px; background:var(--red);
+  border:4px solid var(--deepest); box-shadow:0 5px 0 var(--deepest);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  cursor:pointer; transition:transform .08s ease, box-shadow .08s ease;
+}
+.fab:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--deepest); }
+.fab .dish{
+  width:24px; height:24px; border-radius:50%; background:var(--darker);
+  border:3px solid var(--white); position:relative;
+}
+.fab .dish::after{
+  content:''; position:absolute; left:50%; top:50%; width:6px; height:6px;
+  margin:-3px 0 0 -3px; border-radius:50%; background:var(--white);
+}
+.fab .lbl{ font-size:6px; color:#fff; }
+.fab[data-tracking="true"]{ background:var(--green); }
+.fab[data-tracking="true"] .dish{ animation:corePulse .9s ease-in-out infinite; }
+@keyframes corePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,255,255,.85);} 50%{ box-shadow:0 0 0 7px rgba(255,255,255,0);} }
+
+.rail{
+  position:absolute; left:14px; bottom:calc(24px + env(safe-area-inset-bottom)); z-index:600;
+  display:flex; flex-direction:column; gap:10px;
+}
+.rail-btn{
+  width:56px; height:56px; border-radius:10px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  font-size:6px; color:#fff;
+}
+.rail-btn .ico{ font-size:16px; line-height:1; }
+.rail-btn.spin{ background:var(--yellow); color:var(--dark); }
+
+/* ==========================================================================
+   BOTTOM SHEET
+   ========================================================================== */
+.scrim{ position:absolute; inset:0; z-index:700; background:rgba(0,0,0,.62);
+  opacity:0; pointer-events:none; transition:opacity .2s ease; }
+.scrim.open{ opacity:1; pointer-events:auto; }
+
+.sheet{
+  position:absolute; left:8px; right:8px; bottom:8px; z-index:800;
+  background:var(--dark); border:4px solid var(--white); border-radius:14px;
+  box-shadow:0 0 0 4px var(--deepest), 0 8px 0 rgba(0,0,0,.5);
+  transform:translateY(118%); transition:transform .3s cubic-bezier(.2,.9,.25,1.05);
+  max-height:76vh; display:flex; flex-direction:column;
+}
+.sheet.open{ transform:translateY(0); }
+.sheet-inner{ padding:15px; overflow-y:auto; }
+.sheet-hdr{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.entry-no{ font-size:8px; color:var(--muted); margin-bottom:7px; }
+.sheet-name{ font-size:13px; color:var(--yellow); text-shadow:2px 2px 0 rgba(0,0,0,.5); line-height:1.6; }
+.badge-row{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+
+.status-chip{ font-size:7px; padding:6px 8px; border-radius:6px;
+  border:2px solid var(--deepest); white-space:nowrap; flex:0 0 auto; }
+.status-chip.verified{ background:var(--green);  color:#04352a; }
+.status-chip.pending{  background:var(--yellow); color:#3d2c00; }
+.status-chip.closed{   background:var(--red);    color:#fff; }
+
+.stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
+.stat{ background:var(--darker); border:3px solid var(--deepest); border-radius:8px; padding:10px 5px; text-align:center; }
+.stat .v{ font-size:11px; color:var(--yellow); }
+.stat .l{ font-size:6px; color:var(--muted); margin-top:6px; }
+
+.sect{ margin-top:15px; }
+.sect h4{ font-size:8px; color:#fff; background:var(--red); display:inline-block;
+  padding:6px 9px; border-radius:6px; border:2px solid var(--deepest); margin:0 0 9px; }
+.sect p{ margin:0; font-size:13px; line-height:1.55; color:#E5E7EB; }
+
+.acts{ display:flex; gap:9px; margin-top:17px; }
+.acts .a{ flex:1; text-align:center; padding:13px 6px; font-size:8px; }
+.a.catch[data-caught="true"]{ background:var(--green); color:#04352a; }
+
+.sheet-x{ position:absolute; top:-14px; right:10px; width:32px; height:32px; border-radius:50%;
+  background:var(--red); color:#fff; border:3px solid var(--white);
+  display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; z-index:3; }
+
+/* ==========================================================================
+   ENCOUNTER (only when a spot is extremely close by)
+   ========================================================================== */
+.encounter{ position:absolute; inset:0; z-index:900; display:none; pointer-events:none; }
+.encounter.run{ display:block; }
+.encounter .flash{ position:absolute; inset:0; background:var(--white); animation:encFlash .8s steps(1) forwards; }
+@keyframes encFlash{ 0%{opacity:0;}8%{opacity:1;}16%{opacity:0;}24%{opacity:1;}32%{opacity:0;}40%{opacity:1;}48%{opacity:0;}100%{opacity:0;} }
+.encounter .wipe{ position:absolute; inset:0; background:var(--darker);
+  clip-path:circle(0% at 50% 50%); animation:encWipe .8s ease-in forwards; }
+@keyframes encWipe{ 0%{clip-path:circle(0% at 50% 50%);}55%{clip-path:circle(85% at 50% 50%);}100%{clip-path:circle(0% at 50% 50%);} }
+.encounter .cry{
+  position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:86%; text-align:center;
+  font-size:12px; color:#fff; text-shadow:3px 3px 0 var(--deepest); line-height:1.9;
+  animation:cryIn .8s ease-out forwards;
+}
+@keyframes cryIn{ 0%{opacity:0; transform:translate(-50%,-50%) scale(.6);}40%{opacity:1; transform:translate(-50%,-50%) scale(1.05);}100%{opacity:0;} }
+
+.toast{
+  position:absolute; left:50%; top:0; transform:translateX(-50%) translateY(-150%); z-index:950;
+  background:var(--dark); border:3px solid var(--white); border-radius:10px;
+  box-shadow:0 4px 0 var(--deepest); padding:11px 14px; font-size:8px; color:var(--yellow);
+  transition:transform .3s cubic-bezier(.2,.9,.25,1.1); max-width:88vw; text-align:center; line-height:1.8;
+}
+.toast.show{ transform:translateX(-50%) translateY(14px); }
+
+/* ==========================================================================
+   MODALS — Logbook, Explorer Card, Spin Wheel
+   ========================================================================== */
+.modal{
+  position:absolute; inset:0; z-index:880; background:#0B1220;
+  display:flex; flex-direction:column;
+  transform:translateY(100%); transition:transform .3s cubic-bezier(.2,.9,.25,1.02);
+}
+.modal.open{ transform:translateY(0); }
+.modal-hdr{
+  display:flex; align-items:center; gap:10px;
+  padding:14px 12px;
+  background:var(--red); border-bottom:4px solid var(--deepest);
+}
+.modal-hdr h2{ margin:0; font-size:11px; text-shadow:2px 2px 0 rgba(0,0,0,.45); }
+.modal-hdr .x{ margin-left:auto; width:32px; height:32px; border-radius:8px;
+  background:var(--deepest); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px; }
+.modal-body{ flex:1; overflow-y:auto; padding:12px; }
+
+.meter-wrap{ padding:12px; background:var(--dark); border-bottom:4px solid var(--deepest); }
+.meter-wrap .lbl{ font-size:7px; color:var(--muted); margin-bottom:8px; }
+.meter-track{ height:14px; background:var(--darker); border:3px solid var(--deepest); border-radius:8px; overflow:hidden; }
+.meter-fill{ height:100%; background:var(--green); width:0%; transition:width .4s ease; box-shadow:inset 0 -4px 0 rgba(0,0,0,.25); }
+
+.log-row{
+  display:flex; align-items:center; gap:11px; padding:10px;
+  background:var(--dark); border:3px solid var(--deepest); border-radius:9px;
+  margin-bottom:8px; cursor:pointer;
+}
+.log-row .no{ font-size:8px; color:#6B7280; width:34px; flex:0 0 auto; }
+.log-row .nm{ font-size:8px; line-height:1.7; }
+.log-row .sub{ font-size:7px; color:var(--muted); margin-top:6px; }
+.log-row.unseen .nm{ color:#4B5563; }
+.log-row .sprite{ width:30px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; }
+.log-row.unseen .sprite{ filter:brightness(0) saturate(0); opacity:.5; }
+.log-row .got{ margin-left:auto; font-size:15px; flex:0 0 auto; }
+
+.xcard{
+  background:linear-gradient(150deg,#3B82F6,#1D4ED8);
+  border:4px solid var(--deepest); border-radius:14px; padding:15px;
+  box-shadow:0 5px 0 var(--deepest); margin-bottom:15px;
+}
+.xcard .top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.xcard .who{ font-size:10px; text-shadow:2px 2px 0 rgba(0,0,0,.45); }
+.xcard .id{ font-size:7px; color:#BFDBFE; margin-top:8px; }
+.xcard .avatar{ width:52px; height:52px; border-radius:10px; background:var(--yellow);
+  border:3px solid var(--deepest); display:flex; align-items:center; justify-content:center; font-size:26px; }
+.xcard .grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:16px; }
+.xcard .cell{ background:rgba(0,0,0,.32); border:2px solid var(--deepest); border-radius:8px; padding:10px; }
+.xcard .cell .k{ font-size:6px; color:#BFDBFE; }
+.xcard .cell .v{ font-size:11px; color:var(--yellow); margin-top:8px; }
+
+.badge-case{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.zone-badge{
+  aspect-ratio:1; border-radius:50%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px;
+  background:var(--darker); border:3px solid var(--deepest); color:#374151;
+}
+.zone-badge .ico{ font-size:19px; }
+.zone-badge .nm{ font-size:5px; }
+.zone-badge.earned{ background:var(--yellow); color:var(--dark); box-shadow:0 0 12px rgba(251,191,36,.55); }
+.hint{ font-size:6px; color:#6B7280; line-height:2; margin-top:13px; }
+.sect-title{ font-size:8px; background:var(--dark); border:3px solid var(--deepest);
+  border-radius:7px; padding:9px 10px; margin:0 0 12px; }
+
+/* ---- Spin wheel --------------------------------------------------------- */
+.wheel-stage{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+.wheel-box{ position:relative; width:min(84vw,330px); aspect-ratio:1; }
+.wheel-box svg{ width:100%; height:100%; display:block;
+  filter:drop-shadow(0 6px 0 var(--deepest)); transform:rotate(0deg); }
+.wheel-box svg.spinning{ transition:transform 4.2s cubic-bezier(.15,.85,.2,1); }
+/* Pointer sits at 12 o'clock */
+.wheel-ptr{
+  position:absolute; top:-10px; left:50%; transform:translateX(-50%); z-index:3;
+  width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent;
+  border-top:24px solid var(--yellow); filter:drop-shadow(0 2px 0 var(--deepest));
+}
+.wheel-hub{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2;
+  width:26%; height:26%; border-radius:50%; background:var(--dark);
+  border:4px solid var(--deepest); display:flex; align-items:center; justify-content:center;
+  font-size:8px; color:var(--yellow); text-align:center; line-height:1.6;
+}
+.wheel-result{
+  width:100%; background:var(--dark); border:3px solid var(--deepest); border-radius:10px;
+  padding:14px; text-align:center; min-height:96px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px;
+}
+.wheel-result .rn{ font-size:11px; color:var(--yellow); line-height:1.7; }
+.wheel-result .rs{ font-size:7px; color:var(--muted); line-height:1.9; }
+.wheel-ctrls{ display:flex; gap:9px; width:100%; }
+.wheel-ctrls .a{ flex:1; text-align:center; padding:14px 6px; font-size:9px; }
+.wheel-mode{ display:flex; gap:6px; width:100%; overflow-x:auto; scrollbar-width:none; }
+.wheel-mode::-webkit-scrollbar{ display:none; }
+
+/* ==========================================================================
+   LANDING / TITLE SCREEN
+   ========================================================================== */
+.landing{
+  position:absolute; inset:0; z-index:1000; background:var(--darker);
+  display:flex; flex-direction:column; overflow-y:auto;
+  transition:opacity .35s ease, visibility .35s;
+}
+.landing.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+.landing-hero{
+  background:linear-gradient(170deg, var(--red), var(--red-dk));
+  border-bottom:4px solid var(--deepest);
+  padding:34px 20px 30px; text-align:center;
+  position:relative; overflow:hidden;
+}
+/* Faint moving grid in the hero, like a title-screen backdrop */
+.landing-hero::before{
+  content:''; position:absolute; inset:-50%;
+  background-image:linear-gradient(to right, rgba(255,255,255,.09) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(255,255,255,.09) 1px, transparent 1px);
+  background-size:26px 26px; animation:drift 9s linear infinite;
+}
+@keyframes drift{ to{ transform:translate(26px,26px); } }
+.landing-hero .inner{ position:relative; z-index:1; }
+.landing-hero .mark{ margin:0 auto 18px; width:34px; height:34px; }
+.landing-hero h1{ margin:0; font-size:20px; line-height:1.6; text-shadow:4px 4px 0 rgba(0,0,0,.45); }
+.landing-hero h1 em{ font-style:normal; color:var(--yellow); }
+.landing-hero .tag{ margin-top:16px; font-size:9px; color:rgba(255,255,255,.92); line-height:2.2; }
+.landing-hero .tag em{ font-style:normal; color:var(--yellow); text-shadow:2px 2px 0 rgba(0,0,0,.4); }
+.landing-body{ padding:18px 16px calc(26px + env(safe-area-inset-bottom)); }
+.landing-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:18px; }
+.landing-stats .s{ background:var(--dark); border:3px solid var(--deepest); border-radius:9px; padding:12px 5px; text-align:center; }
+.landing-stats .s .v{ font-size:12px; color:var(--yellow); }
+.landing-stats .s .k{ font-size:6px; color:var(--muted); margin-top:7px; }
+.feat{ display:flex; gap:12px; align-items:flex-start; background:var(--dark);
+  border:3px solid var(--deepest); border-radius:10px; padding:13px; margin-bottom:9px; }
+.feat .fi{ font-size:20px; flex:0 0 auto; }
+.feat .ft{ font-size:8px; color:var(--yellow); line-height:1.7; }
+.feat .fd{ font-size:7px; color:var(--muted); margin-top:7px; line-height:2; }
+.start-btn{ width:100%; padding:18px; font-size:13px; margin-top:8px; animation:breathe 1.8s ease-in-out infinite; }
+@keyframes breathe{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.25);} }
+.landing-foot{ font-size:6px; color:#4B5563; text-align:center; margin-top:16px; line-height:2.2; }
+#installBtn{ width:100%; padding:13px; font-size:8px; margin-top:10px; display:none; }
+
+@media (min-width:640px){
+  .sheet{ left:auto; right:14px; width:400px; }
+  .hud-top{ max-width:430px; }
+  .modal{ left:auto; width:430px; border-left:4px solid var(--deepest); }
+  .landing{ align-items:center; }
+  .landing > *{ width:100%; max-width:520px; }
+}
+</style>
+</head>
+<body>
+<!-- Persistent black status bar — fixed, never scrolls away -->
+<div class="statusbar">
+  <span class="sb-sub">THIS ONE HALAL AH? <em>HALAL LAH!</em></span>
+</div>
+
+<div class="scanlines"></div>
+<div id="app">
+
+  <div id="map"></div>
+  <div class="map-tint"></div>
+  <div class="map-grid"></div>
+  <div class="map-vignette"></div>
+
+  <!-- ================= HEADER ================= -->
+  <div class="hud-top">
+    <div class="title-plate">
+      <div class="mark"></div>
+      <h1>HALAL<span>AH</span></h1>
+      <div class="ver">V3.0</div>
+    </div>
+
+    <div class="searchbar panel">
+      <div class="row1">
+        <input type="text" id="searchInput" class="field" placeholder="SEARCH..." autocomplete="off">
+        <button class="find-btn btn btn-y" id="searchBtn">FIND</button>
+      </div>
+      <div class="filters" id="filterRow">
+        <div class="filter-pill" data-filter="all" data-active="true">ALL</div>
+        <div class="filter-pill" data-filter="verified" data-active="false">CERTIFIED</div>
+        <div class="filter-pill" data-filter="pending" data-active="false">PENDING</div>
+        <div class="filter-pill" data-filter="legendary" data-active="false">★LEGENDARY</div>
+        <div class="filter-pill" data-filter="rare" data-active="false">RARE</div>
+        <div class="filter-pill" data-filter="hawker" data-active="false">HAWKER</div>
+        <div class="filter-pill" data-filter="restaurant" data-active="false">RESTAURANT</div>
+        <div class="filter-pill" data-filter="cafe" data-active="false">CAFE</div>
+      </div>
+    </div>
+
+    <div class="status-strip">
+      <div class="led"></div>
+      <span>SEEN <b id="statusCount">0</b> · LINK <b id="socketState">IDLE</b></span>
+    </div>
+  </div>
+
+  <!-- ================= LEFT RAIL ================= -->
+  <div class="rail">
+    <div class="rail-btn spin btn" id="openWheel"><div class="ico">🎡</div><div>SPIN</div></div>
+    <div class="rail-btn btn btn-r" id="openLog"><div class="ico">📕</div><div>LOG</div></div>
+    <div class="rail-btn btn btn-b" id="openCard"><div class="ico">🎫</div><div>CARD</div></div>
+  </div>
+
+  <!-- ================= FAB ================= -->
+  <div class="fab" id="fabLocate" data-tracking="false" title="Locate me / live tracking">
+    <div class="dish"></div>
+    <div class="lbl">SCAN</div>
+  </div>
+
+  <!-- ================= ENCOUNTER + TOAST ================= -->
+  <div class="encounter" id="encounter">
+    <div class="flash"></div><div class="wipe"></div>
+    <div class="cry" id="encounterText"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <!-- ================= BOTTOM SHEET ================= -->
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-x" id="sheetClose">✕</div>
+    <div class="sheet-inner">
+      <div class="sheet-hdr">
+        <div>
+          <div class="entry-no" id="sEntryNo">No. 000</div>
+          <div class="sheet-name" id="sName">—</div>
+        </div>
+        <div class="status-chip" id="sStatus">—</div>
+      </div>
+      <div class="badge-row">
+        <span class="type-badge" id="sType">—</span>
+        <span class="rarity-badge" id="sRarity">—</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="sDist">—</div><div class="l">DIST</div></div>
+        <div class="stat"><div class="v" id="sRating">—</div><div class="l">RATING</div></div>
+        <div class="stat"><div class="v" id="sPrice">—</div><div class="l">COST</div></div>
+      </div>
+      <div class="sect"><h4>CERTIFICATION</h4><p class="prose" id="sCert">—</p></div>
+      <div class="sect"><h4>LOCATION</h4><p class="prose" id="sAddr">—</p></div>
+      <div class="sect"><h4>OPEN HOURS</h4><p class="prose" id="sHours">—</p></div>
+      <div class="acts">
+        <div class="a btn btn-y" id="sGo">ROUTE</div>
+        <div class="a catch btn btn-w" id="sCatch" data-caught="false">◎ VISIT</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= WHEEL MODAL ================= -->
+  <div class="modal" id="wheelModal">
+    <div class="modal-hdr">
+      <div class="mark"></div>
+      <h2>WHAT TO EAT?</h2>
+      <div class="x" id="wheelClose">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="wheel-stage">
+        <div class="wheel-mode" id="wheelMode">
+          <div class="filter-pill" data-wmode="near"  data-active="true">NEAREST</div>
+          <div class="filter-pill" data-wmode="cert"  data-active="false">CERTIFIED</div>
+          <div class="filter-pill" data-wmode="top"   data-active="false">TOP RATED</div>
+          <div class="filter-pill" data-wmode="cheap" data-active="false">CHEAP EATS</div>
+          <div class="filter-pill" data-wmode="new"   data-active="false">UNVISITED</div>
+        </div>
+
+        <div class="wheel-box">
+          <div class="wheel-ptr"></div>
+          <svg id="wheelSvg" viewBox="0 0 200 200"></svg>
+          <div class="wheel-hub" id="wheelHub">SPIN</div>
+        </div>
+
+        <div class="wheel-result" id="wheelResult">
+          <div class="rn">READY?</div>
+          <div class="rs">PICKS ARE DRAWN FROM<br>SPOTS AROUND YOU</div>
+        </div>
+
+        <div class="wheel-ctrls">
+          <div class="a btn btn-y" id="spinBtn">SPIN!</div>
+          <div class="a btn btn-w" id="wheelGo">VIEW SPOT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LOGBOOK MODAL ================= -->
+  <div class="modal" id="logModal">
+    <div class="modal-hdr">
+      <div class="mark"></div>
+      <h2>FIELD LOG</h2>
+      <div class="x" id="logClose">✕</div>
+    </div>
+    <div class="meter-wrap">
+      <div class="lbl">DISCOVERED <span id="logProgressText">0 / 0</span></div>
+      <div class="meter-track"><div class="meter-fill" id="logProgressFill"></div></div>
+    </div>
+    <div class="modal-body" id="logList"></div>
+  </div>
+
+  <!-- ================= EXPLORER CARD MODAL ================= -->
+  <div class="modal" id="cardModal">
+    <div class="modal-hdr">
+      <div class="mark"></div>
+      <h2>EXPLORER CARD</h2>
+      <div class="x" id="cardClose">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="xcard">
+        <div class="top">
+          <div>
+            <div class="who">EXPLORER</div>
+            <div class="id" id="xcId">IDNo. 00000</div>
+          </div>
+          <div class="avatar">🧭</div>
+        </div>
+        <div class="grid">
+          <div class="cell"><div class="k">SEEN</div><div class="v" id="xcSeen">0</div></div>
+          <div class="cell"><div class="k">VISITED</div><div class="v" id="xcVisited">0</div></div>
+          <div class="cell"><div class="k">LOG %</div><div class="v" id="xcPct">0%</div></div>
+          <div class="cell"><div class="k">BADGES</div><div class="v" id="xcBadges">0/4</div></div>
+        </div>
+      </div>
+      <h3 class="sect-title">BADGE CASE</h3>
+      <div class="badge-case" id="badgeCase"></div>
+      <div class="hint">EARN A REGION BADGE BY VISITING<br>3 CERTIFIED SPOTS IN THAT REGION.</div>
+    </div>
+  </div>
+
+  <!-- ================= LANDING / TITLE SCREEN ================= -->
+  <div class="landing" id="landing">
+    <div class="landing-hero">
+      <div class="inner">
+        <div class="mark"></div>
+        <h1>HALAL<em>AH</em></h1>
+        <div class="tag">THIS ONE HALAL AH?<br><em>HALAL LAH!</em></div>
+      </div>
+    </div>
+    <div class="landing-body">
+      <div class="landing-stats">
+        <div class="s"><div class="v" id="lsTotal">0</div><div class="k">SPOTS</div></div>
+        <div class="s"><div class="v" id="lsCert">0</div><div class="k">CERTIFIED</div></div>
+        <div class="s"><div class="v" id="lsSeen">0</div><div class="k">YOUR LOG</div></div>
+      </div>
+
+      <div class="feat"><div class="fi">🎡</div><div>
+        <div class="ft">CAN'T DECIDE?</div>
+        <div class="fd">SPIN THE WHEEL FOR A PICK<br>BASED ON WHERE YOU ARE</div></div></div>
+      <div class="feat"><div class="fi">📡</div><div>
+        <div class="ft">LIVE SCAN</div>
+        <div class="fd">TRACK YOUR POSITION AND GET<br>ALERTED WHEN A SPOT IS CLOSE</div></div></div>
+      <div class="feat"><div class="fi">📕</div><div>
+        <div class="ft">FIELD LOG</div>
+        <div class="fd">EVERY SPOT YOU FIND GETS<br>LOGGED. COLLECT ALL FOUR BADGES</div></div></div>
+
+      <button class="start-btn btn btn-y" id="startBtn">PRESS START</button>
+      <button class="btn btn-w" id="installBtn">⤓ INSTALL APP</button>
+      <div class="landing-foot">MOCK DATA FOR DEMO PURPOSES<br>ALWAYS VERIFY CERTIFICATION ON SITE</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ==========================================================================
+   1. MOCK DATABASE
+   --------------------------------------------------------------------------
+   DB HOOK: replace generateMockSpots() with a real request, e.g.
+     const raw = await fetch('/api/spots?bbox=' + map.getBounds().toBBoxString())
+                        .then(r => r.json());
+   At thousands of rows, page the response and push batches into the cluster
+   group rather than holding the whole set in memory.
+   ========================================================================== */
+
+/* Cuisine renders as a coloured "type" capsule — this table drives label+colour. */
+const TYPE_MAP = {
+  "Malay":          { type:"KAMPUNG", color:"#78C850" },
+  "Indian Muslim":  { type:"SPICE",   color:"#F08030" },
+  "Middle Eastern": { type:"DESERT",  color:"#E0C068" },
+  "Turkish":        { type:"GRILL",   color:"#C03028" },
+  "Western Halal":  { type:"WESTERN", color:"#8f8fa8" },
+  "Chinese Muslim": { type:"WOK",     color:"#d8b310" },
+  "Fusion":         { type:"FUSION",  color:"#7038F8" },
+  "Thai Halal":     { type:"THAI",    color:"#A040A0" },
+  "Korean Halal":   { type:"KOREAN",  color:"#F85888" },
+  "Japanese Halal": { type:"JAPAN",   color:"#6890F0" },
+};
+const CUISINES = Object.keys(TYPE_MAP);
+const KINDS = ["hawker","restaurant","cafe"];
+const STATUSES = ["verified","verified","verified","pending","closed"];
+const PREFIX = ["Warung","Restoran","Kedai","Al","Nasi","Sedap","Kampung","Spice","Golden","Ummi","Pak","Mama"];
+const SUFFIX = ["Corner","Kitchen","House","Delights","Bistro","Grill","Express","Table","Hut","Pot","Nook","Junction"];
+const AREAS = ["Bedok","Tampines","Jurong","Woodlands","Ang Mo Kio","Yishun","Bukit Timah","Geylang","Serangoon","Clementi"];
+
+const SG = { latMin:1.235, latMax:1.462, lngMin:103.605, lngMax:103.999 };
+const rand = (a,b) => Math.random()*(b-a)+a;
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
+/* RARITY is derived purely from star rating. */
+function rarityFor(rating){
+  const r = parseFloat(rating);
+  if(r >= 4.6) return "legendary";
+  if(r >= 4.1) return "rare";
+  return "common";
+}
+/* Region drives the four-badge collection system. */
+function regionFor(lat,lng){
+  if(lat > 1.40) return "NORTH";
+  if(lng > 103.90) return "EAST";
+  if(lng < 103.75) return "WEST";
+  return "CENTRAL";
+}
+
+function generateMockSpots(count){
+  const out = [];
+  for(let i=0;i<count;i++){
+    const status = pick(STATUSES);
+    const rating = rand(3.2,4.9).toFixed(1);
+    const lat = rand(SG.latMin,SG.latMax), lng = rand(SG.lngMin,SG.lngMax);
+    out.push({
+      id:`spot-${i}`,
+      entryNo:String(i+1).padStart(3,"0"),
+      name:`${pick(PREFIX)} ${pick(SUFFIX)}`,
+      cuisine:pick(CUISINES),
+      kind:pick(KINDS),
+      status, lat, lng, rating,
+      rarity:rarityFor(rating),
+      region:regionFor(lat,lng),
+      price:pick(["$","$$","$$$"]),
+      cert: status==="verified" ? "MUIS Certified · Renewed 2026"
+          : status==="pending"  ? "MUIS application under review"
+          : "Certification lapsed",
+      address:`${Math.floor(rand(1,400))} ${pick(AREAS)} ${pick(["Ave","St","Rd","Link","Dr"])} #${Math.floor(rand(1,4))}-${Math.floor(rand(10,99))}, Singapore ${Math.floor(rand(100000,829999))}`,
+      hours: status==="closed" ? "Temporarily closed"
+           : `${pick(["7:00am","9:00am","10:30am","11:00am"])} – ${pick(["9:00pm","10:00pm","10:30pm","midnight"])}`,
+    });
+  }
+  return out;
+}
+const SPOTS = generateMockSpots(88);
+
+/* ==========================================================================
+   2. PLAYER PROGRESS
+   --------------------------------------------------------------------------
+   PERSISTENCE HOOK: localStorage stands in for an account. Swap for
+   authenticated GET/PUT /api/explorer to sync progress across devices.
+   ========================================================================== */
+const SAVE_KEY = "halalah.save.v1";
+let save = { seen:[], visited:[], explorerId:String(Math.floor(rand(10000,99999))), started:false };
+try{ const raw = localStorage.getItem(SAVE_KEY); if(raw) save = Object.assign(save, JSON.parse(raw)); }catch(e){}
+function persist(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }catch(e){} }
+
+const hasSeen    = id => save.seen.includes(id);
+const hasVisited = id => save.visited.includes(id);
+function markSeen(id){ if(!hasSeen(id)){ save.seen.push(id); persist(); refreshProgressUI(); } }
+function toggleVisited(id){
+  const i = save.visited.indexOf(id);
+  if(i > -1) save.visited.splice(i,1); else save.visited.push(id);
+  persist(); refreshProgressUI(); checkBadges();
+  return i === -1;
+}
+
+const REGIONS = [
+  { key:"CENTRAL", icon:"🏙", label:"CENTRAL" },
+  { key:"EAST",    icon:"🌊", label:"EAST" },
+  { key:"WEST",    icon:"🏭", label:"WEST" },
+  { key:"NORTH",   icon:"🌳", label:"NORTH" },
+];
+const BADGE_REQ = 3;
+const regionProgress = k => SPOTS.filter(s => s.region===k && s.status==="verified" && hasVisited(s.id)).length;
+const earnedBadges  = () => REGIONS.filter(r => regionProgress(r.key) >= BADGE_REQ);
+let knownBadgeCount = earnedBadges().length;
+function checkBadges(){
+  const now = earnedBadges();
+  if(now.length > knownBadgeCount) showToast(`${now[now.length-1].label} BADGE EARNED!`);
+  knownBadgeCount = now.length;
+}
+
+/* ==========================================================================
+   3. MAP + WORLD DRESSING + CLUSTERING
+   ========================================================================== */
+const map = L.map('map', { zoomControl:false, minZoom:11, maxZoom:18 })
+             .setView([1.3521,103.8198], 12);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+/* Region "territories" — dashed zones with a plaque, so the map reads as a
+   game world with named areas rather than a blank basemap. */
+const ZONE_BOXES = {
+  NORTH:  { bounds:[[1.400,103.630],[1.470,103.999]], color:"#10B981" },
+  EAST:   { bounds:[[1.235,103.900],[1.400,104.010]], color:"#3B82F6" },
+  WEST:   { bounds:[[1.235,103.600],[1.400,103.750]], color:"#FBBF24" },
+  CENTRAL:{ bounds:[[1.235,103.750],[1.400,103.900]], color:"#EF4444" },
+};
+Object.entries(ZONE_BOXES).forEach(([name,z]) => {
+  L.rectangle(z.bounds,{
+    color:z.color, weight:2, dashArray:"7 7", fillColor:z.color,
+    fillOpacity:.05, interactive:false
+  }).addTo(map);
+  const c = L.latLngBounds(z.bounds).getCenter();
+  L.marker(c,{
+    interactive:false,
+    icon:L.divIcon({ className:'', html:`<div class="zone-label">${name} ZONE</div>`, iconSize:[110,14] })
+  }).addTo(map);
+});
+
+const clusterGroup = L.markerClusterGroup({
+  showCoverageOnHover:false, spiderfyOnMaxZoom:true,
+  disableClusteringAtZoom:17, maxClusterRadius:60,
+  iconCreateFunction(cluster){
+    const n = cluster.getChildCount();
+    const cls = n>=25 ? "l" : n>=8 ? "m" : "s";
+    const px  = n>=25 ? 48 : n>=8 ? 42 : 36;
+    return L.divIcon({ html:`<div class="cl-badge ${cls}" style="width:${px}px;height:${px}px;">${n}</div>`,
+                       className:'', iconSize:L.point(px,px) });
+  }
+});
+
+const pinHtml = s => `<div class="pix-pin st-${s.status} rar-${s.rarity}">
+    <div class="body"></div><div class="pip"></div><div class="point"></div></div>`;
+const iconFor = s => L.divIcon({ className:'', html:pinHtml(s), iconSize:[26,30], iconAnchor:[13,28] });
+
+const markerIndex = {};
+function renderMarkers(dataset){
+  clusterGroup.clearLayers();
+  for(const k in markerIndex) delete markerIndex[k];
+  dataset.forEach(s => {
+    const m = L.marker([s.lat,s.lng],{ icon:iconFor(s) });
+    m.on('click', () => handleSpotTap(s));
+    clusterGroup.addLayer(m);
+    markerIndex[s.id] = { marker:m, data:s };
+  });
+  document.getElementById('statusCount').textContent = dataset.length;
+}
+map.addLayer(clusterGroup);
+renderMarkers(SPOTS);
+
+/* ==========================================================================
+   4. LIVE DATA (mock WebSocket)
+   --------------------------------------------------------------------------
+   WEBSOCKET HOOK:
+     const socket = new WebSocket('wss://api.halalah.sg/live');
+     socket.onmessage = e => handleLiveUpdate(JSON.parse(e.data));
+   Payloads patch a single marker in place — no full re-render — which is what
+   keeps this cheap once the dataset is large.
+   ========================================================================== */
+const socketStateEl = document.getElementById('socketState');
+function handleLiveUpdate(msg){
+  const entry = markerIndex[msg.id];
+  if(!entry) return;
+  entry.data.status = msg.status;
+  entry.marker.setIcon(iconFor(entry.data));
+  if(currentSpotId === msg.id) fillSheet(entry.data);
+}
+function mockSocketTick(){
+  socketStateEl.textContent = 'SYNC';
+  for(let i=0;i<3;i++){
+    const t = pick(SPOTS), next = pick(['verified','verified','pending','closed']);
+    if(t.status !== next) handleLiveUpdate({ type:'status_update', id:t.id, status:next });
+  }
+  setTimeout(() => socketStateEl.textContent = 'LIVE', 400);
+}
+setInterval(mockSocketTick, 8000);
+socketStateEl.textContent = 'LIVE';
+
+/* ==========================================================================
+   5. GEOLOCATION / LIVE TRACKING
+   --------------------------------------------------------------------------
+   GEO HOOK: watchPosition is the real API. To stream positions server-side
+   (heatmaps, nearby-friends), POST from updatePosition().
+   ========================================================================== */
+let playerMarker=null, watchId=null, tracking=false, simTimer=null, playerPos=null;
+
+function toggleTracking(){
+  tracking = !tracking;
+  document.getElementById('fabLocate').dataset.tracking = tracking;
+  if(tracking){
+    showToast('LIVE SCAN ON');
+    if(navigator.geolocation){
+      watchId = navigator.geolocation.watchPosition(
+        p => updatePosition(p.coords.latitude, p.coords.longitude),
+        () => simulateWalk(),
+        { enableHighAccuracy:true, maximumAge:5000, timeout:8000 });
+    } else simulateWalk();
+  } else {
+    showToast('SCAN OFF');
+    if(watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if(simTimer){ clearInterval(simTimer); simTimer = null; }
+  }
+}
+/* Demo walk so the feature is visible without a permission grant. */
+function simulateWalk(){
+  let lat=1.3521, lng=103.8198;
+  updatePosition(lat,lng);
+  simTimer = setInterval(() => {
+    lat += rand(-0.0025,0.0025); lng += rand(-0.0025,0.0025);
+    updatePosition(lat,lng);
+  }, 3000);
+}
+function updatePosition(lat,lng){
+  playerPos = { lat, lng };
+  if(!playerMarker){
+    playerMarker = L.marker([lat,lng],{
+      icon:L.divIcon({ className:'', html:`<div class="pix-pin player"><div class="body"></div></div>`,
+                       iconSize:[26,26], iconAnchor:[13,13] }),
+      zIndexOffset:1000 }).addTo(map);
+    map.setView([lat,lng],15);
+  } else playerMarker.setLatLng([lat,lng]);
+  SPOTS.forEach(s => s._dist = haversine(lat,lng,s.lat,s.lng));
+  scanForEncounters();
+}
+function haversine(a1,o1,a2,o2){
+  const R=6371, r=d=>d*Math.PI/180;
+  const dLat=r(a2-a1), dLon=r(o2-o1);
+  const x = Math.sin(dLat/2)**2 + Math.cos(r(a1))*Math.cos(r(a2))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+document.getElementById('fabLocate').addEventListener('click', toggleTracking);
+
+/* ==========================================================================
+   6. CLOSE-PROXIMITY ENCOUNTER
+   ========================================================================== */
+const ENCOUNTER_RADIUS_KM = 0.20;      // 200m — "extremely close"
+const encountered = new Set();
+
+function scanForEncounters(){
+  if(!tracking) return;
+  for(const s of SPOTS){
+    if(s._dist !== undefined && s._dist <= ENCOUNTER_RADIUS_KM && !encountered.has(s.id)){
+      encountered.add(s.id);
+      playEncounter(s, () => openSheet(s));
+      break;                            // one at a time
+    }
+  }
+}
+function playEncounter(spot, done){
+  const el = document.getElementById('encounter');
+  const label = spot.rarity==='legendary' ? 'A LEGENDARY SPOT IS NEARBY!'
+              : spot.rarity==='rare'      ? 'A RARE SPOT IS NEARBY!'
+              : 'A SPOT IS RIGHT NEARBY!';
+  document.getElementById('encounterText').innerHTML = `${label}<br><br>${spot.name.toUpperCase()}`;
+  el.classList.remove('run'); void el.offsetWidth; el.classList.add('run');
+  setTimeout(() => { el.classList.remove('run'); if(done) done(); }, 810);
+}
+function handleSpotTap(spot){
+  if(spot._dist !== undefined && spot._dist <= ENCOUNTER_RADIUS_KM && !encountered.has(spot.id)){
+    encountered.add(spot.id);
+    playEncounter(spot, () => openSheet(spot));
+  } else openSheet(spot);
+}
+
+/* ==========================================================================
+   7. BOTTOM SHEET
+   ========================================================================== */
+const sheet = document.getElementById('sheet');
+const scrim = document.getElementById('scrim');
+let currentSpotId = null;
+const STATUS_LABEL = { verified:'CERTIFIED', pending:'PENDING', closed:'CLOSED' };
+const fmtDist = d => d===undefined ? '—' : (d<1 ? Math.round(d*1000)+'m' : d.toFixed(1)+'km');
+
+function fillSheet(s){
+  const t = TYPE_MAP[s.cuisine];
+  document.getElementById('sEntryNo').textContent = `No. ${s.entryNo}`;
+  document.getElementById('sName').textContent = s.name;
+  const chip = document.getElementById('sStatus');
+  chip.textContent = STATUS_LABEL[s.status]; chip.className = 'status-chip '+s.status;
+  const tEl = document.getElementById('sType');
+  tEl.textContent = t.type; tEl.style.background = t.color;
+  const rEl = document.getElementById('sRarity');
+  rEl.textContent = s.rarity.toUpperCase(); rEl.className = 'rarity-badge '+s.rarity;
+  document.getElementById('sDist').textContent   = fmtDist(s._dist);
+  document.getElementById('sRating').textContent = '★'+s.rating;
+  document.getElementById('sPrice').textContent  = s.price;
+  document.getElementById('sCert').textContent   = s.cert;
+  document.getElementById('sAddr').textContent   = s.address;
+  document.getElementById('sHours').textContent  = s.hours;
+  const btn = document.getElementById('sCatch');
+  const v = hasVisited(s.id);
+  btn.dataset.caught = v; btn.textContent = v ? '✔ VISITED' : '◎ VISIT';
+}
+function openSheet(s){
+  currentSpotId = s.id;
+  const first = !hasSeen(s.id);
+  markSeen(s.id); fillSheet(s);
+  sheet.classList.add('open'); scrim.classList.add('open');
+  map.panTo([s.lat,s.lng],{ animate:true });
+  if(first) showToast('NEW LOG ENTRY REGISTERED');
+}
+function closeSheet(){ sheet.classList.remove('open'); scrim.classList.remove('open'); currentSpotId = null; }
+document.getElementById('sheetClose').addEventListener('click', closeSheet);
+scrim.addEventListener('click', closeSheet);
+document.getElementById('sGo').addEventListener('click', () => {
+  // ROUTING HOOK: wire to OneMap SG / Google Directions here.
+  showToast('ROUTING API NOT CONNECTED');
+});
+document.getElementById('sCatch').addEventListener('click', () => {
+  if(!currentSpotId) return;
+  const v = toggleVisited(currentSpotId);
+  const b = document.getElementById('sCatch');
+  b.dataset.caught = v; b.textContent = v ? '✔ VISITED' : '◎ VISIT';
+  if(v) showToast('LOGGED TO EXPLORER CARD');
+});
+
+/* ==========================================================================
+   8. SEARCH + FILTERS
+   ========================================================================== */
+let activeFilter = 'all';
+function applyFilters(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const list = SPOTS.filter(s => {
+    const mq = !q || s.name.toLowerCase().includes(q)
+                  || s.cuisine.toLowerCase().includes(q)
+                  || TYPE_MAP[s.cuisine].type.toLowerCase().includes(q)
+                  || s.address.toLowerCase().includes(q);
+    let mf = true;
+    if(activeFilter==='verified' || activeFilter==='pending') mf = s.status===activeFilter;
+    else if(activeFilter==='legendary' || activeFilter==='rare') mf = s.rarity===activeFilter;
+    else if(KINDS.includes(activeFilter)) mf = s.kind===activeFilter;
+    return mq && mf;
+  });
+  renderMarkers(list);
+}
+document.getElementById('searchBtn').addEventListener('click', applyFilters);
+document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') applyFilters(); });
+document.querySelectorAll('#filterRow .filter-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#filterRow .filter-pill').forEach(x => x.dataset.active='false');
+    p.dataset.active='true'; activeFilter = p.dataset.filter; applyFilters();
+  });
+});
+
+/* ==========================================================================
+   9. "WHAT TO EAT" WHEEL
+   --------------------------------------------------------------------------
+   The 8 slices are drawn dynamically from live state: current position (when
+   scanning), the selected mode, and open/certification status. Re-opening the
+   wheel or changing mode re-rolls the candidate pool, so the wheel is never
+   the same twice.
+   RECOMMENDER HOOK: swap buildCandidates() for a ranked /api/recommend call
+   (personalised by history, time of day, cuisine affinity).
+   ========================================================================== */
+const SLICES = 8;
+const SLICE_COLORS = ["#EF4444","#FBBF24","#10B981","#3B82F6","#F08030","#A040A0","#6890F0","#78C850"];
+let wheelMode = 'near';
+let wheelPool = [];
+let wheelPick = null;
+let wheelAngle = 0;
+let spinning = false;
+
+function buildCandidates(){
+  // Never suggest somewhere that's shut.
+  let pool = SPOTS.filter(s => s.status !== 'closed');
+
+  if(wheelMode === 'cert')  pool = pool.filter(s => s.status === 'verified');
+  if(wheelMode === 'top')   pool = pool.filter(s => parseFloat(s.rating) >= 4.2);
+  if(wheelMode === 'cheap') pool = pool.filter(s => s.price === '$');
+  if(wheelMode === 'new')   pool = pool.filter(s => !hasVisited(s.id));
+
+  if(playerPos){
+    // Location-based: rank by distance, then take a random 8 from the nearest 20
+    // so repeat spins stay varied instead of always offering the same list.
+    pool.sort((a,b) => (a._dist ?? 999) - (b._dist ?? 999));
+    pool = pool.slice(0, 20);
+  }
+  // Shuffle then take 8
+  for(let i=pool.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  return pool.slice(0, SLICES);
+}
+
+function polar(cx,cy,r,deg){
+  const rad = (deg-90) * Math.PI/180;
+  return [cx + r*Math.cos(rad), cy + r*Math.sin(rad)];
+}
+function drawWheel(){
+  wheelPool = buildCandidates();
+  const svg = document.getElementById('wheelSvg');
+  const seg = 360/SLICES, cx=100, cy=100, r=96;
+  let out = '';
+
+  for(let i=0;i<SLICES;i++){
+    const a0 = i*seg, a1 = (i+1)*seg;
+    const [x0,y0] = polar(cx,cy,r,a0);
+    const [x1,y1] = polar(cx,cy,r,a1);
+    out += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 0,1 ${x1.toFixed(2)},${y1.toFixed(2)} Z"
+             fill="${SLICE_COLORS[i]}" stroke="#0A0F18" stroke-width="2.5"/>`;
+
+    /* Labels run along each slice's radius, anchored at the outer rim so they
+       always sit inside their own wedge. Slices on the left half are flipped
+       180° so the text never renders upside-down. */
+    const spot = wheelPool[i];
+    if(spot){
+      const mid = a0 + seg/2;
+      const flip = mid > 180;
+      const [tx,ty] = polar(cx, cy, r*0.9, mid);
+      const rot = flip ? mid + 90 : mid - 90;
+      const anchor = flip ? 'start' : 'end';
+      const name = spot.name.toUpperCase();
+      const label = name.length > 12 ? name.slice(0,11) + '.' : name;
+      out += `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}"
+                transform="rotate(${rot.toFixed(1)},${tx.toFixed(2)},${ty.toFixed(2)})"
+                text-anchor="${anchor}" dominant-baseline="middle"
+                font-family="'Press Start 2P',cursive" font-size="5"
+                fill="#111827">${label}</text>`;
+    }
+  }
+  out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#0A0F18" stroke-width="5"/>`;
+  svg.innerHTML = out;
+
+  document.getElementById('wheelResult').innerHTML =
+    `<div class="rn">READY?</div><div class="rs">${wheelPool.length} PICKS ${playerPos ? 'NEAR YOU' : 'ISLAND-WIDE'}</div>`;
+  wheelPick = null;
+}
+
+function spinWheel(){
+  if(spinning || !wheelPool.length) return;
+  spinning = true;
+  const svg = document.getElementById('wheelSvg');
+  const idx = Math.floor(Math.random()*wheelPool.length);
+  const seg = 360/SLICES;
+  // Land the chosen slice's midpoint under the 12 o'clock pointer.
+  const target = 360*5 + (360 - (idx*seg + seg/2));
+  wheelAngle += target;
+  svg.classList.add('spinning');
+  svg.style.transform = `rotate(${wheelAngle}deg)`;
+  document.getElementById('wheelHub').textContent = '...';
+
+  setTimeout(() => {
+    spinning = false;
+    wheelPick = wheelPool[idx];
+    document.getElementById('wheelHub').textContent = 'SPIN';
+    const t = TYPE_MAP[wheelPick.cuisine];
+    document.getElementById('wheelResult').innerHTML = `
+      <div class="rn">${wheelPick.name.toUpperCase()}</div>
+      <div class="rs">${t.type} · ★${wheelPick.rating} · ${wheelPick.price}
+        ${wheelPick._dist !== undefined ? '<br>'+fmtDist(wheelPick._dist)+' AWAY' : ''}</div>`;
+    showToast('TONIGHT: ' + wheelPick.name.toUpperCase());
+  }, 4300);
+}
+
+document.getElementById('spinBtn').addEventListener('click', spinWheel);
+document.getElementById('wheelHub').addEventListener('click', spinWheel);
+document.getElementById('wheelGo').addEventListener('click', () => {
+  if(!wheelPick){ showToast('SPIN FIRST!'); return; }
+  wheelModal.classList.remove('open');
+  map.setView([wheelPick.lat,wheelPick.lng],16);
+  setTimeout(() => openSheet(wheelPick), 300);
+});
+document.querySelectorAll('#wheelMode .filter-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#wheelMode .filter-pill').forEach(x => x.dataset.active='false');
+    p.dataset.active='true'; wheelMode = p.dataset.wmode;
+    drawWheel();
+  });
+});
+
+const wheelModal = document.getElementById('wheelModal');
+document.getElementById('openWheel').addEventListener('click', () => { drawWheel(); wheelModal.classList.add('open'); });
+document.getElementById('wheelClose').addEventListener('click', () => wheelModal.classList.remove('open'));
+
+/* ==========================================================================
+   10. FIELD LOG (list view) — unseen entries stay blacked out
+   ========================================================================== */
+const logModal = document.getElementById('logModal');
+const logList  = document.getElementById('logList');
+
+function buildLog(){
+  logList.innerHTML = '';
+  SPOTS.forEach(s => {
+    const seen = hasSeen(s.id);
+    const row = document.createElement('div');
+    row.className = 'log-row' + (seen ? '' : ' unseen');
+    row.innerHTML = `
+      <div class="no">${s.entryNo}</div>
+      <div class="sprite">${pinHtml(s)}</div>
+      <div>
+        <div class="nm">${seen ? s.name.toUpperCase() : '??????????'}</div>
+        <div class="sub">${seen ? TYPE_MAP[s.cuisine].type+' · '+s.region : 'NOT REGISTERED'}</div>
+      </div>
+      <div class="got">${hasVisited(s.id) ? '✔' : ''}</div>`;
+    if(seen) row.addEventListener('click', () => {
+      logModal.classList.remove('open');
+      map.setView([s.lat,s.lng],16);
+      setTimeout(() => openSheet(s), 300);
+    });
+    logList.appendChild(row);
+  });
+  const pct = Math.round(save.seen.length / SPOTS.length * 100);
+  document.getElementById('logProgressText').textContent = `${save.seen.length} / ${SPOTS.length}`;
+  document.getElementById('logProgressFill').style.width = pct + '%';
+  logList.scrollTop = 0;
+}
+document.getElementById('openLog').addEventListener('click', () => { buildLog(); logModal.classList.add('open'); });
+document.getElementById('logClose').addEventListener('click', () => logModal.classList.remove('open'));
+
+/* ==========================================================================
+   11. EXPLORER CARD + BADGE CASE
+   ========================================================================== */
+const cardModal = document.getElementById('cardModal');
+function buildCard(){
+  const pct = Math.round(save.seen.length / SPOTS.length * 100);
+  const earned = earnedBadges();
+  document.getElementById('xcId').textContent      = 'IDNo. ' + save.explorerId;
+  document.getElementById('xcSeen').textContent    = save.seen.length;
+  document.getElementById('xcVisited').textContent = save.visited.length;
+  document.getElementById('xcPct').textContent     = pct + '%';
+  document.getElementById('xcBadges').textContent  = `${earned.length}/${REGIONS.length}`;
+  const wrap = document.getElementById('badgeCase');
+  wrap.innerHTML = '';
+  REGIONS.forEach(r => {
+    const got = regionProgress(r.key) >= BADGE_REQ;
+    const el = document.createElement('div');
+    el.className = 'zone-badge' + (got ? ' earned' : '');
+    el.innerHTML = `<div class="ico">${r.icon}</div>
+                    <div class="nm">${got ? r.label : regionProgress(r.key)+'/'+BADGE_REQ}</div>`;
+    wrap.appendChild(el);
+  });
+}
+document.getElementById('openCard').addEventListener('click', () => { buildCard(); cardModal.classList.add('open'); });
+document.getElementById('cardClose').addEventListener('click', () => cardModal.classList.remove('open'));
+
+function refreshProgressUI(){
+  if(logModal.classList.contains('open'))  buildLog();
+  if(cardModal.classList.contains('open')) buildCard();
+  document.getElementById('lsSeen').textContent = save.seen.length;
+}
+
+/* ==========================================================================
+   12. TOAST
+   ========================================================================== */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ==========================================================================
+   13. LANDING / TITLE SCREEN
+   ========================================================================== */
+document.getElementById('lsTotal').textContent = SPOTS.length;
+document.getElementById('lsCert').textContent  = SPOTS.filter(s => s.status==='verified').length;
+document.getElementById('lsSeen').textContent  = save.seen.length;
+
+/* Fullscreen must be requested from a user gesture, so PRESS START is where we
+   ask. In an installed PWA the manifest's display mode already covers this and
+   the call simply no-ops. */
+function goFullscreen(){
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if(req) { try { req.call(el, { navigationUI:'hide' }); } catch(e){ try{ req.call(el); }catch(_){} } }
+}
+document.getElementById('startBtn').addEventListener('click', () => {
+  goFullscreen();
+  document.getElementById('landing').classList.add('hide');
+  save.started = true; persist();
+  setTimeout(() => map.invalidateSize(), 400);   // map was hidden at init
+});
+/* Returning explorers skip the title screen entirely — which means there's no
+   PRESS START to hang the fullscreen request on, so catch their first tap. */
+if(save.started){
+  document.getElementById('landing').classList.add('hide');
+  window.addEventListener('pointerdown', function once(){
+    goFullscreen();
+    window.removeEventListener('pointerdown', once);
+  }, { once:true });
+}
+
+/* Manifest shortcuts (?action=spin | ?action=log) launch straight into a view. */
+const launchAction = new URLSearchParams(location.search).get('action');
+if(launchAction){
+  document.getElementById('landing').classList.add('hide');
+  save.started = true; persist();
+  setTimeout(() => {
+    map.invalidateSize();
+    if(launchAction === 'spin'){ drawWheel(); wheelModal.classList.add('open'); }
+    if(launchAction === 'log'){ buildLog();  logModal.classList.add('open'); }
+  }, 400);
+}
+
+/* ==========================================================================
+   14. PWA — service worker + install prompt
+   ========================================================================== */
+/* The manifest is built here rather than shipped as a sibling file, so the app
+   stays a single .html. start_url/scope/id are absolutised against wherever
+   this file is actually served from — a data: URL has no base to resolve
+   relative paths against, so they must be spelled out in full. */
+(function injectManifest(){
+  const here = location.href.split('?')[0].split('#')[0];
+  const dir  = here.substring(0, here.lastIndexOf('/') + 1);
+  const manifest = {
+    id: dir,
+    name: "HALALAH — This one Halal ah?",
+    short_name: "HALALAH",
+    description: "This one Halal ah? Halal lah! Find halal food across Singapore.",
+    start_url: here,
+    scope: dir,
+    display: "fullscreen",
+    display_override: ["fullscreen","standalone","minimal-ui"],
+    orientation: "portrait",
+    background_color: "#000000",
+    theme_color: "#000000",
+    lang: "en-SG",
+    categories: ["food","travel","lifestyle"],
+    icons: [
+      { src:"data:image/png;base64,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",  sizes:"192x192", type:"image/png", purpose:"any" },
+      { src:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAS7klEQVR4nO3cO44d2ZmF0VBLAEGgAQ6gJiBDrqx2awAaqiYhq9wyegKyBQICCBoNtcGKyiQzb5y48Tzn32sB5ZLxQuzv3qzkH/7188//mQCAKP919wEAANcTAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQ6E93H0AlP/3y692HAFDaP//6l7sPoQwBsIPBB7jWe+9dUbCNAHiS0Qfoy+v3shhYTwCsZPgB+je/q4VAmwBoMPwA4xECbQLgAcMPMD4h8JgA+IHhB6hHCLzl3wF4xfgD1OY9/0IA/MZDAZDB+/6b+AD46ZdfPQwAYbz3wwPAAwCQK/0DYGwAJN90AF6k7kHkbwGcebM/fPx02p8NkOzrl8+n/dk//fJr3G8IxAXAGeNv9AHO9+O79swgSBD7I4C9Pnz89Pt/AFzv6Pdw2o8CogLgiJtr9AH6c9S7OSkCYgLgqPEHoF8iYL2IANh7M33qBxjHEe/shAiICIA9DD/AmLy/l5UPgD0V5+EBGNue93j1bwHKB8BWxh+gBu/z95UOgK315mEBqGXre73ytwClA2AL4w9Qk/f798oGQOVqA+A6VfekbABsoQ4BavOef1EyALbUmocCIMOW933FbwFKBgAAsEwATD79A6Tx3i8YABW/pgHgftX2pVwAAABt8QHgayCATOnv//gAAIBEpQKg2s9nAOhLpZ0pFQDPSv/6ByBd8g5EBwAApBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQABPv65fPdhwDcRABAqK9fPk+f//7fIgBCCQAINI//NE0iAEIJAAjzevxnIgDyCAAI8t74z0QAZBEAEGJp/GciAHIIAAiwZvxnIgAyCAAo7pnxn4kAqE8AQGFbxn8mAqA2AQBF7Rn/mQiAugQAFHTE+M9EANQkAKCYI8d/JgKgHgEAhZwx/jMRALUIACjizPGfiQCoQwBAAVeM/0wEQA0CAAZ35fjPRACMTwDAwO4Y/5kIgLEJABjUneM/EwEwLgEAA+ph/GciAMYkAGAwPY3/TATAeAQADKTH8Z+JABiLAIBB9Dz+MxEA4xAAMIARxn8mAmAMAgA6N9L4z0QA9E8AQMdGHP+ZCIC+CQDo1MjjPxMB0C8BAB2qMP4zEQB9EgDQmUrjPxMB0B8BAB2pOP4zEQB9EQDQicrjPxMB0A8BAB1IGP+ZCIA+CAC4WdL4z0QA3E8AwI0Sx38mAuBeAgBukjz+MxEA9xEAcAPj/0IEwD0EAFzM+L8lAuB6AgAuZPwfEwFwLQEAFzH+bSIAriMA4ALGfz0RANcQAHAy4/88EQDnEwBwIuO/nQiAcwkAOInx308EwHkEAJzA+B9HBMA5BAAczPgfTwTA8QQAHMj4n0cEwLEEABzE+J9PBMBxBAAcwPhfRwTAMQQA7GT8rycCYD8BADsY//uIANhHAMBGxv9+IgC2EwCwgfHvhwiAbQQAPMn490cEwPMEADzB+PdLBMBzBACsZPz7JwJgPQEAKxj/cYgAWEcAQIPxH48IgDYBAAuM/7hEACwTAPCA8R+fCIDHBAC8w/jXIQLgfQIAfmD86xEB8JYAgFeMf10iAL4nAOA3xr8+EQAvBABMxj+JCIBvBADxjH8eEQACgHDGH0glAIhl/LP5FoB0AoBIxp9pEgFkEwDEMf68JgJIJQCIYvx5jwggkQAghvFniQggjQAggvFnDRFAEgFAecafZ4gAUggASjP+bCECSCAAKMv4t/3f//zv3YfQLRFAdQKAkox/2zz+IuAxEUBlAoByjH/bj6MvAh4TAVQlACjF+Lc9GnsR8JgIoCIBQBnGv6018iLgMRFANQKAEox/29pxFwGPiQAqEQAMz/i3PTvqIuAxEUAVAoChGf+2rWMuAh4TAVQgABiW8W/bO+Ii4DERwOgEAEMy/m1HjbcIeEwEMDIBwHCMf9vRoy0CHhMBjEoAMBTj33bWWIuAx0QAIxIADMP4t5090iLgMRHAaAQAQzD+bVeNswh4TAQwEgFA94x/29WjLAIeEwGMQgDQNePfdtcYi4DHRAAjEAB0y/i33T3Cd//9PRMB9E4A0CXj39bL+PZyHD0SAfRMANAd49/W2+j2djw9EQH0SgDQFePf1uvY9npcPRAB9EgA0A3j39b7yPZ+fHcSAfRGANAF4982yriOcpx3EAH0RABwO+PfNtqojna8VxIB9EIAcCvj3zbqmI563FcQAfRAAHAb4982+oiOfvxnEgHcTQBwC+PfVmU8q5zHGUQAdxIAXM74t1UbzWrncyQRwF0EAJcy/m3GMo8I4A4CgMsY/7bK41/53I4gAriaAOASxr8tYSATznEPEcCVBACnM/5tScOYdK5biACuIgA4lfFvSxzExHN+hgjgCgKA0xj/tuQhTD73NUQAZxMAnML4txlA16BFBHAmAcDhjH+b4XvhWiwTAZxFAHAo499m8N5yTZaJAM4gADiM8W8zdI+5NstEAEcTABzC+LcZuDbXaJkI4EgCgN2Mf5thW8+1WiYCOIoAYBfj32bQnueaLRMBHEEAsJnxbzNk27l2y0QAewkANjH+bQZsP9dwmQhgDwHA04x/m+E6jmu5TASwlQDgKca/zWAdzzVdJgLYQgCwmvFvM1TncW2XiQCeJQBYxfi3GajzucbLRADPEAA0Gf82w3Qd13qZCGAtAcAi499mkK7nmi8TAawhAHjI+LcZovu49stEAC0CgHcZ/zYDdD/3YJkIYIkA4A3j32Z4+uFeLBMBPCIA+I7xbzM4/XFPlokA3iMA+J3xbzM0/XJvlokAfiQAmKbJ+K9hYPrnHi0TAbwmADD+KxiWcbhXy0QAMwHA9OHjp+nT3/5992F07Y//+PPdh8BK7tWyT3/79/Th46e7D4MOCACmaRIBaxiW/rlHy4w/rwkAficC2gxMv9ybZcafHwkAviMC2gxNf9yTZcaf9wgA3hABbQanH+7FMuPPIwKAd4mANsNzP/dgmfFniQDgIRHQZoDu49ovM/60CAAWiYA2Q3Q913yZ8WcNAUCTCGgzSNdxrZcZf9YSAKwiAtoM0/lc42XGn2cIAFYTAW0G6jyu7TLjz7MEAE8RAW2G6niu6TLjzxYCgKeJgDaDdRzXcpnxZysBwCYioM1w7ecaLjP+7CEA2EwEtBmw7Vy7ZcafvQQAu4iANkP2PNdsmfHnCAKA3URAm0Fbz7VaZvw5igDgECKgzbC1uUbLjD9HEgAcRgS0GbjHXJtlxp+jCQAOJQLaDN1brsky488ZBACHEwFtBu+Fa7HM+HMWAcApRECb4XMNWow/ZxIAnEYEtCUPYPK5r2H8OZsA4FQioC1xCBPP+RnGnysIAE4nAtqSBjHpXLcw/lxFAHAJEdCWMIwJ57iH8edKAoDLiIC2P/7jz2VHsup5HcX4czUBwKVEwDrVxrLa+RzN+HMHAcDlRMA6VUazynmcxfhzFwHALUTAOqOP5+jHfzbjz50EALcRAeuMOqKjHvdVjD93EwDcSgSsM9qYjna8VzP+9EAAcDsRsM4oozrKcd7F+NMLAUAXRMA6vY9r78d3N+NPTwQA3RAB6/Q6sr0eVy+MP70RAHRFBKzT29j2djy9Mf70SADQHRGwTi+j28tx9Mr40ysBQJdEwDp3j+/df3/vjD89EwB0SwSsc9cIG/9lxp/eCQC6JgLWuXqMjf8y488IBADdEwHrXDXKxn+Z8WcUAoAhiIB1zh5n47/M+DMSAcAwRMA6Z4208V9m/BmNAGAoImCdo8fa+C8z/oxIADAcEbDOUaNt/JcZf0YlABiSCFhn73gb/2XGn5EJAIYlAtbZOuLGf5nxZ3QCgKGJgHWeHXPjv8z4U4EAYHgiYJ21o278lxl/qhAAlCAC1mmNu/FfZvypRABQhghY59HIG/9lxp9qBACliIB1fhx747/M+FORAKAcEbDOPPrGf5nxpyoBQEkiYB3jv8z4U5kAoCwRwB7Gn+oEAKWJALYw/iQQAJQnAniG8SeFACCCCGAN408SAUAMEcAS408aAUAUEcB7jD+JBABxRACvGX9SCQAiiQCmyfiTTQAQa44AIZDJ+JNOABDtw8dPvg0IZPxBAMA0TX4kkMT4wzcCAH4jAuoz/vBCAMArIqAu4w/fEwDwAxFQj/GHtwQAvEME1GH84X0CAB4QAeMz/vCYAIAFImBcxh+WCQBoEAHjMf7QJgBgBREwDuMP6wgAWEkE9M/4w3oCAJ4gAvpl/OE5AgCeJAL6Y/zheQIANhAB/TD+sI0AgI1EwP2MP2wnAGAHEXAf4w/7CADYSQRcz/jDfgIADiACrmP84RgCAA4iAs5n/OE4AgAOJALOY/zhWAIADiYCjmf84XgCAE4gAo5j/OEcAgBOIgL2M/5wHgEAJxIB2xl/OJcAgJOJgOcZfzifAIALiID1jD9cQwDARURAm/GH6wgAuJAIeMz4w7UEAFxMBLxl/OF6AgBuIAJeGH+4hwCAm4gA4w93EgBwo+QIMP5wLwEAN0uMAOMP9xMA0IGkCDD+0AcBAJ1IiADjD/0QANCRyhFg/KEvAgA6UzECjD/0RwBAhypFgPGHPgkA6FSFCDD+0C8BAB0bOQKMP/RNAEDnRowA4w/9EwAwgJEiwPjDGAQADGKECDD+MA4BAAPpOQKMP4xFAMBgeowA4w/jEQAwoJ4iwPjDmAQADKqHCDD+MC4BAAO7MwKMP4xNAMDg7ogA4w/jEwBQwJURYPyhBgEARVwRAcYf6hAAUMiZEWD8oRYBAMWcEQHGH+oRAFDQkRFg/KEmAQBFHREBxh/qEgBQ2J4IMP5QmwCA4rZEgPGH+gQABHgmAow/ZBAAEGJNBBh/yCEAIMhSBBh/yCIAIMx7EWD8IY8AgECvI8D4QyYBAKHmCDD+kEkAQDDjD7kEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBogPg65fPdx8CADdK3oFSAfDPv/7l7kMAoLBKO1MqAACAdQQAAASKD4Dkn/8AJEt//8cHAAAkKhcAlf4HDQDOseXTf7V9KRcAW6R/DQRAHgEAQBQf+r4pGQBbvqbxQADwSLWv/6epaABsJQIAavOef1E2ACrWGgDbbR3/qntSNgC2UocAJCgdAFurTQQA1OLT/1ulA2APEQBQg/f5+8oHwJ5689AAjG3Pe7zyp/9pCgiAvUQAwHi+fvls/BsiAmDvjdz7IAFwHe/rdSICYJqOqTkPFUC/jvqwlvDpf5qCAmCajosAIQDQjyPfyynjP01hATBNx93c+YETAwD3OPodnDT+0zRNf7r7ACp4/QB++PjpxiMBqOvMD1xp4z9N0/SHf/3883/uPog7/PTLr3cfAgAdSBz/aQr8EcAs9YYD8CJ5C2IDYJq+3fjkmw+QLP39Hx0As/SHACCN974A+J2HASCD9/03AuAVDwVAXX7s+z0B8AMPCEA93utv+XcAHpgfFr8uCDAuw/+YAGgQAgDjMfxtAmAlIQDQP8O/ngB40uuHSwwA3M/obyMAdvjxoRMEAOcy9scRAAfyYAIwCr8GCACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACB/h+D41ZVMsHXUAAAAABJRU5ErkJggg==",  sizes:"512x512", type:"image/png", purpose:"any" },
+      { src:"data:image/png;base64,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", sizes:"512x512", type:"image/png", purpose:"maskable" }
+    ]
+  };
+  const link = document.createElement('link');
+  link.rel  = 'manifest';
+  link.href = 'data:application/manifest+json;charset=utf-8,' +
+              encodeURIComponent(JSON.stringify(manifest));
+  document.head.appendChild(link);
+})();
+
+/* NOTE ON OFFLINE SUPPORT
+   A service worker must be registered from a same-origin script URL — blob:
+   and data: URLs are rejected by every browser — so a single-file build can't
+   ship one. That costs OFFLINE CACHING only; it does not block installation:
+   Chrome no longer requires a service worker in its install criteria (manifest
+   + icons + a secure origin is enough), and iOS Safari's Add to Home Screen
+   never required one. If you want offline support later, split sw.js out as a
+   sibling file and register it here. */
+const installBtn = document.getElementById('installBtn');
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.textContent = '⤓ INSTALL APP';
+  installBtn.style.display = 'block';
+});
+
+/* iOS never fires beforeinstallprompt, so surface the manual route instead
+   (but not when we're already running installed). */
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true ||
+                     window.matchMedia('(display-mode: fullscreen)').matches ||
+                     window.matchMedia('(display-mode: standalone)').matches;
+if(isIOS && !isStandalone){
+  installBtn.textContent = '⤓ ADD TO HOME SCREEN';
+  installBtn.style.display = 'block';
+}
+
+installBtn.addEventListener('click', async () => {
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+    return;
+  }
+  showToast('TAP SHARE, THEN ADD TO HOME SCREEN');
+});
+</script>
+</body>
+</html>
