@@ -29,7 +29,11 @@ export default defineConfig({
     assetsInlineLimit: 100 * 1024 * 1024,   // inline everything, whatever the size
     chunkSizeWarningLimit: 5000,
     rollupOptions: {
-      output: { inlineDynamicImports: true },
+      /* Classic IIFE, not an ES module. canvaslink serves pages under a CSP
+         `sandbox` directive, and a <script type="module"> is far more fragile
+         there than a plain script — the pre-Vite build that worked on that host
+         used a classic script. This keeps the output shape identical to it. */
+      output: { format: 'iife', inlineDynamicImports: true },
     },
   },
   server: { port: 5180, open: false },

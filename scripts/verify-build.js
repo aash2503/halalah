@@ -57,7 +57,17 @@ unexpected.length === 0
     ? pass(`${label} present`)
     : fail(`${label} MISSING`));
 
-// 5. the anon key is publishable, but a secret key never belongs here
+// 5. a module script is a canvaslink hazard (it serves under a CSP sandbox)
+/<script[^>]*type="module"/.test(html)
+  ? fail('script is still type="module" — fragile under canvaslink\'s CSP sandbox')
+  : pass('classic <script> (safe under a CSP sandbox)');
+
+// 5b. a classic script in <head> MUST be deferred or it runs before <body>
+html.indexOf('<script>') > html.indexOf('<div id="app"')
+  ? pass('script sits after the markup (DOM exists when it runs)')
+  : fail('inline script runs before <body> — Leaflet will fail with "Map container not found"');
+
+// 6. the anon key is publishable, but a secret key never belongs here
 /sb_secret_|service_role/.test(html)
   ? fail('a SECRET key is present — never ship service_role / sb_secret_')
   : pass('no secret key in the bundle');
