@@ -30,10 +30,11 @@ const fail = m => { console.error('  ✗ ' + m); failed = true; };
 const pass = m => console.log('  ✓ ' + m);
 
 // 1. exactly one file in dist
-const files = readdirSync(DIST).filter(f => !f.startsWith('.'));
-files.length === 1 && files[0] === 'index.html'
-  ? pass('dist contains exactly index.html')
-  : fail(`dist should contain only index.html, found: ${files.join(', ')}`);
+const files = readdirSync(DIST).filter(f => !f.startsWith('.')).sort();
+const named = files.find(f => /^halalah-v[\d.]+\.html$/.test(f));
+files.length === 2 && files.includes('index.html') && named
+  ? pass(`dist holds index.html + ${named} (identical; upload the named one)`)
+  : fail(`dist should hold index.html and one halalah-vX.Y.html, found: ${files.join(', ')}`);
 
 const html = readFileSync(join(DIST, 'index.html'), 'utf8');
 
@@ -73,5 +74,6 @@ html.indexOf('<script>') > html.indexOf('<div id="app"')
   : pass('no secret key in the bundle');
 
 const kb = Math.round(statSync(join(DIST, 'index.html')).size / 1024);
-console.log(`\n  dist/index.html — ${kb} KB — upload THIS file to canvaslink.\n`);
+console.log(`\n  ${kb} KB — upload  dist/${named}  to canvaslink.`);
+console.log(`  (NOT the index.html at the project root — that is the source shell.)\n`);
 process.exit(failed ? 1 : 0);

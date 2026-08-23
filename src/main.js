@@ -20,6 +20,10 @@ import './ui/near.js';
 import './ui/log.js';
 import { updatePosition, scanForEncounters, startTracking } from './geo.js';
 
+/* The source shell carries a "do not upload" banner (see index.html). If we're
+   running, the bundle loaded, so it was never the bare source — drop it. */
+document.getElementById('srcWarning')?.remove();
+
 /* --- break the two would-be cycles ------------------------------------- */
 onGroupTap(handleGroupTap);          // map -> sheet
 onProgressChange(refreshProgressUI); // state -> card

@@ -36,3 +36,13 @@ html = html.replace(/<style\s+rel="stylesheet"\s+crossorigin>/g, '<style>');
 
 writeFileSync(FILE, html);
 console.log('  ✓ classic <script>, moved to end of <body>');
+
+/* 3. Emit a DISTINCTLY NAMED copy.
+      The Vite entry at the project root is also called index.html, and picking
+      the wrong one in a file dialog uploads a 15 KB shell with no CSS and a
+      404-ing module script — which renders as unstyled markup and looks like
+      the host mangled it. A versioned filename removes the ambiguity. */
+const ver = (html.match(/class="ver">V([\d.]+)</) || [,'0.0'])[1];
+const named = `dist/halalah-v${ver}.html`;
+writeFileSync(named, html);
+console.log(`  ✓ upload copy: ${named}`);

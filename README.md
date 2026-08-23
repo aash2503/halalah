@@ -5,14 +5,25 @@ Singapore halal food locator. Retro-game UI over the MUIS halal registry.
 ## The one rule
 
 **The host (canvaslink.app) accepts exactly ONE html file.**
-Upload **`dist/index.html`** — never the `index.html` at the project root, which
-is only the Vite entry shell. `npm run build` fails the build if anything would
-end up as a sibling file or a CDN reference.
+
+Upload **`dist/halalah-vX.Y.html`**.
+
+There are two files named `index.html` in this project and only one of them
+works. The one at the **project root is the Vite source shell** — 15 KB, no CSS,
+and a `<script src="/src/main.js">` that 404s on any host. Uploading it renders
+as unstyled markup that looks like the host mangled the file; it has happened.
+The build therefore emits a version-stamped copy so the right file is
+unmistakable in a file dialog, and the source shell now shows a full-screen
+"DO NOT UPLOAD" banner if it is ever served directly.
+
+`npm run build` fails if anything would end up as a sibling file, reference a
+CDN, lose an inlined asset, ship a module script, place the script before the
+markup, or contain a secret key.
 
 ```bash
 npm install
 npm run dev      # http://localhost:5180, hot reload
-npm run build    # -> dist/index.html  (+ verification)
+npm run build    # -> dist/halalah-vX.Y.html  (upload this)  + verification
 npm run verify   # re-run the checks against an existing build
 ```
 
