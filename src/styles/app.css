@@ -440,62 +440,47 @@ html,body{
 .wheel-mode::-webkit-scrollbar{ display:none; }
 .wm-label{ width:100%; font-size:6px; color:var(--muted); margin-bottom:-6px; }
 
-/* ---- AR ----------------------------------------------------------------- */
-.ar-modal{ position:absolute; inset:0; z-index:960; background:#000; display:none; }
-.ar-modal.open{ display:block; }
-#arVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-/* The scene itself must not swallow taps — only the tags are interactive. */
-.ar-scene{ position:absolute; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
-.ar-crosshair{ position:absolute; left:50%; top:0; bottom:0; width:2px; margin-left:-1px;
-  background:rgba(251,191,36,.35); z-index:2; }
-.ar-tag{
-  position:absolute; transform:translate(-50%,-50%);
-  background:var(--darker); border:3px solid var(--green); border-radius:9px;
-  box-shadow:0 3px 0 rgba(0,0,0,.7); padding:7px 9px; text-align:center;
-  font-family:'Press Start 2P',cursive; white-space:nowrap;
-  pointer-events:auto; cursor:pointer; max-width:46vw; overflow:hidden; }
-/* No transition here on purpose: renderAR() rebuilds every tag on each compass
-   event, so a transition never smooths anything — but it DOES make
-   getBoundingClientRect return mid-animation values, which broke de-collision. */
-.ar-tag:active{ transform:translate(-50%,-50%) scale(.94); }
-.ar-tag .an{ font-size:7px; color:var(--white); }
-.ar-tag .ad{ font-size:6px; color:var(--yellow); margin-top:5px; }
-.ar-tag.far{ opacity:.62; }
-/* A building holding several certified spots — one tag, not one per stall. */
-.ar-tag.multi{ border-color:var(--yellow); }
-.ar-tag .acount{ font-size:6px; color:var(--green); margin-top:4px; }
-.ar-hud{ position:absolute; left:0; right:0; top:0; z-index:4; padding:12px;
-  display:flex; align-items:center; gap:9px; }
-.ar-hud .ttl{ background:var(--red); border:3px solid var(--deepest); border-radius:9px;
-  padding:8px 10px; font-size:8px; box-shadow:0 3px 0 var(--deepest); }
-.ar-hud .x{ margin-left:auto; width:36px; height:36px; border-radius:9px; background:var(--deepest);
-  border:3px solid var(--white); display:flex; align-items:center; justify-content:center;
-  font-size:14px; cursor:pointer; color:#fff; }
-.ar-foot{ position:absolute; left:0; right:0; bottom:0; z-index:4;
-  padding:12px calc(12px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:9px; align-items:center; }
-.ar-compass{ background:var(--darker); border:3px solid var(--deepest); border-radius:9px;
-  padding:8px 12px; font-size:8px; color:var(--yellow); box-shadow:0 3px 0 var(--deepest); }
+/* ---- FINDER: compass walk + indoor venue mode ------------------------- */
+.compass-wrap{ display:flex; justify-content:center; margin:4px 0 14px; }
+.compass{ position:relative; width:min(70vw,260px); aspect-ratio:1; border-radius:50%;
+  border:4px solid var(--deepest); background:radial-gradient(circle,#0d1a14 0%,#060b12 72%);
+  box-shadow:0 0 0 4px rgba(16,185,129,.22), 0 5px 0 var(--deepest); }
+.compass .cr-ring{ position:absolute; inset:14%; border:2px dashed rgba(16,185,129,.26); border-radius:50%; }
+.compass .cr-ring.r2{ inset:32%; }
+.compass .cr-n{ position:absolute; left:50%; top:6px; transform:translateX(-50%);
+  font-size:8px; color:var(--green); }
+/* One element, rotated — never rebuilt. The old overlay recreated every tag on
+   each compass event (~60 Hz) and forced a layout per tag, which is what made
+   it feel broken. */
+.compass .cr-arrow{ position:absolute; left:50%; top:50%; width:0; height:0;
+  margin:-56px 0 0 -22px; border-left:22px solid transparent; border-right:22px solid transparent;
+  border-bottom:74px solid var(--yellow);
+  filter:drop-shadow(0 3px 0 var(--deepest));
+  transform-origin:50% 74%; transition:transform .16s linear, opacity .2s ease; }
+.compass .cblip{ position:absolute; width:9px; height:9px; margin:-4px 0 0 -4px; border-radius:2px;
+  background:var(--green); border:2px solid var(--deepest); }
+.compass .cblip.hot{ background:var(--yellow); }
+.compass .cblip.on{ background:#fff; box-shadow:0 0 8px #fff; }
+
+.walk-card{ background:var(--dark); border:3px solid var(--deepest); border-radius:10px;
+  padding:14px; text-align:center; margin-bottom:10px; }
+.walk-dist{ font-size:22px; color:var(--yellow); line-height:1.4; }
+.walk-target{ font-size:10px; margin-top:10px; line-height:1.8; }
+.walk-sub{ font-size:7px; color:var(--muted); margin-top:8px; line-height:1.9; }
 .ar-note{ background:rgba(10,15,24,.9); border:2px solid var(--deepest); border-radius:8px;
-  padding:8px 10px; font-size:6px; color:var(--muted); text-align:center; line-height:2; max-width:92%; }
-/* 2D radar fallback — also used when the camera is unavailable */
-.radar-wrap{ position:absolute; inset:0; z-index:1; display:none; align-items:center; justify-content:center; }
-.radar-wrap.on{ display:flex; }
-.radar{ position:relative; width:min(84vw,340px); aspect-ratio:1; border-radius:50%;
-  border:4px solid var(--deepest); background:radial-gradient(circle, #0d1a14 0%, #060b12 70%);
-  box-shadow:0 0 0 4px rgba(16,185,129,.25); }
-.radar .ring{ position:absolute; inset:12%; border:2px dashed rgba(16,185,129,.28); border-radius:50%; }
-.radar .ring.r2{ inset:30%; } .radar .ring.r3{ inset:44%; }
-.radar .sweep{ position:absolute; inset:0; border-radius:50%;
-  background:conic-gradient(rgba(16,185,129,.35) 0deg, rgba(16,185,129,0) 55deg, rgba(16,185,129,0) 360deg);
-  animation:sweep 3.4s linear infinite; }
-@keyframes sweep{ to{ transform:rotate(360deg); } }
-.radar .me{ position:absolute; left:50%; top:50%; width:10px; height:10px; margin:-5px 0 0 -5px;
-  background:var(--red); border:2px solid #fff; border-radius:50%; }
-.radar .blip{ position:absolute; width:12px; height:12px; margin:-6px 0 0 -6px;
-  background:var(--green); border:2px solid var(--deepest); border-radius:3px; }
-.radar .blip.hot{ background:var(--yellow); }
-.radar .north{ position:absolute; left:50%; top:5px; transform:translateX(-50%);
-  font-size:7px; color:var(--green); }
+  padding:8px 10px; font-size:6px; color:var(--muted); text-align:center; line-height:2; margin-top:10px; }
+
+.indoor-hdr{ font-size:11px; color:var(--yellow); line-height:1.7; }
+.indoor-sub{ font-size:7px; color:var(--muted); margin:8px 0 12px; line-height:1.9; }
+.unit-row{ display:flex; align-items:center; gap:11px; padding:10px;
+  background:var(--dark); border:3px solid var(--deepest); border-radius:9px;
+  margin-bottom:7px; cursor:pointer; }
+.unit-no{ font-size:9px; color:var(--yellow); width:64px; flex:0 0 auto; }
+.unit-nm{ font-size:8px; line-height:1.7; }
+.unit-ty{ font-size:6px; margin-top:6px; }
+.unit-go{ margin-left:auto; font-size:11px; color:var(--yellow); flex:0 0 auto; }
+/* unit number shown in the building list on the map sheet too */
+.bld-row .unit{ font-size:7px; color:var(--yellow); margin-top:5px; }
 
 /* ---- landing ------------------------------------------------------------ */
 .landing{ position:absolute; inset:0; z-index:1000; background:var(--darker);

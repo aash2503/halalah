@@ -43,7 +43,7 @@
 
   <div class="hud-top">
     <div class="title-plate">
-      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V6.4</div>
+      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V6.5</div>
     </div>
     <div class="offline-bar" id="offlineBar">OFFLINE — SHOWING SAVED DATA</div>
 
@@ -82,7 +82,7 @@
   <div class="rail">
     <div class="rail-btn btn btn-g" id="openNear"><div class="ico">📍</div><div>NEAR</div></div>
     <div class="rail-btn spin btn" id="openWheel"><div class="ico">🎡</div><div>SPIN</div></div>
-    <div class="rail-btn ar btn"   id="openAR"><div class="ico">📷</div><div>AR</div></div>
+    <div class="rail-btn ar btn"   id="openFinder"><div class="ico">🧭</div><div>FIND</div></div>
     <div class="rail-btn btn btn-r" id="openLog"><div class="ico">📕</div><div>LOG</div></div>
     <div class="rail-btn btn btn-b" id="openCard"><div class="ico">🎫</div><div>CARD</div></div>
   </div>
@@ -278,28 +278,49 @@
     </div>
   </div>
 
-  <!-- ===== AR ===== -->
-  <div class="ar-modal" id="arModal">
-    <video id="arVideo" playsinline muted autoplay></video>
-    <div class="ar-scene" id="arScene"><div class="ar-crosshair"></div></div>
-    <div class="radar-wrap" id="radarWrap">
-      <div class="radar" id="radar">
-        <div class="sweep"></div>
-        <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
-        <div class="north">N</div><div class="me"></div>
+  <!-- ===== FINDER — compass walk + indoor venue mode ===== -->
+  <div class="modal" id="finderModal">
+    <div class="modal-hdr"><div class="mark"></div><h2 id="finderTitle">WALK THIS WAY</h2>
+      <div class="x" id="finderClose">✕</div></div>
+    <div class="modal-body">
+
+      <!-- OUTDOORS: point me at one place -->
+      <div id="finderWalk">
+        <div class="compass-wrap">
+          <div class="compass" id="compass">
+            <div class="cr-ring"></div><div class="cr-ring r2"></div>
+            <div class="cr-n">N</div>
+            <div class="cr-blips" id="crBlips"></div>
+            <div class="cr-arrow" id="crArrow"></div>
+          </div>
+        </div>
+        <div class="walk-card">
+          <div class="walk-dist" id="walkDist">—</div>
+          <div class="walk-target" id="walkTarget">—</div>
+          <div class="walk-sub" id="walkSub">—</div>
+        </div>
+        <div class="wheel-ctrls">
+          <div class="a btn btn-w" id="walkPrev">◀ PREV</div>
+          <div class="a btn btn-w" id="walkNext">NEXT ▶</div>
+        </div>
+        <div class="wheel-ctrls">
+          <div class="a btn btn-y" id="walkOpen">VIEW SPOT</div>
+          <div class="a btn btn-b" id="walkRadius">500 M</div>
+        </div>
+        <div class="ar-note" id="finderNote">FINDING YOUR POSITION...</div>
       </div>
-    </div>
-    <div class="ar-hud">
-      <div class="ttl">FINDER</div>
-      <div class="x" id="arClose">✕</div>
-    </div>
-    <div class="ar-foot">
-      <div class="ar-compass" id="arCompass">HEADING —</div>
-      <div class="wheel-ctrls" style="max-width:330px;">
-        <div class="a btn btn-w" id="arToggle" style="padding:11px 6px; font-size:7px;">RADAR MODE</div>
-        <div class="a btn btn-y" id="arRadius" style="padding:11px 6px; font-size:7px;">500 M</div>
+
+      <!-- INDOORS: you are already in the building — give unit numbers -->
+      <div id="finderIndoor" style="display:none;">
+        <div class="indoor-hdr" id="indoorHdr">—</div>
+        <div class="indoor-sub" id="indoorSub">—</div>
+        <div class="wheel-mode" id="indoorLevels"></div>
+        <div id="indoorList"></div>
+        <div class="wheel-ctrls">
+          <div class="a btn btn-w" id="indoorExit">POINT ME SOMEWHERE ELSE</div>
+        </div>
       </div>
-      <div class="ar-note" id="arNote">POINT YOUR PHONE AROUND</div>
+
     </div>
   </div>
 
@@ -328,9 +349,9 @@
       <div class="feat"><div class="fi">🎡</div><div>
         <div class="ft">CAN'T DECIDE?</div>
         <div class="fd">COMBINE CATEGORIES AND SPIN<br>FOR A PICK NEAR YOU</div></div></div>
-      <div class="feat"><div class="fi">📷</div><div>
-        <div class="ft">AR FINDER</div>
-        <div class="fd">POINT YOUR PHONE TO SEE<br>WHAT'S HALAL THAT WAY</div></div></div>
+      <div class="feat"><div class="fi">🧭</div><div>
+        <div class="ft">WALK THIS WAY</div>
+        <div class="fd">A COMPASS THAT POINTS AT<br>THE NEAREST HALAL SPOT</div></div></div>
       <div class="feat"><div class="fi">📕</div><div>
         <div class="ft">FIELD LOG</div>
         <div class="fd">CLEAR WHOLE MALLS AND<br>COLLECT REGION BADGES</div></div></div>

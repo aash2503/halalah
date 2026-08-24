@@ -24,6 +24,7 @@ export const S = {
   NEW_IDS: new Set(), // ids added since the previous launch
   SYNCED_AT: null,    // registry snapshot time (last_synced_at)
   playerPos: null,
+  accuracy: null,     // metres, from position.coords.accuracy
   tracking: false,
 };
 

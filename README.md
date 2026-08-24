@@ -43,7 +43,7 @@ src/
          cache.js   IndexedDB snapshot
          model.js   grouping, venues, brands
   map/   map.js     Leaflet, zones, clustering, markers
-  ui/    sheet.js search.js wheel.js near.js log.js card.js ar.js
+  ui/    sheet.js search.js wheel.js near.js log.js card.js finder.js
          share.js toast.js dialog.js
   styles/app.css    vendor CSS + brand kit
   assets/           icons + pixel font (inlined at build)
@@ -62,6 +62,26 @@ importing downward:
 
 `appUrl`/`spotLink` live in `util.js` (not `sheet.js`) for the same reason —
 `share.js` needs them and `sheet.js` already imports `share.js`.
+
+## The finder (not AR)
+
+The camera-overlay AR was removed in 6.5. It was fighting its own error budget:
+position uncertainty is ~19 m (urban GPS ~15 m plus the dataset's 4-dp
+coordinates quantising to ~11 m) and phone compasses drift 10-20 deg outdoors
+and far worse near steel. At 25 m that is ~42 deg of combined error against a
+35 deg viewfinder half-width — the label could sit on the wrong shop. It also
+repainted every tag on every compass event (~60 Hz) with a forced layout per
+tag, which is what made it stutter.
+
+What replaced it degrades gracefully instead:
+
+- **WALK THIS WAY** — one target, a single rotated arrow, live distance, and an
+  honest `±N M FIX` from `position.coords.accuracy`. 25 deg off still walks you
+  there. With no compass it names the direction in words instead of pretending
+  to point.
+- **YOU'RE INSIDE** — 82% of eat-in spots share a coordinate with another (45%
+  with nine or more, largest stack 52). Inside such a building a bearing is
+  meaningless, so the finder switches to the unit numbers, grouped by level.
 
 ## Data notes
 

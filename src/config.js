@@ -91,6 +91,9 @@ export const ZONE_BOXES = {
 export const HOTSPOT_MIN = 5;
 export const VENUE_CHIP_ZOOM = 16;
 
+/* Treat "inside a venue" generously: our own fix is ~19 m uncertain, so
+   arguing about a bearing to a building we're already standing in is noise. */
+export const INDOOR_RADIUS_M = 35;
 export const ENCOUNTER_RADIUS_M = 120;
 /* Minimum gap between proximity alerts. Without it a dense building fires one
    per GPS tick. */

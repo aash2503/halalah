@@ -15,7 +15,7 @@ import { handleGroupTap, closeSheet } from './ui/sheet.js';
 import { refreshProgressUI } from './ui/card.js';
 import './ui/wheel.js';
 import { boot, handleDeepLink, goFullscreen, renderSyncStamp } from './boot.js';
-import './ui/ar.js';
+import { _debug as finderDebug } from './ui/finder.js';
 import './ui/near.js';
 import './ui/log.js';
 import { updatePosition, scanForEncounters, startTracking } from './geo.js';
@@ -47,4 +47,4 @@ boot().catch(err => fatal('boot', err));
 /* A single handle for debugging and for the verification battery — the module
    internals are otherwise unreachable from the console once bundled. */
 window.__HALALAH = { S, boot, handleDeepLink, renderSyncStamp,
-                     updatePosition, scanForEncounters, startTracking };
+                     updatePosition, scanForEncounters, startTracking, finderDebug };

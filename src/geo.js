@@ -5,7 +5,7 @@ import { L, map } from './map/map.js';
 import { showToast } from './ui/toast.js';
 import { showDialog, hideDialog } from './ui/dialog.js';
 import { openSpot, openGroup } from './ui/sheet.js';
-import { renderARIfOpen } from './ui/ar.js';
+import { renderFinderIfOpen } from './ui/finder.js';
 
 /* ==========================================================================
    9. LIVE SCAN
@@ -13,19 +13,20 @@ import { renderARIfOpen } from './ui/ar.js';
 let playerMarker = null, watchId = null;
 
 /* Ask before the browser asks. A cold permission prompt gets denied far more
-   often, and a denial here costs the wheel's NEAR ME, AR distances, the
-   near-me list and proximity alerts. */
+   often, and a denial here costs the wheel's NEAR ME, the finder, the near-me
+   list and proximity alerts. */
 function primeGeolocation(then){
   if(save.geoPrimed) { then(); return; }
   showDialog('FIND WHAT\'S AROUND YOU',
-    `HALALAH uses your location to sort spots by distance, power the AR finder
-     and alert you when a certified place is right nearby.<br><br>
+    `HALALAH uses your location to sort spots by distance, point the compass at
+     the nearest halal spot, and alert you when a certified place is right
+     nearby.<br><br>
      Your location <b>stays on this device</b> — it is never uploaded.`,
     [{ label:'CONTINUE', cls:'btn-y', fn:() => { save.geoPrimed = true; persist(); hideDialog(); then(); } },
      { label:'NOT NOW', cls:'btn-w', fn:hideDialog }]);
 }
 /* ---- Live scan is ALWAYS ON --------------------------------------------
-   Distances, the near-me list, the wheel's NEAR ME scope, the AR finder and
+   Distances, the near-me list, the wheel's NEAR ME scope, the finder and
    proximity alerts are all worthless without a position, so scanning starts
    itself rather than waiting for a tap. Two honest limits remain:
      · the browser still owns the permission prompt — if it is denied we cannot
@@ -46,7 +47,7 @@ function startTracking({ silent = false } = {}){
   if(!navigator.geolocation){ if(!silent) showToast('NO GEOLOCATION SUPPORT'); return; }
   S.tracking = true; setTrackingUi();
   watchId = navigator.geolocation.watchPosition(
-    p => { denied = false; updatePosition(p.coords.latitude, p.coords.longitude); },
+    p => { denied = false; S.accuracy = p.coords.accuracy; updatePosition(p.coords.latitude, p.coords.longitude); },
     err => {
       denied = err.code === 1;
       if(!silent || denied) showToast(denied ? 'LOCATION DENIED — TAP TO RETRY' : 'LOCATION UNAVAILABLE');
@@ -91,7 +92,7 @@ function updatePosition(lat,lng){
   if(first) map.setView([lat,lng],16);
   for(const s of S.ALL) s._dist = haversine(lat,lng,s.lat,s.lng);
   scanForEncounters();
-  renderARIfOpen();
+  renderFinderIfOpen();
 }
 /* Initial bearing from point 1 to point 2, degrees clockwise from north. */
 function bearing(a1,o1,a2,o2){

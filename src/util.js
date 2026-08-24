@@ -55,4 +55,25 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 const appUrl = () => location.origin + location.pathname;
 function spotLink(s){ return `${appUrl()}?spot=${encodeURIComponent(s.id)}`; }
 
-export { appUrl, spotLink, titleCase, fmtDist, regionFor, escapeHtml, haversine, bearing, daysSince, fmtSynced, shuffle };
+/* Unit numbers are the only useful wayfinding inside a mall, and 91% of eat-in
+   rows carry one. "#B1-42/43/44" -> "#B1-42", level "B1". Levels sort
+   basement-first, the way lift buttons do. */
+function unitOf(address){
+  const m = (address || '').match(/#([A-Z0-9]+)-([A-Z0-9]+)/i);
+  if(m) return `#${m[1].toUpperCase()}-${m[2].toUpperCase()}`;
+  const m2 = (address || '').match(/#([A-Z0-9]+)/i);
+  return m2 ? `#${m2[1].toUpperCase()}` : null;
+}
+function levelLabel(address){
+  const m = (address || '').match(/#([A-Z0-9]+)-/i) || (address || '').match(/#([A-Z0-9]+)/i);
+  return m ? m[1].toUpperCase() : null;
+}
+function levelRank(label){
+  if(!label) return 999;
+  const b = label.match(/^B(\d+)$/);            // B2 below B1 below ground
+  if(b) return -Number(b[1]);
+  const n = label.match(/^0*(\d+)$/);
+  return n ? Number(n[1]) : 500;
+}
+
+export { unitOf, levelLabel, levelRank, appUrl, spotLink, titleCase, fmtDist, regionFor, escapeHtml, haversine, bearing, daysSince, fmtSynced, shuffle };

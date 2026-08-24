@@ -1,6 +1,7 @@
 import { S, hasVisited, hasSaved, hasSeen, markSeen, toggleVisited, toggleSaved } from '../state.js';
 import { SCHEME_PREP, SCHEME_EAT } from '../config.js';
-import { titleCase, fmtDist, escapeHtml, regionFor, appUrl, spotLink } from '../util.js';
+import { titleCase, fmtDist, escapeHtml, regionFor, appUrl, spotLink,
+         unitOf, levelLabel, levelRank } from '../util.js';
 import { subMeta, brandKey, venueName, buildGroups } from '../data/model.js';
 import { map, renderGroups, flyBounds, onGroupTap, clusterGroup, L } from '../map/map.js';
 import { applyFilters, setFilter, setArea, setSearch, setExact, setVenue } from '../filters.js';
@@ -60,12 +61,19 @@ function openGroup(g){
     .sort((a,b) => b[1]-a[1])
     .map(([l,n]) => `<span class="type-badge" style="background:#374151">${n} ${escapeHtml(l)}</span>`).join('');
 
-  document.getElementById('blRows').innerHTML = g.items.map((s,i) => {
-    const m = subMeta(s);
+  /* Order by level then unit, the way you'd walk a mall, and SHOW the unit —
+     inside a building that number is the only thing that helps you find it. */
+  const ordered = g.items.map((s,i) => ({ s, i })).sort((a,b) =>
+      levelRank(levelLabel(a.s.address)) - levelRank(levelLabel(b.s.address))
+   || (unitOf(a.s.address) || '').localeCompare(unitOf(b.s.address) || ''));
+
+  document.getElementById('blRows').innerHTML = ordered.map(({s,i}) => {
+    const m = subMeta(s), u = unitOf(s.address);
     return `<div class="bld-row ${hasVisited(s.id)?'done':''}" data-i="${i}">
       <div style="min-width:0;">
         <div class="nm">${escapeHtml((s.name||'').toUpperCase())}</div>
         <div class="ty" style="color:${m.color}">${m.label}${s.est_type===1?' · VIRTUAL':''}${S.NEW_IDS.has(s.id)?' · NEW':''}${hasVisited(s.id)?' · ✔':''}</div>
+        ${u ? `<div class="unit">${escapeHtml(u)}</div>` : ''}
       </div><div class="go">▶</div></div>`;
   }).join('');
   document.querySelectorAll('#blRows .bld-row').forEach(row =>
