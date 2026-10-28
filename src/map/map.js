@@ -9,9 +9,14 @@ import { setStatus } from '../ui/toast.js';
    7. MAP
    ========================================================================== */
 const map = L.map('map', { zoomControl:false, minZoom:11, maxZoom:18 }).setView([1.3521,103.8198], 12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-  attribution:'&copy; OpenStreetMap &copy; CARTO · Halal data &copy; MUIS',
-  subdomains:'abcd', maxZoom:19 }).addTo(map);
+/* Esri's World Dark Gray Base: keyless and dark. CARTO's free basemaps began
+   stamping "API KEY REQUIRED" across every tile in Oct 2026 — served as a
+   normal 200 PNG, so nothing errored, the map just grew a watermark. Esri's
+   native tiles stop at zoom 16; Leaflet upscales 17–18 from them, which on a
+   pixel-art map is a feature. */
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+  attribution:'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors · Halal data &copy; MUIS',
+  maxNativeZoom:16, maxZoom:18 }).addTo(map);
 
 Object.entries(ZONE_BOXES).forEach(([name,z]) => {
   L.rectangle(z.bounds,{ color:z.color, weight:2, dashArray:"7 7", fillColor:z.color,

@@ -296,7 +296,7 @@ document.getElementById('aboutBtn').addEventListener('click', () => {
      · There is no account, no S.tracking and no analytics.<br><br>
 
      <b style="color:var(--yellow)">DATA</b><br>
-     Halal listings © MUIS. Map © OpenStreetMap contributors, tiles © CARTO.
+     Halal listings © MUIS. Map tiles © Esri, HERE, Garmin and OpenStreetMap contributors.
      Built with Leaflet (BSD-2-Clause) and Leaflet.markercluster (MIT).`,
     [{ label:'CLOSE', cls:'btn-y', fn:hideDialog }]);
 });

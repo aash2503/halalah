@@ -73,7 +73,10 @@ html,body{
 
 /* ---- map ---------------------------------------------------------------- */
 #map{ position:absolute; inset:0; z-index:0; background:var(--screen); }
-.leaflet-tile-pane{ filter:brightness(2.1) contrast(1.12) saturate(.55) hue-rotate(150deg); }
+/* Tuned for Esri's dark-gray base (a stop lighter than the old CARTO dark).
+   image-rendering keeps the upscaled z17–18 tiles crisp-pixelled, not blurred. */
+.leaflet-tile-pane{ filter:brightness(1.25) contrast(1.15) saturate(.55) hue-rotate(150deg); }
+.leaflet-tile{ image-rendering:pixelated; }
 .map-tint{ position:absolute; inset:0; z-index:1; pointer-events:none; mix-blend-mode:screen;
   background:linear-gradient(160deg, rgba(16,185,129,.13), rgba(59,130,246,.15) 55%, rgba(239,68,68,.10)); }
 .map-grid{ position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.5;

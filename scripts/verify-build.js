@@ -12,8 +12,7 @@ import { join } from 'node:path';
 const DIST = 'dist';
 const ALLOWED_HOSTS = [
   'svnagkwvpenklcgbwrvc.supabase.co',   // the data API
-  '{s}.basemaps.cartocdn.com',          // Leaflet tile template ({s} = subdomain)
-  'basemaps.cartocdn.com',              // map tiles, fetched at runtime by Leaflet
+  'server.arcgisonline.com',            // map tiles (Esri dark gray base, keyless)
   'www.w3.org',                         // SVG/xlink namespaces, not a request
   'bugs.chromium.org',                  // URL inside a Leaflet CSS comment
   'bugzilla.mozilla.org',               // URL inside a Leaflet CSS comment
@@ -22,7 +21,6 @@ const ALLOWED_HOSTS = [
   'leafletjs.com',                      // licence comment
   'github.com',                         // licence comment
   'openstreetmap.org',                  // attribution link
-  'carto.com',                          // attribution link
 ];
 
 let failed = false;
