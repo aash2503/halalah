@@ -48,7 +48,7 @@ export function parseRows(records){
 }
 
 export async function refresh(force){
-  const week = 7 * 864e5;
+  const week = 12 * 36e5;                     // ask again after 12 hours, so 'Live' means checked today
   const haveNextMonth = !!store.days[dkey(new Date(Date.now() + 30 * 864e5))];
   if(!force && haveNextMonth && Date.now() - store.fetchedAt < week) return { ok:true, cached:true };
   try{
@@ -95,3 +95,11 @@ export function timesFor(d){
   return row ? { times:row, official:true } : { times:calc(d), official:false };
 }
 export const fmt = m => pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
+
+/* How far to trust the times on screen (shown in the banner, never by colour alone):
+   live = official and checked with data.gov.sg in the last 24 hours; saved = official, from this phone's copy;
+   est = calculated, no official row for that date. */
+export function trust(d){
+  if(!store.days[dkey(d)]) return 'est';
+  return Date.now() - store.fetchedAt < 864e5 ? 'live' : 'saved';
+}

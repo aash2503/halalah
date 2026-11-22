@@ -372,11 +372,10 @@
     <button class="arr" id="solNext" aria-label="Next day"></button>
   </div>
   <div class="view-scroll sol-body">
-    <div class="sol-next panel"><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
+    <div class="sol-next panel"><div class="sol-where"><span class="loc" id="solLoc"></span><span class="st" id="solState"></span></div><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
     <div id="solRows"></div>
     <input type="date" id="solPick" class="sol-pick" aria-label="Pick a date" tabindex="-1">
-    <div class="sol-foot"><div class="sol-note" id="solNote"></div>
-      <button class="btn2" id="solToday" style="display:none">Back to today</button></div>
+    <div class="sol-foot" id="solFoot"><button class="btn2" id="solToday">Back to today</button></div>
   </div>
 </div>
 

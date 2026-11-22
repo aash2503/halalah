@@ -1,6 +1,6 @@
 /* Solat screen: all six times for a day, the next prayer and a countdown, the
    Hijri date, and a way to step or jump to any date (design option B). */
-import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey, lastError } from './data.js';
+import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey, trust } from './data.js';
 import { hijri } from './hijri.js';
 import { pi } from '../ui/icons.js';
 
@@ -43,11 +43,16 @@ export function renderSolat(){
       <button class="bell${bellOn(p) ? '' : ' off'}" data-bell="${p}" aria-pressed="${bellOn(p)}"
         aria-label="${LABEL[p]} reminder ${bellOn(p) ? 'on' : 'off'}">${pi('bell', 20)}</button></div>`;
   }).join('');
-  $('solToday').style.display = isToday ? 'none' : '';
-  $('solNote').innerHTML = official
-    ? 'Official MUIS times. Tap the date to pick another day.'
-    : pi('warn', 12) + ' Estimated: official MUIS times not loaded.' + (lastError ? ' (' + lastError + ')' : '');
-  $('solNote').classList.toggle('est', !official);
+  $('solFoot').style.display = isToday ? 'none' : '';
+  const tr = trust(view);
+  $('solLoc').innerHTML = pi('pin', 16) + 'Singapore';
+  $('solState').className = 'st ' + tr;
+  $('solState').innerHTML = tr === 'live' ? '<i class="dot"></i>Live · MUIS'
+    : tr === 'saved' ? '<i class="dot"></i>Saved · MUIS'
+    : '<i class="bang">!</i>Estimated';
+  $('solState').title = tr === 'live' ? 'Official MUIS times, checked today.'
+    : tr === 'saved' ? 'Official MUIS times saved on this phone. Not checked today.'
+    : 'Calculated times. The official MUIS timetable for this date is not loaded.';
 }
 
 function shift(n){ view = new Date(view.getFullYear(), view.getMonth(), view.getDate() + n); renderSolat(); }

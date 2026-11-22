@@ -114,3 +114,14 @@
 .sol-foot{ flex:0 0 auto; display:flex; align-items:center; gap:8px; min-height:24px; }
 .sol-foot .sol-note{ margin:0; flex:1; }
 .sol-foot .btn2{ min-height:44px; padding:4px 12px; font-size:14px; white-space:nowrap; }
+
+/* ---- no status bar; the banner carries the place and how far to trust the times ---- */
+:root{ --sb: env(safe-area-inset-top, 0px); }
+.statusbar{ display:none; }
+.sol-where{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:clamp(4px,1vh,8px); text-align:left; }
+.sol-where .loc{ display:flex; align-items:center; gap:8px; font-size:18px; font-weight:700; color:var(--ink); min-width:0; }
+.sol-where .st{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; white-space:nowrap; color:var(--ink); }
+.sol-where .dot{ width:12px; height:12px; border-radius:50%; background:var(--green); flex:0 0 auto; }
+.sol-where .st.saved .dot{ background:var(--yellow); }
+.sol-where .bang{ width:20px; height:20px; border-radius:4px; background:var(--red); color:var(--darker); font:700 14px/20px var(--read); text-align:center; font-style:normal; flex:0 0 auto; }
+.sol-foot{ justify-content:flex-end; }

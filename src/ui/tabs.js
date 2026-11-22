@@ -2,7 +2,7 @@
    original Halalah map; the others are new views beside it. */
 import { map } from '../map/map.js';
 import { pi } from './icons.js';
-import { status, refresh } from '../solat/data.js';
+import { status, refresh, lastError } from '../solat/data.js';
 import { hijriAdjust, setHijriAdjust } from '../solat/hijri.js';
 import { renderSolat } from '../solat/solat.js';
 
@@ -23,7 +23,7 @@ function renderMore(){
   const s = status();
   $('moreData').textContent = s.count
     ? 'Official MUIS times loaded for ' + s.first + ' to ' + s.last + '. Last checked ' + new Date(s.fetchedAt).toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' }) + '.'
-    : 'Official MUIS times are not loaded yet. Times shown are estimates until this phone goes online.';
+    : 'Official MUIS times are not loaded yet, so times are estimates.' + (lastError ? ' Last try: ' + lastError + '.' : '');
   if(window.HalalahApp) $('moreApp').textContent = 'Android app, build ' + window.HalalahApp.build() + '. It updates itself when opened online.';
   document.querySelectorAll('[data-hadj]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.hadj === hijriAdjust())));
 }
