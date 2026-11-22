@@ -12,6 +12,7 @@ import { join } from 'node:path';
 const DIST = 'dist';
 const ALLOWED_HOSTS = [
   'svnagkwvpenklcgbwrvc.supabase.co',   // the data API
+  'data.gov.sg',                        // MUIS prayer timetable (open data)
   'server.arcgisonline.com',            // map tiles (Esri dark gray base, keyless)
   'www.w3.org',                         // SVG/xlink namespaces, not a request
   'bugs.chromium.org',                  // URL inside a Leaflet CSS comment

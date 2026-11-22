@@ -7,6 +7,7 @@
    redraw), the higher layer REGISTERS a callback here instead.
    ========================================================================== */
 import './styles/app.css';
+import './styles/b.css';
 
 import { S, onProgressChange, syncBadgeBaseline } from './state.js';
 import { onGroupTap, map } from './map/map.js';
@@ -19,6 +20,9 @@ import { _debug as finderDebug } from './ui/finder.js';
 import './ui/near.js';
 import './ui/log.js';
 import { updatePosition, scanForEncounters, startTracking } from './geo.js';
+import { initSolat } from './solat/solat.js';
+import { initKiblat } from './kiblat/kiblat.js';
+import { initTabs } from './ui/tabs.js';
 
 /* The source shell carries a "do not upload" banner (see index.html). If we're
    running, the bundle loaded, so it was never the bare source — drop it. */
@@ -43,6 +47,9 @@ window.addEventListener('error', e => fatal('error', e.error || e.message));
 window.addEventListener('unhandledrejection', e => fatal('unhandledrejection', e.reason));
 
 boot().catch(err => fatal('boot', err));
+
+/* v7: prayer times, kiblat and the tab bar sit beside the food map. */
+initSolat(); initKiblat(); initTabs();
 
 /* A single handle for debugging and for the verification battery — the module
    internals are otherwise unreachable from the console once bundled. */

@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Design option B (picked 22 Nov 2026): the tab bar and the Solat, Kiblat and
+   More views. Pixel font only for the logo, the next prayer and short labels
+   of 12px or more; everything that is read is 14-16px sentence case. Tap
+   targets 44px+. Spacing 4/8/16/24. One radius. Yellow = the one primary
+   action, the current tab and the next prayer. Red = errors only.
+   ========================================================================== */
+:root{
+  --ink:#F1F5F9; --dim:#A7B0BE; --line:#374151; --r:8px; --tab:64px;
+  --read:Roboto,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --px:'Press Start 2P',monospace;
+}
+.scanlines{ display:none; }
+.statusbar{ background:var(--deepest); }
+.statusbar .sb-sub{ font-family:var(--read); font-size:12px; color:var(--dim); letter-spacing:0; }
+.statusbar .sb-sync{ color:var(--dim); }
+#app{ bottom:calc(var(--tab) + env(safe-area-inset-bottom,0px)); }
+.view-off{ visibility:hidden; pointer-events:none; }
+#app.view-off{ visibility:hidden; }
+
+.view{ position:fixed; top:var(--sb); left:0; right:0; bottom:calc(var(--tab) + env(safe-area-inset-bottom,0px));
+  background:var(--darker); color:var(--ink); font-family:var(--read); font-size:16px; line-height:1.45;
+  display:flex; flex-direction:column; z-index:1500; user-select:text; -webkit-user-select:text; }
+.view-scroll{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px; width:100%; max-width:560px; margin:0 auto; }
+.view .panel{ border:1px solid var(--line); border-radius:var(--r); box-shadow:none; background:var(--dark); }
+.view .lbl{ font-family:var(--px); font-size:12px; color:var(--dim); text-transform:uppercase; margin:24px 0 8px; }
+.view .lbl:first-child{ margin-top:0; }
+.pi{ fill:currentColor; shape-rendering:crispEdges; flex:0 0 auto; display:block; }
+
+.btn1,.btn2{ min-height:48px; padding:8px 16px; border-radius:var(--r); font:600 16px/1.2 var(--read); cursor:pointer; }
+.btn1{ background:var(--yellow); color:var(--darker); border:1px solid var(--yellow); width:100%; }
+.btn2{ background:transparent; color:var(--ink); border:1px solid var(--dim); }
+.btn1:active,.btn2:active,.tab:active,.arr:active,.bell:active{ opacity:.7; }
+:focus-visible{ outline:2px solid var(--yellow); outline-offset:2px; }
+
+/* ---- tab bar ---- */
+.tabbar{ position:fixed; left:0; right:0; bottom:0; height:calc(var(--tab) + env(safe-area-inset-bottom,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px); background:var(--deepest); border-top:1px solid var(--line);
+  display:flex; z-index:9000; }
+.tab{ flex:1; min-height:48px; background:none; border:0; color:var(--dim); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  font:500 12px/1 var(--read); border-top:3px solid transparent; }
+.tab.on{ color:var(--yellow); border-top-color:var(--yellow); font-weight:700; }
+
+/* ---- Solat ---- */
+.sol-head{ display:flex; align-items:center; gap:8px; padding:8px; border-bottom:1px solid var(--line);
+  width:100%; max-width:560px; margin:0 auto; }
+.sol-head .mid{ flex:1; text-align:center; min-width:0; }
+.sol-head .d{ font-weight:600; font-size:16px; }
+.sol-head .h{ color:var(--dim); font-size:14px; min-height:20px; }
+.arr{ width:48px; height:48px; background:none; border:1px solid var(--line); border-radius:var(--r); color:var(--ink); cursor:pointer;
+  display:grid; place-items:center; flex:0 0 auto; }
+.sol-next{ padding:16px; text-align:center; border-left:4px solid var(--yellow)!important; margin-bottom:16px; }
+.sol-next .l{ color:var(--dim); font-size:14px; }
+.sol-next .n{ font-family:var(--px); font-size:20px; line-height:1.5; color:var(--yellow); margin:8px 0; }
+.sol-next .c{ font-size:16px; }
+.sol-row{ display:flex; align-items:center; gap:8px; padding:4px 4px 4px 16px; margin-bottom:8px; min-height:56px; }
+.sol-row .nm{ font-size:16px; font-weight:500; }
+.sol-row .tag{ font-size:12px; font-weight:700; color:var(--darker); background:var(--yellow); border-radius:4px; padding:2px 8px; }
+.sol-row .t{ margin-left:auto; font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; }
+.sol-row.nx{ border-color:var(--yellow)!important; }
+.sol-row.nx .nm,.sol-row.nx .t{ color:var(--yellow); }
+.sol-row.past .nm,.sol-row.past .t{ color:var(--dim); }
+.bell{ width:48px; height:48px; background:none; border:0; color:var(--ink); cursor:pointer; display:grid; place-items:center; position:relative; }
+.bell.off{ color:#6B7686; }
+.bell.off::after{ content:''; position:absolute; width:26px; height:2px; background:var(--dim); transform:rotate(-45deg); }
+.sol-acts{ display:flex; gap:8px; margin-top:16px; }
+.sol-acts .btn2{ flex:1; }
+.sol-pick{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+.sol-note{ color:var(--dim); font-size:14px; margin-top:16px; display:flex; gap:8px; align-items:center; }
+.sol-note.est{ color:var(--yellow); }
+
+/* ---- Kiblat ---- */
+.kib{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.kib-top{ width:100%; }
+.kib-bearing{ font-family:var(--px); font-size:24px; color:var(--yellow); margin:8px 0 16px; }
+.kib-stage{ position:relative; width:min(72vw,280px); aspect-ratio:1; margin:8px 0 24px; }
+.kib-up{ position:absolute; left:50%; top:-12px; width:0; height:0; margin-left:-8px;
+  border-left:8px solid transparent; border-right:8px solid transparent; border-top:12px solid var(--ink); z-index:2; }
+.kib-dial{ position:absolute; inset:0; border:4px solid var(--line); border-radius:50%; background:var(--dark); }
+.kib-dial span{ position:absolute; font-family:var(--px); font-size:12px; color:var(--dim); }
+.kib-dial .n{ top:8px; left:50%; transform:translateX(-50%); color:var(--ink); }
+.kib-dial .s{ bottom:8px; left:50%; transform:translateX(-50%); }
+.kib-dial .e{ right:8px; top:50%; transform:translateY(-50%); }
+.kib-dial .w{ left:8px; top:50%; transform:translateY(-50%); }
+.kib-needle{ position:absolute; inset:0; }
+.kib-needle i{ position:absolute; left:50%; top:14%; bottom:50%; width:8px; margin-left:-4px; background:var(--yellow); }
+.kib-needle i::before{ content:''; position:absolute; left:-8px; top:-16px;
+  border-left:12px solid transparent; border-right:12px solid transparent; border-bottom:20px solid var(--yellow); }
+.kib-state{ font-weight:600; min-height:48px; }
+.kib-state.ok{ color:var(--green); }
+.kib-words{ color:var(--dim); font-size:14px; margin:8px 0 16px; }
+
+/* ---- More ---- */
+.more-p{ padding:16px; }
+.more-p p{ margin:0; color:var(--ink); }
+.more-p .btn2,.more-p .seg{ margin-top:16px; }
+.seg{ display:flex; border:1px solid var(--dim); border-radius:var(--r); overflow:hidden; }
+.seg button{ flex:1; min-height:48px; background:none; border:0; border-left:1px solid var(--dim); color:var(--ink); font:500 14px/1.2 var(--read); cursor:pointer; padding:4px; }
+.seg button:first-child{ border-left:0; }
+.seg button[aria-pressed="true"]{ background:var(--ink); color:var(--darker); font-weight:700; }
+
+@media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }

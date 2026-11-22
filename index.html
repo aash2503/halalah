@@ -9,7 +9,7 @@
      The host takes ONE html file, so the manifest is generated at runtime as a
      data: URL (see boot.js) rather than shipped as a sibling. Icons are
      imported as modules and inlined by Vite. -->
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0A0F18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -30,7 +30,7 @@
   </div>
 </div>
 <div class="statusbar">
-  <span class="sb-sub">THIS ONE HALAL AH? <em>HALAL LAH!</em></span>
+  <span class="sb-sub">Halalah</span>
   <span class="sb-sync" id="sbSync"></span>
 </div>
 <div class="scanlines"></div>
@@ -43,7 +43,7 @@
 
   <div class="hud-top">
     <div class="title-plate">
-      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V6.6</div>
+      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V7.0</div>
     </div>
     <div class="offline-bar" id="offlineBar">OFFLINE — SHOWING SAVED DATA</div>
 
@@ -363,6 +363,57 @@
     </div>
   </div>
 </div>
+
+<!-- ===== Solat (prayer times) ===== -->
+<div class="view" id="view-solat">
+  <div class="sol-head">
+    <button class="arr" id="solPrev" aria-label="Previous day"></button>
+    <div class="mid"><div class="d" id="solDate">—</div><div class="h" id="solHijri"></div></div>
+    <button class="arr" id="solNext" aria-label="Next day"></button>
+  </div>
+  <div class="view-scroll">
+    <div class="sol-next panel"><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
+    <div id="solRows"></div>
+    <div class="sol-acts">
+      <button class="btn2" id="solPickBtn">Pick a date</button>
+      <button class="btn2" id="solToday" style="display:none">Back to today</button>
+    </div>
+    <input type="date" id="solPick" class="sol-pick" aria-label="Pick a date" tabindex="-1">
+    <div class="sol-note" id="solNote"></div>
+  </div>
+</div>
+
+<!-- ===== Kiblat ===== -->
+<div class="view view-off" id="view-kiblat">
+  <div class="view-scroll kib">
+    <div class="kib-top"><div class="lbl">Kiblat</div><div class="kib-bearing" id="kibBearing">—</div></div>
+    <div class="kib-stage">
+      <div class="kib-up"></div>
+      <div class="kib-dial" id="kibDial"><span class="n">N</span><span class="e">E</span><span class="s">S</span><span class="w">W</span></div>
+      <div class="kib-needle" id="kibNeedle"><i></i></div>
+    </div>
+    <div class="kib-state" id="kibState"></div>
+    <p class="kib-words" id="kibWords"></p>
+    <button class="btn1" id="kibStart">Start the compass</button>
+  </div>
+</div>
+
+<!-- ===== More ===== -->
+<div class="view view-off" id="view-more">
+  <div class="view-scroll more">
+    <div class="lbl">Prayer times</div>
+    <div class="panel more-p"><p id="moreData"></p><button class="btn2" id="moreRefresh">Check for new times</button></div>
+    <div class="lbl">Hijri date</div>
+    <div class="panel more-p"><p>The Hijri date is calculated. If it is a day off from the date MUIS has declared, adjust it here.</p>
+      <div class="seg"><button data-hadj="-1">1 day earlier</button><button data-hadj="0">As calculated</button><button data-hadj="1">1 day later</button></div></div>
+    <div class="lbl">Reminders</div>
+    <div class="panel more-p"><p>The bell beside each prayer saves your choice. Reminders will sound once the Android app is installed; the web version cannot ring by itself.</p></div>
+    <div class="lbl">About</div>
+    <div class="panel more-p"><p>Prayer times: MUIS, through data.gov.sg. Halal food: MUIS halal registry. Always check the certificate on site.</p></div>
+  </div>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>
