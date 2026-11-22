@@ -368,18 +368,15 @@
 <div class="view" id="view-solat">
   <div class="sol-head">
     <button class="arr" id="solPrev" aria-label="Previous day"></button>
-    <div class="mid"><div class="d" id="solDate">—</div><div class="h" id="solHijri"></div></div>
+    <button class="mid" id="solPickBtn" aria-label="Pick a date"><span class="d" id="solDate">—</span><span class="h" id="solHijri"></span></button>
     <button class="arr" id="solNext" aria-label="Next day"></button>
   </div>
-  <div class="view-scroll">
+  <div class="view-scroll sol-body">
     <div class="sol-next panel"><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
     <div id="solRows"></div>
-    <div class="sol-acts">
-      <button class="btn2" id="solPickBtn">Pick a date</button>
-      <button class="btn2" id="solToday" style="display:none">Back to today</button>
-    </div>
     <input type="date" id="solPick" class="sol-pick" aria-label="Pick a date" tabindex="-1">
-    <div class="sol-note" id="solNote"></div>
+    <div class="sol-foot"><div class="sol-note" id="solNote"></div>
+      <button class="btn2" id="solToday" style="display:none">Back to today</button></div>
   </div>
 </div>
 

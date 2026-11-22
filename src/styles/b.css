@@ -101,3 +101,16 @@
 .seg button[aria-pressed="true"]{ background:var(--ink); color:var(--darker); font-weight:700; }
 
 @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+
+/* ---- Solat fits one screen (no scrolling): rows share the height left over ---- */
+.sol-body{ display:flex; flex-direction:column; gap:8px; padding:12px 16px; overflow-y:auto; }
+.sol-head .mid{ background:none; border:1px solid var(--line); border-radius:var(--r); color:var(--ink); cursor:pointer;
+  min-height:48px; padding:4px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:var(--read); }
+.sol-head .mid .d::after{ content:' \25BE'; color:var(--dim); }
+.sol-body .sol-next{ margin:0; padding:clamp(8px,2vh,16px) 16px; flex:0 0 auto; }
+.sol-body .sol-next .n{ margin:clamp(4px,1vh,8px) 0; font-size:clamp(16px,5.2vw,20px); }
+#solRows{ flex:1 1 auto; display:flex; flex-direction:column; gap:clamp(4px,1vh,8px); min-height:0; }
+#solRows .sol-row{ flex:1 1 0; margin:0; min-height:46px; max-height:64px; }
+.sol-foot{ flex:0 0 auto; display:flex; align-items:center; gap:8px; min-height:24px; }
+.sol-foot .sol-note{ margin:0; flex:1; }
+.sol-foot .btn2{ min-height:44px; padding:4px 12px; font-size:14px; white-space:nowrap; }

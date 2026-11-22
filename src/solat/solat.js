@@ -27,7 +27,7 @@ function waitText(m){
 export function renderSolat(){
   const isToday = sameDay(view, today());
   const { times, official } = timesFor(view);
-  $('solDate').textContent = view.toLocaleDateString('en-SG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  $('solDate').textContent = view.toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
   $('solHijri').textContent = hijri(view);
   const nx = nextPrayer();
   $('solNextLbl').textContent = nx.tomorrow ? 'Next prayer, tomorrow' : 'Next prayer';
@@ -45,8 +45,8 @@ export function renderSolat(){
   }).join('');
   $('solToday').style.display = isToday ? 'none' : '';
   $('solNote').innerHTML = official
-    ? 'Official times from the MUIS prayer timetable.'
-    : pi('warn', 12) + ' Estimated times. The official MUIS timetable for this date is not loaded yet.' + (lastError ? ' (' + lastError + ')' : '');
+    ? 'Official MUIS times. Tap the date to pick another day.'
+    : pi('warn', 12) + ' Estimated: official MUIS times not loaded.' + (lastError ? ' (' + lastError + ')' : '');
   $('solNote').classList.toggle('est', !official);
 }
 
