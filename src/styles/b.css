@@ -125,3 +125,30 @@
 .sol-where .st.saved .dot{ background:var(--yellow); }
 .sol-where .bang{ width:20px; height:20px; border-radius:4px; background:var(--red); color:var(--darker); font:700 14px/20px var(--read); text-align:center; font-style:normal; flex:0 0 auto; }
 .sol-foot{ justify-content:flex-end; }
+
+/* ==========================================================================
+   Skin (picked 22 Nov 2026): deep olive, black and off-white only. No maroon, no motif band. The banner carries the
+   flair: an olive gradient with the sun's path over a pixel skyline. Off-white is the one "act here" colour (next
+   prayer row, current tab, primary button). Green / amber / red appear only as the small data-status marks.
+   ========================================================================== */
+:root{ --darker:#10140B; --dark:#1D2513; --deepest:#080A05; --line:#3F4B2E; --ink:#F6F3E9; --dim:#B9BEA9;
+  --yellow:#F6F3E9; --white:#F6F3E9; --screen:#10140B; }
+.sol-body .sol-next{ border:0!important; border-radius:12px; position:relative; overflow:hidden; padding:12px 16px clamp(8px,2vh,16px);
+  background:linear-gradient(160deg,#55692F 0%,#34421D 55%,#1F2912 100%); }
+.sol-body .sol-next .n{ font-size:clamp(18px,6vw,24px); text-shadow:0 2px 0 rgba(0,0,0,.35); color:var(--ink); }
+.sol-next .l{ color:#DDE2CC; }
+.sol-arc{ margin:0 -16px clamp(4px,1vh,8px); line-height:0; }
+.sol-arc svg{ display:block; width:100%; height:clamp(36px,calc(22vh - 100px),84px); }
+.sol-row.nx{ background:var(--ink); border-color:var(--ink)!important; }
+.sol-row.nx .nm,.sol-row.nx .t,.sol-row.nx .bell{ color:var(--darker); }
+.sol-row .tag{ background:#34421D; color:var(--ink); }
+.sol-where .st.saved .dot{ background:#E9B949; }
+.bell.off{ color:#7C8570; }
+@media (max-height:700px){
+  #solRows .sol-row{ min-height:44px; }
+  .sol-body{ padding-top:8px; padding-bottom:8px; gap:6px; }
+  .sol-body .sol-next{ padding:8px 16px; }
+  .sol-body .sol-next .n{ margin:2px 0; font-size:18px; }
+  .sol-where{ margin-bottom:2px; }
+  .sol-head{ padding:4px 8px; }
+}

@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        int bg = Color.parseColor("#0A0F18");
+        int bg = Color.parseColor("#080A05");
         getWindow().setStatusBarColor(bg);
         getWindow().setNavigationBarColor(bg);
         web = new WebView(this);

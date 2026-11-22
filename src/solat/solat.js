@@ -44,6 +44,7 @@ export function renderSolat(){
         aria-label="${LABEL[p]} reminder ${bellOn(p) ? 'on' : 'off'}">${pi('bell', 20)}</button></div>`;
   }).join('');
   $('solFoot').style.display = isToday ? 'none' : '';
+  $('solArc').innerHTML = arcSvg(times, isToday ? new Date().getHours() * 60 + new Date().getMinutes() : null);
   const tr = trust(view);
   $('solLoc').innerHTML = pi('pin', 16) + 'Singapore';
   $('solState').className = 'st ' + tr;
@@ -53,6 +54,29 @@ export function renderSolat(){
   $('solState').title = tr === 'live' ? 'Official MUIS times, checked today.'
     : tr === 'saved' ? 'Official MUIS times saved on this phone. Not checked today.'
     : 'Calculated times. The official MUIS timetable for this date is not loaded.';
+}
+
+/* The banner picture: the sun's path over a pixel skyline. Time runs left to right from before Subuh to after Isyak;
+   the curve is above the horizon between Syuruk and Maghrib. Marks sit at the prayer times, the dot is the sun now. */
+const SKY = [1,1,1,7,7,1,1,2,3,4,4,3,2,1,1,1,1,1,2,2,2,3,3,4,5,6,7,8,8,9,9,10,10,11];
+function arcSvg(t, nowMin){
+  const W = 340, HZ = 62, A = 50, t0 = t[0] - 45, t1 = t[5] + 45;
+  const X = m => 6 + (W - 12) * (m - t0) / (t1 - t0);
+  const Y = m => { const s = Math.sin(Math.PI * (m - t[1]) / (t[4] - t[1])); return HZ - (s >= 0 ? A * s : 9 * Math.max(s, -1)); };
+  const path = (a, b) => { let d = ''; for(let i = 0; i <= 40; i++){ const m = a + (b - a) * i / 40; d += (i ? 'L' : 'M') + X(m).toFixed(1) + ' ' + Y(m).toFixed(1); } return d; };
+  const cols = SKY.concat(SKY.slice().reverse());
+  let sky = '';
+  cols.forEach((h, i) => { sky += `<rect x="${i * 5}" y="${HZ - h * 3}" width="5.2" height="${h * 3 + 14}"/>`; });
+  sky += `<rect x="167" y="${HZ - 39}" width="6" height="6"/><rect x="15" y="${HZ - 27}" width="10" height="6"/><rect x="315" y="${HZ - 27}" width="10" height="6"/>`;
+  const now = nowMin == null ? null : Math.min(Math.max(nowMin, t0), t1);
+  const marks = [0, 2, 3, 4, 5].map(i => `<circle cx="${X(t[i]).toFixed(1)}" cy="${Y(t[i]).toFixed(1)}" r="3"/>`).join('');
+  return `<svg viewBox="0 0 ${W} 76" preserveAspectRatio="xMidYMid meet">
+    <path d="${path(t0, t1)}" fill="none" stroke="rgba(246,243,233,.4)" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+    ${now == null ? '' : `<path d="${path(t0, now)}" fill="none" stroke="#F6F3E9" stroke-width="3" stroke-linecap="round"/>`}
+    <g fill="#141B0B" shape-rendering="crispEdges">${sky}</g>
+    <g fill="rgba(246,243,233,.75)">${marks}</g>
+    ${now == null ? '' : `<circle cx="${X(now).toFixed(1)}" cy="${Y(now).toFixed(1)}" r="14" fill="rgba(246,243,233,.18)"/><circle cx="${X(now).toFixed(1)}" cy="${Y(now).toFixed(1)}" r="8" fill="#F6F3E9"/>`}
+  </svg>`;
 }
 
 function shift(n){ view = new Date(view.getFullYear(), view.getMonth(), view.getDate() + n); renderSolat(); }

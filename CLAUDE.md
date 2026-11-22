@@ -7,6 +7,10 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
   Tap targets 44px+. Spacing 4/8/16/24, 16px panel padding, one radius (8px). Yellow = the one primary action, the current tab,
   the next prayer. Red = errors only. Pixel SVG icons (`src/ui/icons.js`), no emoji. No scanlines. Verb + object buttons.
   Tokens and the new views: `src/styles/b.css`. Mockups: https://claude.ai/artifact/CrAeZwCqboQAHKRnWuNqnF
+- **Skin (22 Nov 2026, replaces the navy/yellow colours above):** deep olive, black and off-white only; no maroon, no tatreez band.
+  Off-white is the one act colour (next-prayer row, current tab, primary button). The Solat banner carries the flair: olive gradient, the
+  sun's path over a pixel skyline (`arcSvg` in solat.js), the place, and Live (green dot) / Saved (amber dot) / Estimated (red !) with words.
+  No status bar. Solat must fit one screen without scrolling from 360x640 up. Food screens still to be reskinned.
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an
