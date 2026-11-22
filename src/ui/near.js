@@ -28,14 +28,14 @@ function nearRows(){
 function buildNear(){
   const body = document.getElementById('nearBody');
   if(!S.playerPos){
-    body.innerHTML = `<div class="empty">TURN ON SCAN TO SEE<br>WHAT'S CLOSEST TO YOU
-      <div class="acts"><div class="a btn btn-g" id="nearScan" style="font-size:8px">TURN ON SCAN</div></div></div>`;
+    body.innerHTML = `<div class="empty">Turn on scan to see<br>what's closest to you
+      <div class="acts"><div class="a btn btn-g" id="nearScan" >Turn on scan</div></div></div>`;
     const b = document.getElementById('nearScan');
     if(b) b.addEventListener('click', () => { nearModal.classList.remove('open'); startTracking(); });
     return;
   }
   const rows = nearRows();
-  if(!rows.length){ body.innerHTML = `<div class="empty">NOTHING MATCHES<br>TRY ANOTHER CATEGORY</div>`; return; }
+  if(!rows.length){ body.innerHTML = `<div class="empty">Nothing matches<br>Try another category</div>`; return; }
 
   // Collapse by venue so one mall is one row, with its own count.
   const seenKey = new Set(); const out = [];
@@ -54,7 +54,7 @@ function buildNear(){
       <div class="sprite">${spotPinHtml(s)}</div>
       <div style="min-width:0;">
         <div class="nm">${escapeHtml((s.name||'').toUpperCase())}</div>
-        <div class="sub" style="color:${m.color}">${m.label}${siblings>0?` · +${siblings} HERE`:''}${hasSaved(s.id)?' · ★':''}</div>
+        <div class="sub" style="color:${m.color}">${m.label}${siblings>0?` · +${siblings} here`:''}${hasSaved(s.id)?' · ★':''}</div>
       </div>
       <div class="got">${hasVisited(s.id)?'✔':''}</div></div>`;
   }).join('');
@@ -77,8 +77,8 @@ document.getElementById('openNear').addEventListener('click', () => { buildNear(
 document.getElementById('nearClose').addEventListener('click', () => nearModal.classList.remove('open'));
 document.getElementById('nearShare').addEventListener('click', () => {
   const rows = nearRows().slice(0,10);
-  if(!rows.length){ showToast('NOTHING TO SHARE'); return; }
-  shareShortlist(rows, 'NEAR ME');
+  if(!rows.length){ showToast('Nothing to share'); return; }
+  shareShortlist(rows, 'Near me');
 });
 
 export { buildNear, nearModal };

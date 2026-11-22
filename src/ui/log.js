@@ -19,7 +19,7 @@ function buildLog(reset){
   if(reset) logShown = LOG_PAGE;
   const rows = logDataset();
   if(!rows.length){
-    logList.innerHTML = `<div class="empty">NOTHING MATCHES<br>TRY A DIFFERENT WORD</div>`;
+    logList.innerHTML = `<div class="empty">Nothing matches<br>Try a different word</div>`;
     document.getElementById('logMore').style.display = 'none'; return;
   }
   logList.innerHTML = rows.slice(0, logShown).map(s => {
@@ -29,7 +29,7 @@ function buildLog(reset){
       <div class="sprite">${spotPinHtml(s)}</div>
       <div style="min-width:0;">
         <div class="nm">${seen?escapeHtml((s.name||'').toUpperCase()):'??????????'}</div>
-        <div class="sub">${seen?m.label+' · '+regionFor(s.lat,s.lng):'NOT REGISTERED'}</div>
+        <div class="sub">${seen?m.label+' · '+regionFor(s.lat,s.lng):'Not registered'}</div>
       </div>
       <div class="got">${hasVisited(s.id)?'✔':''}</div></div>`;
   }).join('');
@@ -44,7 +44,7 @@ function buildLog(reset){
   });
   const more = document.getElementById('logMore');
   more.style.display = rows.length > logShown ? 'block' : 'none';
-  more.textContent = `LOAD MORE (${rows.length - logShown} LEFT)`;
+  more.textContent = `Load more (${rows.length - logShown} left)`;
   const pct = S.ALL.length ? Math.round(seenSet.size/S.ALL.length*100) : 0;
   document.getElementById('logProgressText').textContent = `${seenSet.size} / ${S.ALL.length}`;
   document.getElementById('logProgressFill').style.width = pct + '%';

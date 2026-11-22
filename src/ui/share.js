@@ -12,22 +12,22 @@ function shortlistText(rows, title){
     const d = s._dist ?? s.distance_m;
     return `${i+1}. ${s.name} — ${subMeta(s).label}${d!=null?` (${fmtDist(d)})`:''}\n   ${titleCase(s.address)}`;
   });
-  return `HALALAH — ${title}\nMUIS-certified halal spots\n\n${lines.join('\n')}\n\n` +
+  return `Halalah — ${title}\nMUIS-certified halal spots\n\n${lines.join('\n')}\n\n` +
          `${appUrl()}\nAlways verify the certificate on site.`;
 }
 async function shareShortlist(rows, title){
   rows = rows.slice(0,10);
-  if(!rows.length){ showToast('NOTHING TO SHARE'); return; }
+  if(!rows.length){ showToast('Nothing to share'); return; }
   const text = shortlistText(rows, title);
   let file = null;
   try{ file = await shortlistPng(rows, title); }catch(e){ file = null; }
 
   if(file && navigator.canShare && navigator.canShare({ files:[file] })){
-    try{ await navigator.share({ files:[file], title:'HALALAH', text:`${title} — halal shortlist` }); return; }
+    try{ await navigator.share({ files:[file], title:'Halalah', text:`${title} — halal shortlist` }); return; }
     catch(e){ if(e && e.name === 'AbortError') return; }
   }
   if(navigator.share){
-    try{ await navigator.share({ title:'HALALAH', text }); return; }
+    try{ await navigator.share({ title:'Halalah', text }); return; }
     catch(e){ if(e && e.name === 'AbortError') return; }
   }
   // No Web Share (most desktops): download the PNG and copy the text.
@@ -37,8 +37,8 @@ async function shareShortlist(rows, title){
     a.href = url; a.download = file.name; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   }
-  try{ await navigator.clipboard.writeText(text); showToast('PNG SAVED · TEXT COPIED'); }
-  catch(e){ showToast('SHORTLIST PNG SAVED'); }
+  try{ await navigator.clipboard.writeText(text); showToast('PNG saved · text copied'); }
+  catch(e){ showToast('Shortlist PNG saved'); }
 }
 async function shortlistPng(rows, title){
   try{ await document.fonts.ready; }catch(e){}
@@ -49,11 +49,11 @@ async function shortlistPng(rows, title){
   const px = (n) => `${n}px 'Press Start 2P', monospace`;
 
   x.fillStyle = '#111827'; x.fillRect(0,0,W,H);
-  x.fillStyle = '#EF4444'; x.fillRect(0,0,W,120);
+  x.fillStyle = '#4A5C2A'; x.fillRect(0,0,W,120);
   x.fillStyle = '#0A0F18'; x.fillRect(0,116,W,6);
-  x.fillStyle = '#F8FAFC'; x.font = px(28); x.fillText('HALAL', 34, 58);
-  x.fillStyle = '#FBBF24'; x.fillText('AH', 34 + x.measureText('HALAL').width, 58);
-  x.fillStyle = '#F8FAFC'; x.font = px(11);
+  x.fillStyle = '#F6F3E9'; x.font = px(28); x.fillText('HALAL', 34, 58);
+  x.fillStyle = '#F6F3E9'; x.fillText('AH', 34 + x.measureText('HALAL').width, 58);
+  x.fillStyle = '#F6F3E9'; x.font = px(11);
   x.fillText(String(title).toUpperCase().slice(0,40), 34, 92);
 
   rows.forEach((s,i) => {
@@ -62,18 +62,18 @@ async function shortlistPng(rows, title){
     x.strokeStyle = '#0A0F18'; x.lineWidth = 4; x.strokeRect(24, y, W-48, 76);
     const m = subMeta(s);
     x.fillStyle = m.color; x.fillRect(24, y, 8, 76);
-    x.fillStyle = '#FBBF24'; x.font = px(12);
+    x.fillStyle = '#F6F3E9'; x.font = px(12);
     x.fillText(`${i+1}.`, 46, y+30);
-    x.fillStyle = '#F8FAFC'; x.font = px(12);
+    x.fillStyle = '#F6F3E9'; x.font = px(12);
     x.fillText((s.name||'').toUpperCase().slice(0,30), 82, y+30);
-    x.fillStyle = '#9CA3AF'; x.font = px(8);
+    x.fillStyle = '#B9BEA9'; x.font = px(8);
     const d = s._dist ?? s.distance_m;
     x.fillText(`${m.label}${d!=null?'  ·  '+fmtDist(d):''}`, 82, y+52);
     x.fillStyle = '#6B7280'; x.font = px(7);
     x.fillText(titleCase(s.address).slice(0,52), 82, y+68);
   });
   x.fillStyle = '#4B5563'; x.font = px(7);
-  x.fillText('MUIS-CERTIFIED · VERIFY ON SITE', 34, H-22);
+  x.fillText('MUIS-certified · verify on site', 34, H-22);
 
   const blob = await new Promise(res => c.toBlob(res, 'image/png'));
   return new File([blob], 'halalah-shortlist.png', { type:'image/png' });

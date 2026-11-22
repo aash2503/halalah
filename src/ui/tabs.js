@@ -29,6 +29,7 @@ function renderMore(){
 }
 
 export function initTabs(){
+  document.querySelectorAll('[data-pi]').forEach(e => { e.innerHTML = pi(e.dataset.pi, +e.dataset.s || 20); });
   $('tabbar').innerHTML = TABS.map(([n, label, ic]) => `<button class="tab" data-tab="${n}">${pi(ic, 22)}<span>${label}</span></button>`).join('');
   $('tabbar').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if(b) showTab(b.dataset.tab); });
   $('moreRefresh').addEventListener('click', async () => {

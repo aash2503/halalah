@@ -38,7 +38,7 @@ function buildSuggestions(q){
   }
   const out = areas.concat(venues);
   /* Group establishment hits by NAME KEY, not raw name. Every outlet carries its
-     own stall code and venue ("MUNCHI PANCAKES (S36) @ ONE PUNGGOL..."), so raw
+     own stall code and venue ("Munchi pancakes (s36) @ one punggol..."), so raw
      names are all distinct and grouping by them collapses nothing. nameKey()
      strips that suffix, so all 17 land on one row. */
   const byName = new Map();
@@ -65,7 +65,7 @@ function renderSuggestions(list){
   if(!list.length){ suggestEl.classList.remove('open'); return; }
   suggestEl.innerHTML = list.map((r,i) => `
     <div class="sg-row" data-i="${i}">
-      <span class="k ${r.kind}">${r.kind==='area'?'AREA':r.kind==='venue'?'VENUE':'SPOT'}</span>
+      <span class="k ${r.kind}">${r.kind==='area'?'Area':r.kind==='venue'?'Venue':'Spot'}</span>
       <span class="t" style="min-width:0;">${escapeHtml(r.name.toUpperCase().slice(0,30))}
         ${r.sub?`<div class="d">${escapeHtml(r.sub)}</div>`:''}</span>
     </div>`).join('');
@@ -84,7 +84,7 @@ function chooseSuggestion(r){
     document.getElementById('searchInput').value = r.name;
     applyFilters();
     map.flyTo([r.lat, r.lng], 15, { duration:.8 });
-    showToast(`SNAPPED TO ${r.name}`);
+    showToast(`Snapped to ${r.name}`);
   } else if(r.kind === 'venue'){
     /* A venue name can occur at more than one coordinate (NORTHPOINT, CHANGI
        AIRPORT T2/T3). Show every one of them, not just the first. */
@@ -98,7 +98,7 @@ function chooseSuggestion(r){
       setTimeout(() => openGroup(groups[0]), 850);
     } else {
       flyBounds(groups.map(g => [g.lat,g.lng]));
-      showToast(`${groups.length} PLACES NAMED ${r.name}`);
+      showToast(`${groups.length} places named ${r.name}`);
     }
   } else {
     /* Every outlet with this name, not just the one that happened to match
@@ -112,7 +112,7 @@ function chooseSuggestion(r){
       setTimeout(() => openSpot(r.rows[0], null), 850);
     } else {
       flyBounds(r.rows.map(e => [e.lat,e.lng]));
-      showToast(`${r.rows.length} LOCATIONS — ${exactName.slice(0,22)}`);
+      showToast(`${r.rows.length} locations — ${exactName.slice(0,22)}`);
     }
   }
 }

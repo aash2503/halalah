@@ -77,7 +77,7 @@ let knownBadgeCount = 0;
 export function syncBadgeBaseline() { knownBadgeCount = earnedBadges().length; }
 export function checkBadges() {
   const now = earnedBadges();
-  if (now.length > knownBadgeCount) showToast(`${now[now.length - 1].label} BADGE EARNED!`);
+  if (now.length > knownBadgeCount) showToast(`${now[now.length - 1].label} badge earned!`);
   knownBadgeCount = now.length;
 }
 
@@ -89,10 +89,10 @@ export function checkVenueClear(id) {
   const s = S.BY_ID[id]; if (!s) return;
   const g = S.GROUP_BY_KEY[s.lat + ',' + s.lng];
   if (g && g.items.length > 1 && groupCleared(g)) {
-    showDialog('VENUE CLEARED!', `<div style="text-align:center; line-height:2.2;">
+    showDialog('Venue cleared!', `<div style="text-align:center; line-height:2.2;">
       <div style="font-size:11px; color:var(--yellow)">${escapeHtml(titleCase(g.label))}</div>
       <div style="margin-top:12px;">ALL ${g.items.length} CERTIFIED SPOTS VISITED.</div></div>`,
-      [{ label: 'NICE', cls: 'btn-y', fn: hideDialog }]);
+      [{ label: 'Nice', cls: 'btn-y', fn: hideDialog }]);
   }
 }
 
@@ -112,6 +112,6 @@ export function checkQuest() {
   if (q.done) return;
   let ok = false;
   if (def.cat) ok = [...visitedSet].some(id => S.BY_ID[id] && String(S.BY_ID[id].sub_scheme) === def.cat);
-  else ok = visitedSet.size - q.start >= (def.text.startsWith('LOG 3') ? 3 : 2);
-  if (ok) { q.done = true; persist(); showToast('QUEST COMPLETE!'); }
+  else ok = visitedSet.size - q.start >= (def.text.startsWith('Log 3') ? 3 : 2);
+  if (ok) { q.done = true; persist(); showToast('Quest complete!'); }
 }

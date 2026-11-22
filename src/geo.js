@@ -17,13 +17,13 @@ let playerMarker = null, watchId = null;
    list and proximity alerts. */
 function primeGeolocation(then){
   if(save.geoPrimed) { then(); return; }
-  showDialog('FIND WHAT\'S AROUND YOU',
+  showDialog('Find what\'s around you',
     `HALALAH uses your location to sort spots by distance, point the compass at
      the nearest halal spot, and alert you when a certified place is right
      nearby.<br><br>
      Your location <b>stays on this device</b> — it is never uploaded.`,
-    [{ label:'CONTINUE', cls:'btn-y', fn:() => { save.geoPrimed = true; persist(); hideDialog(); then(); } },
-     { label:'NOT NOW', cls:'btn-w', fn:hideDialog }]);
+    [{ label:'Continue', cls:'btn-y', fn:() => { save.geoPrimed = true; persist(); hideDialog(); then(); } },
+     { label:'Not now', cls:'btn-w', fn:hideDialog }]);
 }
 /* ---- Live scan is ALWAYS ON --------------------------------------------
    Distances, the near-me list, the wheel's NEAR ME scope, the finder and
@@ -44,13 +44,13 @@ function setTrackingUi(){
 
 function startTracking({ silent = false } = {}){
   if(S.tracking || watchId !== null) return;             // idempotent
-  if(!navigator.geolocation){ if(!silent) showToast('NO GEOLOCATION SUPPORT'); return; }
+  if(!navigator.geolocation){ if(!silent) showToast('No geolocation support'); return; }
   S.tracking = true; setTrackingUi();
   watchId = navigator.geolocation.watchPosition(
     p => { denied = false; S.accuracy = p.coords.accuracy; updatePosition(p.coords.latitude, p.coords.longitude); },
     err => {
       denied = err.code === 1;
-      if(!silent || denied) showToast(denied ? 'LOCATION DENIED — TAP TO RETRY' : 'LOCATION UNAVAILABLE');
+      if(!silent || denied) showToast(denied ? 'Location denied — tap to retry' : 'Location unavailable');
       stopTracking();
     },
     { enableHighAccuracy:true, maximumAge:5000, timeout:10000 });
@@ -79,7 +79,7 @@ function onFabTap(){
   if(!save.geoPrimed){ primeGeolocation(() => startTracking()); return; }
   denied = false;
   startTracking();
-  showToast('LOOKING FOR YOU...');
+  showToast('Looking for you...');
 }
 function updatePosition(lat,lng){
   const first = !S.playerPos;
@@ -142,7 +142,7 @@ function playEncounter(spot, group, done){
   /* Name the building when there are several inside it — announcing one stall
      for a whole mall reads as if that is all there is. */
   const many = group && group.items.length > 1;
-  const label = many ? `${group.items.length} HALAL SPOTS HERE!` : 'HALAL SPOT RIGHT HERE!';
+  const label = many ? `${group.items.length} halal spots here!` : 'Halal spot right here!';
   const who = many ? (group.venue || spot.name || '') : (spot.name || '');
   document.getElementById('encounterText').innerHTML =
     `${label}<br><br>${escapeHtml(who.toUpperCase())}`;

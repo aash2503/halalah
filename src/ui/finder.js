@@ -116,7 +116,7 @@ function paint(){
 function paintIndoor(g){
   $('finderWalk').style.display = 'none';
   $('finderIndoor').style.display = 'block';
-  $('finderTitle').textContent = "YOU'RE INSIDE";
+  $('finderTitle').textContent = "You're inside";
 
   const venue = g.items[0] && venueName(g.items[0].address);
   $('indoorHdr').textContent = venue || titleCase(g.items[0].address || '').slice(0, 40);
@@ -147,7 +147,7 @@ function paintIndoor(g){
         <div class="unit-ty" style="color:${m.color}">${m.label}</div>
       </div>
       <div class="unit-go">▶</div></div>`;
-  }).join('') || `<div class="empty">NOTHING ON THIS LEVEL</div>`;
+  }).join('') || `<div class="empty">Nothing on this level</div>`;
 
   $('indoorList').querySelectorAll('.unit-row').forEach(r =>
     r.addEventListener('click', () => {
@@ -159,20 +159,20 @@ function paintIndoor(g){
 function paintWalk(){
   $('finderIndoor').style.display = 'none';
   $('finderWalk').style.display = 'block';
-  $('finderTitle').textContent = 'WALK THIS WAY';
+  $('finderTitle').textContent = 'Walk this way';
 
   if(!S.playerPos){
     $('walkDist').textContent = '—';
-    $('walkTarget').textContent = 'NO POSITION YET';
+    $('walkTarget').textContent = 'No position yet';
     $('walkSub').textContent = '';
-    note('WAITING FOR A GPS FIX');
+    note('Waiting for a GPS fix');
     return;
   }
   if(!targets.length){
     $('walkDist').textContent = '—';
-    $('walkTarget').textContent = `NOTHING WITHIN ${fmtDist(radius)}`;
-    $('walkSub').textContent = 'TRY A WIDER RADIUS';
-    note('TAP THE RADIUS BUTTON TO WIDEN');
+    $('walkTarget').textContent = `Nothing within ${fmtDist(radius)}`;
+    $('walkSub').textContent = 'Try a wider radius';
+    note('Tap the radius button to widen');
     drawBlips();
     return;
   }
@@ -185,7 +185,7 @@ function paintWalk(){
   $('walkDist').textContent = fmtDist(g.dist);
   $('walkTarget').textContent = (venue || lead.name || '').toUpperCase().slice(0, 26);
   $('walkSub').textContent = g.items.length > 1
-    ? `${g.items.length} HALAL SPOTS HERE · ${idx+1}/${targets.length}`
+    ? `${g.items.length} halal spots here · ${idx+1}/${targets.length}`
     : `${subMeta(lead).label} · ${idx+1}/${targets.length}`;
 
   const brg = bearing(S.playerPos.lat, S.playerPos.lng, g.lat, g.lng);
@@ -195,7 +195,7 @@ function paintWalk(){
        in words rather than pretending to point. */
     arrow.style.opacity = '.25';
     arrow.style.transform = `rotate(${brg}deg)`;
-    note(`HEAD ${compassPoint(brg)} · ${accuracyNote()}`);
+    note(`Head ${compassPoint(brg)} · ${accuracyNote()}`);
   } else {
     arrow.style.opacity = '1';
     arrow.style.transform = `rotate(${((brg - heading) + 360) % 360}deg)`;
@@ -222,8 +222,8 @@ const POINTS = ['N','NE','E','SE','S','SW','W','NW'];
 const compassPoint = b => POINTS[Math.round(((b % 360) / 45)) % 8];
 function accuracyNote(){
   const a = S.accuracy;
-  if(a == null) return 'ACCURACY UNKNOWN';
-  return `±${Math.round(a)} M FIX${a > 40 ? ' — ROUGH' : ''}`;
+  if(a == null) return 'Accuracy unknown';
+  return `±${Math.round(a)} m fix${a > 40 ? ' — rough' : ''}`;
 }
 function note(s){ $('finderNote').textContent = s; }
 
@@ -231,14 +231,14 @@ function note(s){ $('finderNote').textContent = s; }
 async function openFinder(){
   finderModal.classList.add('open');
   open = true;
-  if(!S.playerPos) showToast('WAITING FOR YOUR POSITION');
+  if(!S.playerPos) showToast('Waiting for your position');
 
   /* Orientation permission must be asked from the gesture that opened this. */
   try{
     if(typeof DeviceOrientationEvent !== 'undefined' &&
        typeof DeviceOrientationEvent.requestPermission === 'function'){
       const st = await DeviceOrientationEvent.requestPermission();
-      if(st !== 'granted') note('COMPASS DENIED — SHOWING DIRECTION IN WORDS');
+      if(st !== 'granted') note('Compass denied — showing direction in words');
     }
   }catch(e){}
 
@@ -273,7 +273,7 @@ $('finderClose').addEventListener('click', closeFinder);
 $('walkNext').addEventListener('click', () => { if(targets.length){ idx = (idx + 1) % targets.length; paint(); } });
 $('walkPrev').addEventListener('click', () => { if(targets.length){ idx = (idx - 1 + targets.length) % targets.length; paint(); } });
 $('walkOpen').addEventListener('click', () => {
-  const g = targets[idx]; if(!g){ showToast('NOTHING TO OPEN'); return; }
+  const g = targets[idx]; if(!g){ showToast('Nothing to open'); return; }
   closeFinder();
   map.setView([g.lat, g.lng], 17);
   const mg = S.GROUP_BY_KEY[g.key];
@@ -281,7 +281,7 @@ $('walkOpen').addEventListener('click', () => {
 });
 $('walkRadius').addEventListener('click', () => {
   radius = AR_RADII[(AR_RADII.indexOf(radius) + 1) % AR_RADII.length];
-  $('walkRadius').textContent = fmtDist(radius).toUpperCase();
+  $('walkRadius').textContent = fmtDist(radius);
   idx = 0; paint();
 });
 /* Escape hatch: standing in a mall but wanting to be pointed elsewhere. */

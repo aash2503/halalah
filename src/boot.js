@@ -43,10 +43,10 @@ function readyUp(note){
   applyFilters();
   if(S.SYNCED_AT){
     document.getElementById('landingFoot').innerHTML =
-      `MUIS REGISTRY · SYNCED ${fmtSynced(S.SYNCED_AT)}<br>ALWAYS VERIFY THE CERTIFICATE ON SITE`;
+      `MUIS registry · synced ${fmtSynced(S.SYNCED_AT)}<br>Always verify the certificate on site`;
   }
   startBtn.disabled = false;
-  startBtn.textContent = 'PRESS START';
+  startBtn.textContent = 'Press start';
   loadNote.classList.remove('err');
   loadNote.textContent = note;
 }
@@ -55,7 +55,7 @@ function readyUp(note){
    which holds FULL records — so a delisted place can still be named) and
    surface the delta in a dialog.
 
-   NOTE ON "NEW": every row currently shares one first_seen_at, because the
+   NOTE ON "New": every row currently shares one first_seen_at, because the
    table was seeded in a single import. So "new" here means "new to YOU since
    your last launch", derived from the local snapshot diff — not a claim about
    when MUIS certified it. */
@@ -76,21 +76,21 @@ function diffAndAnnounce(freshRows, prevRows){
     <div class="chg-item" data-id="${r.id}" ${warn?'style="border-color:var(--red)"':''}>
       <span class="s" style="color:${warn?'var(--red)':'var(--green)'}">${sign}</span>
       <span><span class="n">${escapeHtml((r.name||'').toUpperCase().slice(0,26))}</span>
-      <span class="a2">${warn?'YOU LOGGED THIS — NOW DELISTED':escapeHtml(titleCase(r.address).slice(0,40))}</span></span>
+      <span class="a2">${warn?'You logged this — now delisted':escapeHtml(titleCase(r.address).slice(0,40))}</span></span>
     </div>`;
 
   const body =
     `<div style="margin-bottom:10px;">
-       ${added.length   ? `<b style="color:var(--green)">${added.length} NEWLY LISTED</b><br>` : ''}
-       ${removed.length ? `<b style="color:var(--red)">${removed.length} NO LONGER LISTED</b>` : ''}
+       ${added.length   ? `<b style="color:var(--green)">${added.length} newly listed</b><br>` : ''}
+       ${removed.length ? `<b style="color:var(--red)">${removed.length} no longer listed</b>` : ''}
      </div>` +
     removedVisited.map(r => rowHtml(r,'－',true)).join('') +
     removed.filter(r => !hasVisited(r.id) && !hasSaved(r.id)).slice(0,4).map(r => rowHtml(r,'－',false)).join('') +
     added.slice(0,6).map(r => rowHtml(r,'＋',false)).join('') +
-    (added.length>6 ? `<div class="hint">+${added.length-6} MORE NEW</div>` : '');
+    (added.length>6 ? `<div class="hint">+${added.length-6} more new</div>` : '');
 
   const buttons = [];
-  if(added.length) buttons.push({ label:'SHOW NEW', cls:'btn-y', fn:() => {
+  if(added.length) buttons.push({ label:'Show new', cls:'btn-y', fn:() => {
     hideDialog();
     document.querySelectorAll('#filterRow .filter-pill').forEach(x => x.dataset.active='false');
     const p = document.querySelector('#filterRow .filter-pill[data-filter="new"]');
@@ -99,13 +99,13 @@ function diffAndAnnounce(freshRows, prevRows){
     const pts = added.map(r => [r.lat,r.lng]);
     if(pts.length) map.fitBounds(L.latLngBounds(pts).pad(.3), { maxZoom:15 });
   }});
-  buttons.push({ label:'DISMISS', cls:'btn-w', fn:hideDialog });
+  buttons.push({ label:'Dismiss', cls:'btn-w', fn:hideDialog });
 
-  showDialog('REGISTRY UPDATED', body, buttons);
+  showDialog('Registry updated', body, buttons);
   document.querySelectorAll('#dlgBody .chg-item').forEach(el => {
     el.addEventListener('click', () => {
       const s = S.BY_ID[el.dataset.id];
-      if(!s) { showToast('THIS ONE IS NO LONGER LISTED'); return; }   // removed rows have no map pin
+      if(!s) { showToast('This one is no longer listed'); return; }   // removed rows have no map pin
       hideDialog(); map.setView([s.lat,s.lng],17); setTimeout(() => openSpot(s,null), 300);
     });
   });
@@ -123,8 +123,8 @@ function renderSyncStamp(){
   if(!el) return;
   const d = daysSince(S.SYNCED_AT);
   if(d == null){ el.textContent = ''; el.className = 'sb-sync'; return; }
-  const label = d < 1 ? 'TODAY' : d < 2 ? '1 DAY AGO' : `${Math.floor(d)} DAYS AGO`;
-  el.textContent = 'SYNCED ' + label;
+  const label = d < 1 ? 'Today' : d < 2 ? '1 Day ago' : `${Math.floor(d)} days ago`;
+  el.textContent = 'Synced ' + label;
   el.className = 'sb-sync ' + (d >= UPSTREAM_STALE_DAYS ? 'stale' : d >= UPSTREAM_OLD_DAYS ? 'old' : 'ok');
   el.title = 'Registry synced ' + fmtSynced(S.SYNCED_AT);
 }
@@ -134,12 +134,12 @@ function renderSyncStamp(){
 function warnIfUpstreamStale(){
   const d = daysSince(S.SYNCED_AT);
   if(d == null || d < UPSTREAM_STALE_DAYS) return;
-  showDialog('REGISTRY MAY BE OUT OF DATE',
+  showDialog('Registry may be out of date',
     `The halal registry snapshot behind this app was last updated
      <b>${Math.floor(d)} days ago</b>.<br><br>
      Certifications can lapse or be issued in that time, so treat these listings as a
      guide and <b>check the certificate on site</b>.`,
-    [{ label:'GOT IT', cls:'btn-y', fn:hideDialog }]);
+    [{ label:'Got it', cls:'btn-y', fn:hideDialog }]);
 }
 
 async function boot(forceRefresh){
@@ -151,7 +151,7 @@ async function boot(forceRefresh){
     indexData(prevRows);
     renderSyncStamp();
     const ageMin = Math.round((Date.now() - cached.at) / 60000);
-    readyUp(`${prevRows.length} SPOTS FROM CACHE (${ageMin < 60 ? ageMin+' MIN' : Math.round(ageMin/60)+' HR'} OLD)`);
+    readyUp(`${prevRows.length} spots from cache (${ageMin < 60 ? ageMin+' Min' : Math.round(ageMin/60)+' Hr'} old)`);
     usedCache = true;
 
     /* The registry is a scheduled upstream snapshot, not a live feed, so there
@@ -162,24 +162,24 @@ async function boot(forceRefresh){
       warnIfUpstreamStale();
       return;
     }
-    setStatus('CACHED — REFRESHING...', 'busy');
+    setStatus('Cached — refreshing...', 'busy');
   } else {
-    setStatus('LOADING...', 'busy');
+    setStatus('Loading...', 'busy');
   }
 
   try{
     const t0 = performance.now();
-    const { rows, partial } = await fetchAllEstablishments(n => { if(!usedCache) setStatus(`LOADING ${n}...`, 'busy'); });
+    const { rows, partial } = await fetchAllEstablishments(n => { if(!usedCache) setStatus(`Loading ${n}...`, 'busy'); });
     indexData(rows);
     // A partial fetch must not overwrite a complete cached snapshot.
     if(!partial || !prevRows || rows.length >= prevRows.length){
       await cacheSet(CACHE_KEY, { rows, at: Date.now() });
     }
     // Sync date lives in the footer — don't repeat it here.
-    readyUp(`${rows.length} CERTIFIED SPOTS${partial?' (PARTIAL)':''} (${Math.round(performance.now()-t0)} MS)`);
+    readyUp(`${rows.length} certified spots${partial?' (Partial)':''} (${Math.round(performance.now()-t0)} ms)`);
     if(partial){
-      setStatus('PARTIAL LOAD — SOME SPOTS MISSING', 'err');
-      showToast('CONNECTION DROPPED MID-LOAD');
+      setStatus('Partial load — some spots missing', 'err');
+      showToast('Connection dropped mid-load');
     }
     renderSyncStamp();
     diffAndAnnounce(rows, prevRows);
@@ -190,30 +190,30 @@ async function boot(forceRefresh){
     console.error(err);
     if(usedCache){
       // We still have data — degrade quietly rather than blocking the app.
-      setStatus('OFFLINE — CACHED DATA', 'err');
+      setStatus('Offline — cached data', 'err');
       document.getElementById('offlineBar').classList.add('show');
       /* Certification lapses. Old cached data isn't just inconvenient, it can be
          wrong about whether somewhere is still certified — so past a threshold
          say so loudly rather than in a status pill. */
       const ageDays = (Date.now() - cached.at) / 86400000;
       if(ageDays >= STALE_DAYS){
-        showDialog('SAVED DATA IS OLD',
+        showDialog('Saved data is old',
           `This device last reached the registry <b>${Math.floor(ageDays)} days ago</b>.<br><br>
            Certifications can lapse in that time, so treat what you see as a guide and
            <b>check the certificate on site</b>.`,
-          [{ label:'RETRY NOW', cls:'btn-y', fn:() => location.reload() },
-           { label:'CONTINUE', cls:'btn-w', fn:hideDialog }]);
+          [{ label:'Retry now', cls:'btn-y', fn:() => location.reload() },
+           { label:'Continue', cls:'btn-w', fn:hideDialog }]);
       }
     }else{
       // No data at all. The error must be visible even when the landing screen
       // is hidden for a returning user, so it goes in a dialog, not the landing.
-      setStatus('DATA UNAVAILABLE', 'err');
+      setStatus('Data unavailable', 'err');
       loadNote.classList.add('err');
-      loadNote.textContent = 'COULD NOT REACH THE REGISTRY.';
-      startBtn.disabled = false; startBtn.textContent = 'RETRY';
-      showDialog('CAN\'T REACH THE REGISTRY',
+      loadNote.textContent = 'Could not reach the registry.';
+      startBtn.disabled = false; startBtn.textContent = 'Retry';
+      showDialog('Can\'t reach the registry',
         'No saved data on this device yet, so there is nothing to show offline.<br><br>Check your connection and try again.',
-        [{ label:'RETRY', cls:'btn-y', fn:() => location.reload() }]);
+        [{ label:'Retry', cls:'btn-y', fn:() => location.reload() }]);
     }
   }
 }
@@ -233,7 +233,7 @@ function goFullscreen(){
 }
 startBtn.addEventListener('click', () => {
   if(startBtn.disabled) return;
-  if(startBtn.textContent === 'RETRY'){ location.reload(); return; }
+  if(startBtn.textContent === 'Retry'){ location.reload(); return; }
   goFullscreen();
   document.getElementById('landing').classList.add('hide');
   save.started = true; persist();
@@ -252,7 +252,7 @@ function handleDeepLink(){
   if(launchSpot){
     const s = S.BY_ID[launchSpot];
     if(s){ map.setView([s.lat,s.lng],17); setTimeout(() => openSpot(s,null), 350); }
-    else showToast('THAT SPOT IS NO LONGER LISTED');
+    else showToast('That spot is no longer listed');
     return true;
   }
   if(launchVenue){
@@ -261,7 +261,7 @@ function handleDeepLink(){
       const g = v.groups[0];
       map.setView([g.lat,g.lng],17);
       setTimeout(() => openGroup(g), 350);
-    } else showToast('VENUE NOT FOUND');
+    } else showToast('Venue not found');
     return true;
   }
   return false;
@@ -279,7 +279,7 @@ if(save.started || launchAction || launchSpot || launchVenue){
 /* An installable app that asks for location and camera should say plainly what
    it does with them, and that it isn't the certifying authority. */
 document.getElementById('aboutBtn').addEventListener('click', () => {
-  showDialog('ABOUT HALALAH',
+  showDialog('About Halalah',
     `<b style="color:var(--yellow)">NOT AN OFFICIAL MUIS APP.</b><br>
      HALALAH is an independent app. It is not affiliated with, endorsed by, or operated by
      Majlis Ugama Islam Singapura. Listings mirror the MUIS halal registry
@@ -298,14 +298,14 @@ document.getElementById('aboutBtn').addEventListener('click', () => {
      <b style="color:var(--yellow)">DATA</b><br>
      Halal listings © MUIS. Map tiles © Esri, HERE, Garmin and OpenStreetMap contributors.
      Built with Leaflet (BSD-2-Clause) and Leaflet.markercluster (MIT).`,
-    [{ label:'CLOSE', cls:'btn-y', fn:hideDialog }]);
+    [{ label:'Close', cls:'btn-y', fn:hideDialog }]);
 });
 
 /* Small map controls */
 /* Tap the status pill to force a refresh, since the automatic one is now daily. */
 document.getElementById('statusStrip').style.cursor = 'pointer';
 document.getElementById('statusStrip').addEventListener('click', () => {
-  showToast('REFRESHING REGISTRY...');
+  showToast('Refreshing registry...');
   boot(true);
 });
 
@@ -313,7 +313,7 @@ document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
 document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
 document.getElementById('recenter').addEventListener('click', () => {
   if(S.playerPos) map.flyTo([S.playerPos.lat, S.playerPos.lng], 16, { duration:.6 });
-  else { map.flyTo([1.3521,103.8198], 12, { duration:.6 }); showToast('TURN ON SCAN TO CENTRE ON YOU'); }
+  else { map.flyTo([1.3521,103.8198], 12, { duration:.6 }); showToast('Turn on scan to centre on you'); }
 });
 document.getElementById('legendBtn').addEventListener('click', () => {
   const l = document.getElementById('legend');
@@ -342,7 +342,7 @@ boot().then(() => {
   const here = location.href.split('?')[0].split('#')[0];
   const dir = here.substring(0, here.lastIndexOf('/') + 1);
   const manifest = {
-    id:dir, name:"HALALAH — This one Halal ah?", short_name:"HALALAH",
+    id:dir, name:"HALALAH — This one Halal ah?", short_name:"Halalah",
     description:"Every MUIS-certified halal establishment in Singapore.",
     start_url:here, scope:dir,
     display:"fullscreen", display_override:["fullscreen","standalone","minimal-ui"],
@@ -374,7 +374,7 @@ const installBtn = document.getElementById('installBtn');
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e;
-  installBtn.textContent = '⤓ INSTALL APP';
+  installBtn.textContent = '⤓ Install app';
   installBtn.style.display = 'block';
 });
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -382,7 +382,7 @@ const isStandalone = window.navigator.standalone === true ||
                      window.matchMedia('(display-mode: fullscreen)').matches ||
                      window.matchMedia('(display-mode: standalone)').matches;
 if(isIOS && !isStandalone){
-  installBtn.textContent = '⤓ ADD TO HOME SCREEN';
+  installBtn.textContent = '⤓ Add to home screen';
   installBtn.style.display = 'block';
 }
 installBtn.addEventListener('click', async () => {
@@ -390,7 +390,7 @@ installBtn.addEventListener('click', async () => {
     deferredPrompt.prompt(); await deferredPrompt.userChoice;
     deferredPrompt = null; installBtn.style.display = 'none'; return;
   }
-  showToast('TAP SHARE, THEN ADD TO HOME SCREEN');
+  showToast('Tap share, then add to home screen');
 });
 
 export { boot, indexData, renderSyncStamp, handleDeepLink, goFullscreen, warnIfUpstreamStale };

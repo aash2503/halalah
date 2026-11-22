@@ -19,7 +19,7 @@ let wheelSlices = SLICES;              // slices actually drawn — matches the 
 async function buildCandidates(){
   const cats = [...wheelCats];
   if(wheelScope === 'near'){
-    if(!S.playerPos) return { rows:[], note:'TURN ON SCAN FIRST' };
+    if(!S.playerPos) return { rows:[], note:'Turn on scan first' };
     try{
       let rows = await fetchNearby(S.playerPos.lat, S.playerPos.lng, {
         radius:wheelRadius, limit:120, schemes:[SCHEME_EAT] });
@@ -27,25 +27,25 @@ async function buildCandidates(){
         // The RPC returns sub_scheme_text, so match category via the loaded row.
         rows = rows.filter(r => { const f = S.BY_ID[r.id]; return f && cats.includes(String(f.sub_scheme)); });
       }
-      if(!rows.length) return { rows:[], note:`NOTHING${cats.length?' OF THAT KIND':''} WITHIN ${fmtDist(wheelRadius)}` };
-      return { rows:shuffle(rows).slice(0,SLICES), note:`WITHIN ${fmtDist(wheelRadius)} OF YOU` };
-    }catch(err){ return { rows:[], note:'LOOKUP FAILED — CHECK CONNECTION' }; }
+      if(!rows.length) return { rows:[], note:`Nothing${cats.length?' of that kind':''} within ${fmtDist(wheelRadius)}` };
+      return { rows:shuffle(rows).slice(0,SLICES), note:`Within ${fmtDist(wheelRadius)} of you` };
+    }catch(err){ return { rows:[], note:'Lookup failed — check connection' }; }
   }
 
   let pool = S.ALL.filter(s => s.scheme === SCHEME_EAT);
   if(cats.length) pool = pool.filter(s => cats.includes(String(s.sub_scheme)));
-  let note = cats.length ? cats.map(c => (SUB_SCHEME[c]||{}).label).join(' + ') : 'ANY EAT-IN';
+  let note = cats.length ? cats.map(c => (SUB_SCHEME[c]||{}).label).join(' + ') : 'Any eat-in';
 
   if(wheelScope === 'view'){
     const b = map.getBounds();
     pool = pool.filter(s => b.contains([s.lat,s.lng]));
-    note += ' · THIS MAP VIEW';
+    note += ' · This map view';
   } else if(wheelScope === 'unseen'){
     pool = pool.filter(s => !hasVisited(s.id));
-    note += ' · UNVISITED';
-  } else note += ' · ISLAND-WIDE';
+    note += ' · Unvisited';
+  } else note += ' · Island-wide';
 
-  if(!pool.length) return { rows:[], note:'NOTHING MATCHES THOSE FILTERS' };
+  if(!pool.length) return { rows:[], note:'Nothing matches those filters' };
   if(S.playerPos){
     pool.sort((a,b) => (a._dist ?? Infinity) - (b._dist ?? Infinity));
     pool = pool.slice(0, 40);
@@ -96,8 +96,8 @@ async function drawWheel(){
   out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#0A0F18" stroke-width="5"/>`;
   svg.innerHTML = out;
   document.getElementById('wheelResult').innerHTML =
-    `<div class="rn">${wheelPool.length?'READY?':'NO PICKS'}</div>` +
-    `<div class="rs">${escapeHtml(note)}${wheelPool.length?` · ${wheelPool.length} ON THE WHEEL`:''}</div>`;
+    `<div class="rn">${wheelPool.length?'Ready?':'No picks'}</div>` +
+    `<div class="rs">${escapeHtml(note)}${wheelPool.length?` · ${wheelPool.length} on the wheel`:''}</div>`;
 }
 function spinWheel(){
   if(spinning || !wheelPool.length) return;
@@ -124,21 +124,21 @@ function spinWheel(){
     const d = wheelPick.distance_m ?? full._dist;
     document.getElementById('wheelResult').innerHTML = `
       <div class="rn">${escapeHtml((wheelPick.name||'').toUpperCase())}</div>
-      <div class="rs">${m.label}${d!=null?' · '+fmtDist(d)+' AWAY':''}</div>`;
-    showToast('MAKAN: ' + (wheelPick.name||'').toUpperCase());
+      <div class="rs">${m.label}${d!=null?' · '+fmtDist(d)+' away':''}</div>`;
+    showToast('Makan: ' + (wheelPick.name||'').toUpperCase());
   }, 4300);
 }
 document.getElementById('spinBtn').addEventListener('click', spinWheel);
 document.getElementById('wheelHub').addEventListener('click', spinWheel);
 document.getElementById('wheelGo').addEventListener('click', () => {
-  if(!wheelPick){ showToast('SPIN FIRST!'); return; }
+  if(!wheelPick){ showToast('Spin first!'); return; }
   const full = S.BY_ID[wheelPick.id] || wheelPick;
   wheelModal.classList.remove('open');
   map.setView([full.lat, full.lng], 17);
   setTimeout(() => openSpot(full, null), 300);
 });
 document.getElementById('wheelMore').addEventListener('click', () => {
-  if(!wheelPool.length){ showToast('NOTHING TO SHOW'); return; }
+  if(!wheelPool.length){ showToast('Nothing to show'); return; }
   const ids = new Set(wheelPool.map(r => r.id));
   const rows = S.ALL.filter(s => ids.has(s.id));
   wheelModal.classList.remove('open');
@@ -146,10 +146,10 @@ document.getElementById('wheelMore').addEventListener('click', () => {
   if(rows.length){
     map.fitBounds(L.latLngBounds(rows.map(s => [s.lat,s.lng])).pad(.25), { maxZoom:16 });
   }
-  showToast(`SHOWING ${rows.length} SHORTLISTED`);
+  showToast(`Showing ${rows.length} shortlisted`);
 });
 document.getElementById('wheelShare').addEventListener('click', () => {
-  if(!wheelPool.length){ showToast('SPIN FIRST!'); return; }
+  if(!wheelPool.length){ showToast('Spin first!'); return; }
   const rows = wheelPool.map(r => S.BY_ID[r.id] || r);
   shareShortlist(rows, wheelScope === 'near' ? `WITHIN ${fmtDist(wheelRadius)}` : 'SHORTLIST');
 });

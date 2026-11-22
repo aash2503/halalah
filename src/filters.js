@@ -56,7 +56,7 @@ function applyFilters(){
   let groups = buildGroups(currentSelection());
   if(activeFilter === 'hot') groups = groups.filter(g => g.items.length >= HOTSPOT_MIN);
   renderGroups(groups);
-  if(!groups.length) setStatus('NO MATCHES — CLEAR A FILTER', 'err');
+  if(!groups.length) setStatus('No matches — clear a filter', 'err');
 }
 
 

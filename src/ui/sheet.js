@@ -37,13 +37,13 @@ clusterGroup.on('clusterclick', e => {
     <div class="bld-row" data-i="${i}">
       <div style="min-width:0;">
         <div class="nm">${escapeHtml((g.venue || titleCase(g.label)).toUpperCase().slice(0,30))}</div>
-        <div class="ty">${g.items.length} SPOT${g.items.length===1?'':'S'}${g.items[0]._dist!=null?' · '+fmtDist(g.items[0]._dist):''}</div>
+        <div class="ty">${g.items.length} spot${g.items.length===1?'':'s'}${g.items[0]._dist!=null?' · '+fmtDist(g.items[0]._dist):''}</div>
       </div><div class="go">▶</div></div>`).join('');
   document.querySelectorAll('#blRows .bld-row').forEach(row =>
     row.addEventListener('click', () => handleGroupTap(groups[+row.dataset.i])));
 
   sheet.classList.add('open'); scrim.classList.add('open');
-  showToast('TAP A PLACE, OR ZOOM IN');
+  showToast('Tap a place, or zoom in');
 });
 
 function openGroup(g){
@@ -72,7 +72,7 @@ function openGroup(g){
     return `<div class="bld-row ${hasVisited(s.id)?'done':''}" data-i="${i}">
       <div style="min-width:0;">
         <div class="nm">${escapeHtml((s.name||'').toUpperCase())}</div>
-        <div class="ty" style="color:${m.color}">${m.label}${s.est_type===1?' · VIRTUAL':''}${S.NEW_IDS.has(s.id)?' · NEW':''}${hasVisited(s.id)?' · ✔':''}</div>
+        <div class="ty" style="color:${m.color}">${m.label}${s.est_type===1?' · Virtual':''}${S.NEW_IDS.has(s.id)?' · New':''}${hasVisited(s.id)?' · ✔':''}</div>
         ${u ? `<div class="unit">${escapeHtml(u)}</div>` : ''}
       </div><div class="go">▶</div></div>`;
   }).join('');
@@ -95,8 +95,8 @@ function openSpot(s, fromGroup){
   document.getElementById('sEntryNo').textContent = s.postal ? 'S' + s.postal : '';
   document.getElementById('sName').textContent = (s.name || '').toUpperCase();
   const badges = [`<span class="type-badge" style="background:${m.color}">${m.label}</span>`,
-                  `<span class="status-chip">MUIS CERTIFIED</span>`];
-  if(S.NEW_IDS.has(s.id)) badges.push(`<span class="flag-badge fresh">NEW</span>`);
+                  `<span class="status-chip">MUIS certified</span>`];
+  if(S.NEW_IDS.has(s.id)) badges.push(`<span class="flag-badge fresh">New</span>`);
   if(s.est_type === 1) badges.push(`<span class="flag-badge virtual">VIRTUAL BRAND</span>`);
   if(s.scheme === SCHEME_PREP) badges.push(`<span class="flag-badge prep">NOT WALK-IN</span>`);
   document.getElementById('sBadges').innerHTML = badges.join('');
@@ -117,9 +117,9 @@ function openSpot(s, fromGroup){
 
   const btn = document.getElementById('sCatch');
   const v = hasVisited(s.id);
-  btn.dataset.caught = v; btn.textContent = v ? '✔ VISITED' : '◎ VISIT';
+  btn.dataset.caught = v; btn.textContent = v ? '✔ Visited' : '◎ Mark visited';
   const sv = document.getElementById('sSave');
-  sv.textContent = hasSaved(s.id) ? '★ SAVED' : '☆ SAVE';
+  sv.textContent = hasSaved(s.id) ? '★ Saved' : '☆ Save';
   sv.className = 'a btn ' + (hasSaved(s.id) ? 'btn-y' : 'btn-w');
 
   /* Other locations sharing this name. Deliberately worded as "same name" —
@@ -136,21 +136,21 @@ function openSpot(s, fromGroup){
       `<div style="font-size:8px; line-height:2; color:var(--muted)">
          ${sibs.length} OTHER LOCATION${sibs.length===1?'':'S'} NAMED
          <span style="color:var(--yellow)">${escapeHtml(key)}</span>
-         ${nearest && nearest._dist!=null ? `<br>NEAREST ${fmtDist(nearest._dist)} AWAY` : ''}
+         ${nearest && nearest._dist!=null ? `<br>Nearest ${fmtDist(nearest._dist)} away` : ''}
        </div>
-       <div class="acts"><div class="a btn btn-w" id="sChainBtn" style="font-size:7px">SHOW S.ALL ${sibs.length+1}</div></div>`;
+       <div class="acts"><div class="a btn btn-w" id="sChainBtn" >Show all ${sibs.length+1}</div></div>`;
     document.getElementById('sChainBtn').addEventListener('click', () => {
       const rows = S.BRAND_INDEX[key];
       closeSheet();
       renderGroups(buildGroups(rows));
       map.fitBounds(L.latLngBounds(rows.map(r => [r.lat,r.lng])).pad(.25), { maxZoom:16 });
-      showToast(`${rows.length} NAMED ${key}`);
+      showToast(`${rows.length} named ${key}`);
     });
   } else chainSect.style.display = 'none';
 
   sheet.classList.add('open'); scrim.classList.add('open');
   map.panTo([s.lat,s.lng],{ animate:true });
-  if(first) showToast('NEW LOG ENTRY REGISTERED');
+  if(first) showToast('New log entry registered');
 }
 
 /* Deep link back into the app for a single spot. */
@@ -197,8 +197,8 @@ document.getElementById('sCatch').addEventListener('click', () => {
   if(!currentSpot) return;
   const v = toggleVisited(currentSpot.id);
   const b = document.getElementById('sCatch');
-  b.dataset.caught = v; b.textContent = v ? '✔ VISITED' : '◎ VISIT';
-  if(v) showToast('LOGGED TO EXPLORER CARD');
+  b.dataset.caught = v; b.textContent = v ? '✔ Visited' : '◎ Mark visited';
+  if(v) showToast('Logged to explorer card');
   applyFilters();
 });
 document.getElementById('sMoreLike').addEventListener('click', () => {
@@ -208,11 +208,11 @@ document.getElementById('sMoreLike').addEventListener('click', () => {
   document.querySelectorAll('#filterRow .filter-pill').forEach(x => x.dataset.active='false');
   if(pill){ pill.dataset.active='true'; setFilter(sub); }
   else { setFilter('all'); }
-  setArea({ lat:currentSpot.lat, lng:currentSpot.lng, radius:2000, name:'NEARBY' });
+  setArea({ lat:currentSpot.lat, lng:currentSpot.lng, radius:2000, name:'Nearby' });
   setSearch(''); searchInput.value='';
   applyFilters(); closeSheet();
   map.flyTo([currentSpot.lat, currentSpot.lng], 15, { duration:.7 });
-  showToast(`${subMeta(currentSpot).label} WITHIN 2KM`);
+  showToast(`${subMeta(currentSpot).label} within 2km`);
 });
 document.getElementById('blShare').addEventListener('click', () => {
   if(currentGroup) shareShortlist(currentGroup.items.slice(0,10), titleCase(currentGroup.label));
@@ -221,9 +221,9 @@ document.getElementById('sSave').addEventListener('click', () => {
   if(!currentSpot) return;
   const on = toggleSaved(currentSpot.id);
   const b = document.getElementById('sSave');
-  b.textContent = on ? '★ SAVED' : '☆ SAVE';
+  b.textContent = on ? '★ Saved' : '☆ Save';
   b.className = 'a btn ' + (on ? 'btn-y' : 'btn-w');
-  showToast(on ? 'ADDED TO SAVED' : 'REMOVED FROM SAVED');
+  showToast(on ? 'Added to saved' : 'Removed from saved');
   applyFilters();
 });
 document.getElementById('sShare').addEventListener('click', async () => {
@@ -231,11 +231,11 @@ document.getElementById('sShare').addEventListener('click', async () => {
   const s = currentSpot;
   const text = `${s.name} — MUIS certified (${subMeta(s).label})\n${titleCase(s.address)}\nCert ${s.cert_number}\n${spotLink(s)}`;
   if(navigator.share){
-    try{ await navigator.share({ title:'HALALAH', text }); return; }
+    try{ await navigator.share({ title:'Halalah', text }); return; }
     catch(e){ if(e && e.name === 'AbortError') return; }
   }
-  try{ await navigator.clipboard.writeText(text); showToast('LINK COPIED'); }
-  catch(e){ showToast('COULD NOT COPY'); }
+  try{ await navigator.clipboard.writeText(text); showToast('Link copied'); }
+  catch(e){ showToast('Could not copy'); }
 });
 
 export { openSpot, openGroup, closeSheet, handleGroupTap, currentSpot, currentGroup };

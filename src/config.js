@@ -74,9 +74,9 @@ export const RANKS = [[0,'NEW IN TOWN'],[5,'MAKAN SCOUT'],[15,'KAKI EXPLORER'],[
                [60,'MAKAN MASTER'],[120,'HALAL LEGEND']];
 
 export const QUEST_POOL = [
-  { cat:'103', text:'VISIT A HAWKER STALL' }, { cat:'106', text:'VISIT A RESTAURANT' },
-  { cat:'108', text:'VISIT A BAKERY' },       { cat:null,  text:'LOG 3 NEW SPOTS' },
-  { cat:null,  text:'CLEAR ANY 2 SPOTS IN ONE VENUE' },
+  { cat:'103', text:'Visit a hawker stall' }, { cat:'106', text:'Visit a restaurant' },
+  { cat:'108', text:'Visit a bakery' },       { cat:null,  text:'Log 3 new spots' },
+  { cat:null,  text:'Clear any 2 spots in one venue' },
 ];
 
 export const SAVE_KEY = "halalah.save.v3";

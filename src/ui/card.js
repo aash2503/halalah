@@ -21,7 +21,7 @@ function buildCard(){
 
   const q = currentQuest(), def = QUEST_POOL[q.idx];
   document.getElementById('questText').textContent = def.text;
-  document.getElementById('questProg').textContent = q.done ? '✔ COMPLETE — COME BACK TOMORROW' : 'IN PROGRESS';
+  document.getElementById('questProg').textContent = q.done ? '✔ Complete — come back tomorrow' : 'In progress';
   document.getElementById('questBox').classList.toggle('done', q.done);
 
   document.getElementById('badgeCase').innerHTML = REGIONS.map(r => {
@@ -47,7 +47,7 @@ function buildCard(){
     `<div class="venue-clear ${o.done===o.g.items.length?'full':''}">
       <span>${escapeHtml((o.g.venue||titleCase(o.g.label)).slice(0,22))}</span>
       <span class="vc">${o.done}/${o.g.items.length}${o.done===o.g.items.length?' ✔':''}</span></div>`).join('')
-    : `<div class="empty">VISIT SPOTS IN A MALL<br>TO START CLEARING VENUES</div>`;
+    : `<div class="empty">Visit spots in a mall<br>to start clearing venues</div>`;
 }
 document.getElementById('openCard').addEventListener('click', () => { buildCard(); cardModal.classList.add('open'); });
 document.getElementById('cardClose').addEventListener('click', () => cardModal.classList.remove('open'));
@@ -56,7 +56,7 @@ document.getElementById('shareCard').addEventListener('click', async () => {
   const text = `HALALAH — Explorer Card\nRank: ${rankFor(visitedSet.size)}\n` +
                `Seen ${seenSet.size}/${S.ALL.length} · Visited ${visitedSet.size} · Venues cleared ${cleared}`;
   if(navigator.share){ try{ await navigator.share({ title:'HALALAH', text }); return; }catch(e){ if(e.name==='AbortError') return; } }
-  try{ await navigator.clipboard.writeText(text); showToast('CARD COPIED'); }catch(e){ showToast('COULD NOT SHARE'); }
+  try{ await navigator.clipboard.writeText(text); showToast('Card copied'); }catch(e){ showToast('Could not share'); }
 });
 
 function refreshProgressUI(){

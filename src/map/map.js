@@ -10,7 +10,7 @@ import { setStatus } from '../ui/toast.js';
    ========================================================================== */
 const map = L.map('map', { zoomControl:false, minZoom:11, maxZoom:18 }).setView([1.3521,103.8198], 12);
 /* Esri's World Dark Gray Base: keyless and dark. CARTO's free basemaps began
-   stamping "API KEY REQUIRED" across every tile in Oct 2026 — served as a
+   stamping "Api key required" across every tile in Oct 2026 — served as a
    normal 200 PNG, so nothing errored, the map just grew a watermark. Esri's
    native tiles stop at zoom 16; Leaflet upscales 17–18 from them, which on a
    pixel-art map is a feature. */
@@ -19,10 +19,10 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_D
   maxNativeZoom:16, maxZoom:18 }).addTo(map);
 
 Object.entries(ZONE_BOXES).forEach(([name,z]) => {
-  L.rectangle(z.bounds,{ color:z.color, weight:2, dashArray:"7 7", fillColor:z.color,
+  L.rectangle(z.bounds,{ color:z.color, weight:1, dashArray:"4 8", fillColor:z.color,
                          fillOpacity:.05, interactive:false }).addTo(map);
   L.marker(L.latLngBounds(z.bounds).getCenter(),{ interactive:false,
-    icon:L.divIcon({ className:'', html:`<div class="zone-label">${name} ZONE</div>`, iconSize:[110,14] })
+    icon:L.divIcon({ className:'', html:`<div class="zone-label">${name} zone</div>`, iconSize:[110,14] })
   }).addTo(map);
 });
 
@@ -72,7 +72,7 @@ function renderGroups(groups){
     return m;
   }));
   const n = groups.reduce((s,g) => s + g.items.length, 0);
-  setStatus(`${n} SPOT${n===1?'':'S'} · ${groups.length} PLACE${groups.length===1?'':'S'}`);
+  setStatus(`${n} spot${n===1?'':'s'} · ${groups.length} place${groups.length===1?'':'s'}`);
 }
 /* Re-icon on zoom so venue names appear/disappear at the threshold. */
 let lastZoomBand = null;

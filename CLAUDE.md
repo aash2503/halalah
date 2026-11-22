@@ -10,12 +10,14 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
 - **Skin (22 Nov 2026, replaces the navy/yellow colours above):** deep olive, black and off-white only; no maroon, no tatreez band.
   Off-white is the one act colour (next-prayer row, current tab, primary button). The Solat banner carries the flair: olive gradient, the
   sun's path over a pixel skyline (`arcSvg` in solat.js), the place, and Live (green dot) / Saved (amber dot) / Estimated (red !) with words.
-  No status bar. Solat must fit one screen without scrolling from 360x640 up. Food screens still to be reskinned.
+  No status bar. Solat must fit one screen without scrolling from 360x640 up. Food screens reskinned 22 Nov (first pass: overrides at
+  the end of `b.css`, sizes and colours rewritten in `app.css`, UI strings in sentence case; data values such as names, 'ALL', zone
+  names stay capitals because code compares them). Left: category chip colours, region-badge emoji, a check on a real phone.
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an
   estimate as official. Hijri (`hijri.js`): Umm al-Qura with a -1/0/+1 adjustment; MUIS's own calendar is still to do.
-- **Still to do:** restyle the Food screens to B (landing, search, sheets, wheel, log); bundle the MUIS year table in the build;
+- **Still to do:** bundle the MUIS year table in the build;
   month view; reminder settings (minutes before, azan or tone); Android wrapper with on-device notifications, then the widget;
   iPhone web push (later).
 - **Android app** (`android/`, package `com.aash.halalah`; `.github/workflows/apk.yml`): a WebView shell that carries the one-file app and
