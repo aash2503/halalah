@@ -8,6 +8,7 @@
    ========================================================================== */
 import './styles/app.css';
 import './styles/b.css';
+import './styles/food.css';
 
 import { S, onProgressChange, syncBadgeBaseline } from './state.js';
 import { onGroupTap, map } from './map/map.js';

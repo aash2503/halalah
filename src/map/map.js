@@ -19,8 +19,8 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_D
   maxNativeZoom:16, maxZoom:18 }).addTo(map);
 
 Object.entries(ZONE_BOXES).forEach(([name,z]) => {
-  L.rectangle(z.bounds,{ color:z.color, weight:1, dashArray:"4 8", fillColor:z.color,
-                         fillOpacity:.05, interactive:false }).addTo(map);
+  L.rectangle(z.bounds,{ color:"#6E7A5C", weight:1, dashArray:"4 8", fillColor:z.color,
+                         fillOpacity:0, interactive:false }).addTo(map);
   L.marker(L.latLngBounds(z.bounds).getCenter(),{ interactive:false,
     icon:L.divIcon({ className:'', html:`<div class="zone-label">${name} zone</div>`, iconSize:[110,14] })
   }).addTo(map);

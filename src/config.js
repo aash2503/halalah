@@ -104,7 +104,7 @@ export const REVALIDATE_MS = 24*60*60*1000;   // refresh from the network once a
 export const UPSTREAM_OLD_DAYS = 14, UPSTREAM_STALE_DAYS = 45;
 
 export const SLICES = 8;                      // most picks we'll ever put on the wheel
-export const SLICE_COLORS = ["#EF4444","#FBBF24","#10B981","#3B82F6","#F08030","#A040A0","#6890F0","#78C850"];
+export const SLICE_COLORS = ["#F6F3E9","#8FA066","#DDE2CC","#6B7F45","#F6F3E9","#A9B88A","#DDE2CC","#55692F"];
 
 export const AR_FOV = 70;                     // horizontal degrees mapped across the screen
 export const AR_RADII = [300, 500, 1000, 2000];

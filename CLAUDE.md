@@ -13,6 +13,10 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
   No status bar. Solat must fit one screen without scrolling from 360x640 up. Food screens reskinned 22 Nov (first pass: overrides at
   the end of `b.css`, sizes and colours rewritten in `app.css`, UI strings in sentence case; data values such as names, 'ALL', zone
   names stay capitals because code compares them). Left: category chip colours, region-badge emoji, a check on a real phone.
+- **Food redesign (23 Nov 2026, he said the first reskin looked bad):** `src/styles/food.css`, loaded last. Search bar + filter pills + a
+  small count on top; locate button and zoom/key stack on the right; ONE dock of the five tools along the bottom; no title plate. Sheets and
+  tools use plain rows and dividers, not boxes in boxes. `app.css` was de-chunked (1px lines, no hard shadows, one radius). App icon:
+  the sun's path over the pixel skyline on olive (generated with PIL; `src/assets/icon-*.png`, Android mipmap).
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an

@@ -68,10 +68,10 @@ async function drawWheel(){
   let out = '';
 
   if(!wheelPool.length){
-    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#374151" stroke="#0A0F18" stroke-width="2.5"/>`;
+    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1D2513" stroke="#3F4B2E" stroke-width="2.5"/>`;
   } else if(wheelSlices === 1){
     // One pick: a full disc, because a 360° arc path collapses to nothing.
-    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${SLICE_COLORS[0]}" stroke="#0A0F18" stroke-width="2.5"/>`;
+    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${SLICE_COLORS[0]}" stroke="#10140B" stroke-width="2.5"/>`;
   }
 
   for(let i=0; i<wheelPool.length && wheelSlices > 1; i++){
@@ -79,7 +79,7 @@ async function drawWheel(){
     const [x0,y0]=polar(cx,cy,r,a0), [x1,y1]=polar(cx,cy,r,a1);
     const large = seg > 180 ? 1 : 0;
     out += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large},1 ${x1.toFixed(2)},${y1.toFixed(2)} Z"
-             fill="${SLICE_COLORS[i % SLICE_COLORS.length]}" stroke="#0A0F18" stroke-width="2.5"/>`;
+             fill="${SLICE_COLORS[i % SLICE_COLORS.length]}" stroke="#10140B" stroke-width="2.5"/>`;
   }
   // Labels drawn after all wedges so no slice can overlap a neighbour's text.
   for(let i=0;i<wheelPool.length;i++){
@@ -91,9 +91,9 @@ async function drawWheel(){
               transform="rotate(${(wheelSlices===1?0:(flip?mid+90:mid-90)).toFixed(1)},${tx.toFixed(2)},${ty.toFixed(2)})"
               text-anchor="${wheelSlices===1?'middle':(flip?'start':'end')}" dominant-baseline="middle"
               font-family="'Press Start 2P',cursive" font-size="5"
-              fill="#111827">${escapeHtml(nm.length>12?nm.slice(0,11)+'.':nm)}</text>`;
+              fill="#10140B">${escapeHtml(nm.length>12?nm.slice(0,11)+'.':nm)}</text>`;
   }
-  out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#0A0F18" stroke-width="5"/>`;
+  out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#10140B" stroke-width="5"/>`;
   svg.innerHTML = out;
   document.getElementById('wheelResult').innerHTML =
     `<div class="rn">${wheelPool.length?'Ready?':'No picks'}</div>` +

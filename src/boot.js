@@ -46,7 +46,7 @@ function readyUp(note){
       `MUIS registry · synced ${fmtSynced(S.SYNCED_AT)}<br>Always verify the certificate on site`;
   }
   startBtn.disabled = false;
-  startBtn.textContent = 'Press start';
+  startBtn.textContent = 'Open the map';
   loadNote.classList.remove('err');
   loadNote.textContent = note;
 }
