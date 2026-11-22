@@ -3,14 +3,12 @@
 import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey, trust } from './data.js';
 import { hijri } from './hijri.js';
 import { pi } from '../ui/icons.js';
+import { bellOn, setBell, sync as syncReminders } from './remind.js';
 
 const $ = id => document.getElementById(id);
 let view = new Date();                       // the date on screen
 const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
 const sameDay = (a, b) => dkey(a) === dkey(b);
-const bells = () => { try{ return JSON.parse(localStorage.getItem('hl.solat.bells')) || {}; }catch(e){ return {}; } };
-const bellOn = p => { const b = bells(); return p in b ? b[p] : p !== 'syuruk'; };
-
 function nextPrayer(){
   const n = new Date(), mins = n.getHours() * 60 + n.getMinutes() + n.getSeconds() / 60;
   const t = timesFor(today()).times;
@@ -90,12 +88,12 @@ export function initSolat(){
   pick.addEventListener('change', () => { const [y, m, d] = pick.value.split('-').map(Number); if(y){ view = new Date(y, m - 1, d); renderSolat(); } });
   $('solRows').addEventListener('click', e => {
     const b = e.target.closest('[data-bell]'); if(!b) return;
-    const all = bells(); all[b.dataset.bell] = !bellOn(b.dataset.bell);
-    try{ localStorage.setItem('hl.solat.bells', JSON.stringify(all)); }catch(err){}
+    setBell(b.dataset.bell, !bellOn(b.dataset.bell));
     renderSolat();
   });
   $('solPrev').innerHTML = pi('left', 20); $('solNext').innerHTML = pi('right', 20);
   renderSolat();
   setInterval(renderSolat, 20000);
-  refresh(false).then(r => { renderSolat(); document.dispatchEvent(new CustomEvent('solat-data', { detail:r })); });
+  syncReminders();
+  refresh(false).then(r => { renderSolat(); syncReminders(); document.dispatchEvent(new CustomEvent('solat-data', { detail:r })); });
 }

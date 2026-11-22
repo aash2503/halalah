@@ -225,3 +225,14 @@ html,body,#app,.landing,.panel,.sheet,.dialog,.btn,input,button{ font-family:var
 .empty,.hint{ color:var(--dim); font-size:15px; }
 .avatar{ display:grid; place-items:center; color:var(--darker); background:var(--ink)!important; border:0!important; border-radius:var(--r)!important; }
 .modal,.modal-body{ background:var(--darker); }
+
+/* ---- reminder settings ---- */
+.set-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; margin-top:12px; }
+.set-col{ margin-top:16px; } .set-col > span{ display:block; margin-bottom:8px; }
+.more-p .seg{ margin-top:0; } .seg.sm{ flex:0 0 auto; } .seg.sm button{ min-width:64px; }
+.sel{ min-height:48px; min-width:132px; background:var(--darker); color:var(--ink); border:1px solid var(--dim); border-radius:var(--r); font:500 16px var(--read); padding:0 8px; }
+.rem-prayers{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.chk{ min-height:48px; background:transparent; color:var(--dim); border:1px solid var(--line); border-radius:var(--r); font:500 15px var(--read); cursor:pointer; }
+.chk[aria-checked="true"]{ background:var(--ink); color:var(--darker); border-color:var(--ink); font-weight:700; }
+.chk[aria-checked="true"]::before{ content:'\2713  '; }
+#remBody .btn2{ width:100%; margin-top:12px; }

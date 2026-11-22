@@ -2,11 +2,14 @@ package com.aash.halalah;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.Window;
@@ -47,7 +50,7 @@ public class MainActivity extends Activity {
     private static final String HOME = "https://" + HOST + "/";
     private static final String RELEASE = "https://github.com/aash2503/halalah/releases/latest/download/";
     private static final String MUIS = "https://data.gov.sg/api/action/datastore_search";
-    private static final int REQ_LOCATION = 1;
+    private static final int REQ_LOCATION = 1, REQ_NOTIFY = 2;
     private WebView web;
     private long startedAt;
     private String geoOrigin;
@@ -117,6 +120,10 @@ public class MainActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
+        if (code == REQ_NOTIFY) {
+            web.evaluateJavascript("window.__hlNotify&&window.__hlNotify('" + notifyState() + "')", null);
+            return;
+        }
         if (code != REQ_LOCATION || geoCallback == null) return;
         boolean ok = false;
         for (int r : results) if (r == PackageManager.PERMISSION_GRANTED) ok = true;
@@ -187,7 +194,38 @@ public class MainActivity extends Activity {
         } finally { c.disconnect(); }
     }
 
+    /** "granted" when notifications can be shown, otherwise "denied". */
+    private String notifyState() {
+        boolean ok;
+        if (Build.VERSION.SDK_INT >= 33) ok = checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        else { NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); ok = nm == null || nm.areNotificationsEnabled(); }
+        return ok ? "granted" : "denied";
+    }
+
     private class Bridge {
         @JavascriptInterface public String build() { return String.valueOf(currentBuild()); }
+        @JavascriptInterface public void schedule(String json) { Reminders.save(MainActivity.this, json); }
+        @JavascriptInterface public String notifyState() { return MainActivity.this.notifyState(); }
+        @JavascriptInterface public boolean exactOk() { return Reminders.exactOk(MainActivity.this); }
+        @JavascriptInterface public void askNotify() {
+            runOnUiThread(() -> {
+                if (Build.VERSION.SDK_INT >= 33 && "denied".equals(MainActivity.this.notifyState()))
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFY);
+                else web.evaluateJavascript("window.__hlNotify&&window.__hlNotify('" + MainActivity.this.notifyState() + "')", null);
+            });
+        }
+        @JavascriptInterface public void test(String style) {
+            Reminders.show(MainActivity.this, 99, "Test reminder", "This is how Halalah will remind you.", style);
+        }
+        @JavascriptInterface public void openNotifySettings() {
+            runOnUiThread(() -> {
+                try {
+                    Intent i = Build.VERSION.SDK_INT >= 26
+                            ? new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName())
+                            : new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+                    startActivity(i);
+                } catch (Exception e) { /* no settings screen on this phone */ }
+            });
+        }
     }
 }

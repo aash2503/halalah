@@ -18,8 +18,12 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an
   estimate as official. Hijri (`hijri.js`): Umm al-Qura with a -1/0/+1 adjustment; MUIS's own calendar is still to do.
 - **Still to do:** bundle the MUIS year table in the build;
-  month view; reminder settings (minutes before, azan or tone); Android wrapper with on-device notifications, then the widget;
+  month view; travel mode (location-based times, calculation method); the home-screen widget;
   iPhone web push (later).
+- **Reminders (22 Nov 2026; no azan, his call):** `src/solat/remind.js` builds 30 days of reminders (per-prayer bells, at the time and/or N
+  minutes before, sound and vibrate / vibrate only / silent) and hands them to the shell (`HalalahApp.schedule`); `Reminders.java` keeps the
+  list and one alarm for the next entry, `AlarmReceiver` shows it and re-arms after a restart. Settings live in More. A change to the
+  Java side needs a new APK install; the web side self-updates.
 - **Android app** (`android/`, package `com.aash.halalah`; `.github/workflows/apk.yml`): a WebView shell that carries the one-file app and
   self-updates: at each start it reads `version.txt` from the repo's `latest` release and downloads `halalah.html` when the build number is
   higher. Only Android-side changes need a reinstall. `/muis` in the shell proxies data.gov.sg (`window.HalalahApp` marks the app).
