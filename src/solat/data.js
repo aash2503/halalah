@@ -5,12 +5,15 @@
    (first run offline, or a year MUIS has not published yet) the times are
    CALCULATED and the screen says so: never shown as official. */
 const DATASET = 'd_a6a206cba471fe04b62dd886ef5eaf22';
-const API = 'https://data.gov.sg/api/action/datastore_search?resource_id=' + DATASET;
+/* In the Android app the shell fetches for us (/muis), which avoids the browser's cross-site limits. */
+const API = (typeof window !== 'undefined' && window.HalalahApp ? '/muis' : 'https://data.gov.sg/api/action/datastore_search')
+  + '?resource_id=' + DATASET;
 const KEY = 'hl.solat.v1';
 export const PRAYERS = ['subuh','syuruk','zohor','asar','maghrib','isyak'];
 export const LABEL = { subuh:'Subuh', syuruk:'Syuruk', zohor:'Zohor', asar:'Asar', maghrib:'Maghrib', isyak:'Isyak' };
 
 let store = { fetchedAt:0, days:{} };
+export let lastError = '';
 try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.days) store = s; }catch(e){}
 
 export const pad = n => String(n).padStart(2,'0');
@@ -61,8 +64,9 @@ export async function refresh(force){
     if(!Object.keys(days).length) throw new Error('no rows understood');
     store = { fetchedAt: Date.now(), days };
     try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){}
+    lastError = '';
     return { ok:true, count:Object.keys(days).length };
-  }catch(err){ return { ok:false, error:String(err && err.message || err) }; }
+  }catch(err){ lastError = String(err && err.message || err); return { ok:false, error:lastError }; }
 }
 
 export function status(){

@@ -1,0 +1,71 @@
+# Builds the web app (one file) and the Android APK, and publishes both on the repo's "latest" release:
+#   halalah.apk    download once on the phone and install
+#   halalah.html + version.txt    what the installed app fetches at each start (self-update, no reinstall)
+# Signing: add these Actions secrets once so every APK can update the installed one: ANDROID_KEYSTORE_BASE64,
+# ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Without them the APK is signed with a debug key
+# kept in the Actions cache, which can be lost (then the app must be uninstalled once before installing a new APK).
+name: Build app and APK
+on:
+  push: { branches: [main, optimus/solat-kiblat] }
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: apk, cancel-in-progress: true }
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Build the web app (one file)
+        run: |
+          npm ci && npm run build
+          mkdir -p android/app/src/main/assets/www out
+          cp dist/halalah-v*.html android/app/src/main/assets/www/index.html
+          echo "$GITHUB_RUN_NUMBER" > android/app/src/main/assets/www/build.txt
+          cp dist/halalah-v*.html out/halalah.html
+          echo "$GITHUB_RUN_NUMBER" > out/version.txt
+          echo "HL_BUILD=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+          echo "HL_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+      - name: Debug key cache (only used without the ANDROID_* secrets)
+        uses: actions/cache@v4
+        with: { path: ~/.android-keys, key: halalah-debug-key-v1 }
+      - name: Signing key
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          mkdir -p ~/.android-keys
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASS" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "HL_KEYSTORE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"; echo "HL_KS_PASS=$KS_PASS" >> "$GITHUB_ENV"
+            echo "HL_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"; echo "HL_KEY_PASS=$KEY_PASS" >> "$GITHUB_ENV"; echo "KIND=release key" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No ANDROID_* secrets: signing with the cached debug key. If the cache is lost, uninstall the app once before installing a new APK."
+            [ -f ~/.android-keys/debug.keystore ] || keytool -genkeypair -keystore ~/.android-keys/debug.keystore -storepass android -keypass android \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+            echo "HL_KEYSTORE=$HOME/.android-keys/debug.keystore" >> "$GITHUB_ENV"; echo "HL_KS_PASS=android" >> "$GITHUB_ENV"
+            echo "HL_KEY_ALIAS=androiddebugkey" >> "$GITHUB_ENV"; echo "HL_KEY_PASS=android" >> "$GITHUB_ENV"; echo "KIND=debug key (cached)" >> "$GITHUB_ENV"
+          fi
+      - name: Build the APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk ../out/halalah.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Halalah (latest build)
+          body: "Build ${{ github.run_number }} from ${{ github.sha }}, signed with the ${{ env.KIND }}. On the phone: download halalah.apk and open it to install. After that the app updates itself."
+          files: |
+            out/halalah.apk
+            out/halalah.html
+            out/version.txt
+          make_latest: true

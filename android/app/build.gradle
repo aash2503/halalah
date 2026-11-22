@@ -1,0 +1,21 @@
+plugins { id 'com.android.application' }
+// The signing key is never in this (public) repo: CI passes it in through the four ANDROID_* secrets.
+def ks = System.getenv('HL_KEYSTORE')
+android {
+    namespace 'com.aash.halalah'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.aash.halalah'
+        minSdk 24
+        targetSdk 34
+        versionCode((System.getenv('HL_BUILD') ?: '1') as int)
+        versionName System.getenv('HL_VERSION') ?: '7.0'
+    }
+    signingConfigs {
+        if (ks) personal { storeFile file(ks); storePassword System.getenv('HL_KS_PASS'); keyAlias System.getenv('HL_KEY_ALIAS'); keyPassword System.getenv('HL_KEY_PASS') }
+    }
+    buildTypes {
+        release { minifyEnabled false; if (ks) signingConfig signingConfigs.personal }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

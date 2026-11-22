@@ -1,6 +1,6 @@
 /* Solat screen: all six times for a day, the next prayer and a countdown, the
    Hijri date, and a way to step or jump to any date (design option B). */
-import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey } from './data.js';
+import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey, lastError } from './data.js';
 import { hijri } from './hijri.js';
 import { pi } from '../ui/icons.js';
 
@@ -46,7 +46,7 @@ export function renderSolat(){
   $('solToday').style.display = isToday ? 'none' : '';
   $('solNote').innerHTML = official
     ? 'Official times from the MUIS prayer timetable.'
-    : pi('warn', 12) + ' Estimated times. The official MUIS timetable for this date is not loaded yet.';
+    : pi('warn', 12) + ' Estimated times. The official MUIS timetable for this date is not loaded yet.' + (lastError ? ' (' + lastError + ')' : '');
   $('solNote').classList.toggle('est', !official);
 }
 

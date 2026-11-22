@@ -14,5 +14,9 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
 - **Still to do:** restyle the Food screens to B (landing, search, sheets, wheel, log); bundle the MUIS year table in the build;
   month view; reminder settings (minutes before, azan or tone); Android wrapper with on-device notifications, then the widget;
   iPhone web push (later).
+- **Android app** (`android/`, package `com.aash.halalah`; `.github/workflows/apk.yml`): a WebView shell that carries the one-file app and
+  self-updates: at each start it reads `version.txt` from the repo's `latest` release and downloads `halalah.html` when the build number is
+  higher. Only Android-side changes need a reinstall. `/muis` in the shell proxies data.gov.sg (`window.HalalahApp` marks the app).
+  The signing key is never in the repo (public): four `ANDROID_*` Actions secrets, else a cached debug key.
 - **Build:** `npm run build` -> ONE file `dist/halalah-vX.Y.html` for canvaslink (verify-build.js fails on any sibling asset or new
   host). Never a service_role key in the repo. Plan first and wait for "go".

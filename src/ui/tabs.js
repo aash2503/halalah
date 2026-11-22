@@ -24,6 +24,7 @@ function renderMore(){
   $('moreData').textContent = s.count
     ? 'Official MUIS times loaded for ' + s.first + ' to ' + s.last + '. Last checked ' + new Date(s.fetchedAt).toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' }) + '.'
     : 'Official MUIS times are not loaded yet. Times shown are estimates until this phone goes online.';
+  if(window.HalalahApp) $('moreApp').textContent = 'Android app, build ' + window.HalalahApp.build() + '. It updates itself when opened online.';
   document.querySelectorAll('[data-hadj]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.hadj === hijriAdjust())));
 }
 
