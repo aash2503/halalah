@@ -13,7 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * The three home-screen widgets (wide 4x2, square 2x2, small 2x1).
+ * The three home-screen widgets (wide 4x2, square 2x2, small 2x1). The wide one follows a layout he picked (23 Nov 2026):
+ * next prayer on the left (tag, name, big time, place), all six times as rows on the right.
  * The web app hands over about a month of prayer times for the place in use (HalalahApp.widget):
  *   { place, days:[ { d:"2026-11-23", off:480, k:"o"|"e"|"c", s:["05:27",...six], t:[epoch ms,...six] } ] }
  * d is the calendar day at the place, off its minutes east of UTC, k the source (official / estimated / calculated).
@@ -40,6 +41,7 @@ final class Widgets {
     /** What the widgets show right now, worked out from the saved month. */
     private static final class Model {
         String place = "Halalah", src = "", next = "Open Halalah to load prayer times";
+        String tag = "Halalah", nname = "Open the app", ntime = "";   // the wide widget's left side
         String[] times = null;          // six "HH:MM" for the day at the place, or null when there is nothing to show
         int hi = -1;                    // which of the six is next (today only)
         long wake = 0;                  // when the picture next changes
@@ -73,9 +75,10 @@ final class Widgets {
             if (nextDay >= 0) {
                 String at = days.getJSONObject(nextDay).getJSONArray("s").getString(nextIdx);
                 m.next = "Next: " + NAMES[nextIdx] + " " + at + (nextDay == today ? "" : " tomorrow");
+                m.tag = nextDay == today ? "Next" : "Tomorrow"; m.nname = NAMES[nextIdx]; m.ntime = at;
                 if (nextDay == today) m.hi = nextIdx;
                 if (m.wake == 0 || nextAt < m.wake) m.wake = nextAt;
-            } else m.next = "Open Halalah to load more days";
+            } else { m.next = "Open Halalah to load more days"; m.tag = "Halalah"; m.nname = "Open the app"; }
         } catch (Exception e) { /* nothing saved yet, or unreadable: the widgets say to open the app */ }
         return m;
     }
@@ -94,7 +97,7 @@ final class Widgets {
         if (mgr == null) return;
         Model m = model(c);
         boolean any = false;
-        any |= draw(c, mgr, WidgetWide.class, R.layout.widget_wide, m, true, true);
+        any |= draw(c, mgr, WidgetWide.class, R.layout.widget_wide, m, true, false);
         any |= draw(c, mgr, WidgetSquare.class, R.layout.widget_square, m, true, false);
         any |= draw(c, mgr, WidgetSmall.class, R.layout.widget_small, m, false, true);
         arm(c, any ? m.wake : 0);
@@ -107,13 +110,17 @@ final class Widgets {
         rv.setTextViewText(R.id.place, m.place);
         rv.setTextViewText(R.id.src, m.src);
         if (nextLine) rv.setTextViewText(R.id.next, m.next);
+        if (layout == R.layout.widget_wide) {
+            rv.setTextViewText(R.id.tag, m.tag); rv.setTextViewText(R.id.nname, m.nname); rv.setTextViewText(R.id.ntime, m.ntime);
+            rv.setTextViewText(R.id.src, m.src.isEmpty() ? "" : "MUIS".equals(m.src) ? "MUIS timetable" : m.src + " times");
+        }
         if (six) {
             for (int j = 0; j < 6; j++) {
                 boolean on = j == m.hi;
                 rv.setTextViewText(L[j], m.times == null ? (j == 0 ? "Open Halalah" : "") : NAMES[j]);
                 rv.setTextViewText(T[j], m.times == null ? "" : m.times[j]);
                 rv.setInt(C[j], "setBackgroundResource", on ? R.drawable.widget_hi : 0);
-                rv.setTextColor(L[j], on ? DARK : (layout == R.layout.widget_wide ? SOFT : INK));
+                rv.setTextColor(L[j], on ? DARK : INK);
                 rv.setTextColor(T[j], on ? DARK : INK);
             }
         }

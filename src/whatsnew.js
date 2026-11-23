@@ -1,6 +1,8 @@
 /* What's new, newest first. Add an entry at the TOP with every push: `title` is the one line shown in the phone's
    "Halalah updated" notification (the build writes NEWS[0].title to notes.txt), `items` is the list in More. */
 export const NEWS = [
+  { date:'23 Nov 2026', title:'The wide widget has a new layout: next prayer on the left, all six times on the right.',
+    items:[ 'Wide widget (4 × 2): the next prayer with a large time and the place on the left; all six times as rows on the right. Needs the newest halalah.apk.' ] },
   { date:'23 Nov 2026', title:'Home-screen widgets for prayer times; Singapore in the city list.',
     items:[ 'Three widgets: wide (4 × 2) and square (2 × 2) with all six times, and a small one (2 × 1) with the next prayer. Long-press the home screen, Widgets, Halalah. Needs the newest halalah.apk.',
             'More, Place, A city: Singapore is the first choice and uses the official MUIS timetable, not a calculation.' ] },
