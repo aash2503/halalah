@@ -32,7 +32,8 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
 - **Update pings (23 Nov 2026):** `Updater.java` + `UpdateJob.java` check the release about every six hours in the background and notify
   "Halalah updated" with `notes.txt` (= `NEWS[0].title` in `src/whatsnew.js`); the tap opens More > What's new (`?whatsnew=1`).
   ADD AN ENTRY AT THE TOP OF `src/whatsnew.js` WITH EVERY PUSH.
-- **Widgets (23 Nov 2026):** three home-screen widgets, all drawn by `Widgets.java` from a month of times the web app hands over
+- **Widgets (23 Nov 2026):** four home-screen widgets (a 3x2 was added, and all follow the app's style: skyline `widget_sky.xml`, pixel
+  font `res/font/press_start.ttf` for the next time; widget names stay short because some launchers print them). Originally three, all drawn by `Widgets.java` from a month of times the web app hands over
   (`HalalahApp.widget`, built by `buildWidget` in remind.js): wide 4x2 and square 2x2 with all six times, small 2x1 with the next prayer.
   Redrawn by one alarm at each prayer time and at midnight. Layouts `res/layout/widget_*.xml`. Singapore is also the first entry in the
   city list and always means the official MUIS table.

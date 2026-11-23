@@ -13,7 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * The three home-screen widgets (wide 4x2, square 2x2, small 2x1). The wide one follows a layout he picked (23 Nov 2026):
+ * The four home-screen widgets (wide 4x2, medium 3x2, square 2x2, small 2x1), in the app's own style: the olive
+ * gradient, the pixel skyline along the bottom, the pixel font for the next prayer's time, off-white for what is next. The wide one follows a layout he picked (23 Nov 2026):
  * next prayer on the left (tag, name, big time, place), all six times as rows on the right.
  * The web app hands over about a month of prayer times for the place in use (HalalahApp.widget):
  *   { place, days:[ { d:"2026-11-23", off:480, k:"o"|"e"|"c", s:["05:27",...six], t:[epoch ms,...six] } ] }
@@ -97,7 +98,8 @@ final class Widgets {
         if (mgr == null) return;
         Model m = model(c);
         boolean any = false;
-        any |= draw(c, mgr, WidgetWide.class, R.layout.widget_wide, m, true, false);
+        any |= draw(c, mgr, WidgetWide.class, R.layout.widget_wide, m, true, true);
+        any |= draw(c, mgr, WidgetMedium.class, R.layout.widget_medium, m, true, true);
         any |= draw(c, mgr, WidgetSquare.class, R.layout.widget_square, m, true, false);
         any |= draw(c, mgr, WidgetSmall.class, R.layout.widget_small, m, false, true);
         arm(c, any ? m.wake : 0);
@@ -108,12 +110,9 @@ final class Widgets {
         if (ids == null || ids.length == 0) return false;
         RemoteViews rv = new RemoteViews(c.getPackageName(), layout);
         rv.setTextViewText(R.id.place, m.place);
-        rv.setTextViewText(R.id.src, m.src);
-        if (nextLine) rv.setTextViewText(R.id.next, m.next);
-        if (layout == R.layout.widget_wide) {
-            rv.setTextViewText(R.id.tag, m.tag); rv.setTextViewText(R.id.nname, m.nname); rv.setTextViewText(R.id.ntime, m.ntime);
-            rv.setTextViewText(R.id.src, m.src.isEmpty() ? "" : "MUIS".equals(m.src) ? "MUIS timetable" : m.src + " times");
-        }
+        rv.setTextViewText(R.id.src, layout == R.layout.widget_wide
+                ? (m.src.isEmpty() ? "" : "MUIS".equals(m.src) ? "MUIS timetable" : m.src + " times") : m.src);
+        if (nextLine) { rv.setTextViewText(R.id.tag, m.tag); rv.setTextViewText(R.id.nname, m.nname); rv.setTextViewText(R.id.ntime, m.ntime); }
         if (six) {
             for (int j = 0; j < 6; j++) {
                 boolean on = j == m.hi;
