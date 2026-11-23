@@ -236,3 +236,22 @@ html,body,#app,.landing,.panel,.sheet,.dialog,.btn,input,button{ font-family:var
 .chk[aria-checked="true"]{ background:var(--ink); color:var(--darker); border-color:var(--ink); font-weight:700; }
 .chk[aria-checked="true"]::before{ content:'\2713  '; }
 #remBody .btn2{ width:100%; margin-top:12px; }
+
+/* ---- travel: place, method and what is adjusting the times ---- */
+.sol-where .loc span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sol-where .ring{ width:12px; height:12px; border-radius:50%; border:2px solid var(--ink); flex:0 0 auto; }
+.sol-src{ text-align:left; font-size:13px; color:#DDE2CC; margin:-2px 0 4px; }
+.sol-next{ cursor:pointer; }
+.sol-row .buf{ margin-left:auto; font-size:12px; font-weight:700; color:var(--darker); background:var(--dim); border-radius:4px; padding:1px 6px; }
+.sol-row .buf + .t{ margin-left:0; }
+.sol-info{ position:fixed; inset:0; z-index:9500; background:rgba(0,0,0,.6); display:none; align-items:flex-end; justify-content:center; }
+.sol-info.open{ display:flex; }
+.sol-info-card{ width:100%; max-width:560px; max-height:85%; overflow-y:auto; background:var(--dark); color:var(--ink); font-family:var(--read); font-size:15px; line-height:1.45;
+  border-radius:16px 16px 0 0; padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); }
+.sol-info-card h3{ margin:0 0 8px; font-size:18px; }
+.sol-info-card ul,.adj{ margin:8px 0 16px; padding-left:20px; } .sol-info-card li,.adj li{ margin-bottom:6px; }
+.adj{ color:var(--ink); font-size:14px; line-height:1.4; margin-bottom:0; }
+.more-p .seg button{ font-size:14px; }
+
+.news + .news{ margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+.news .nd{ font-size:13px; color:var(--dim); } .news .nt{ font-weight:600; margin:2px 0 4px; }

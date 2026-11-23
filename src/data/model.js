@@ -9,7 +9,7 @@ import { regionFor } from '../util.js';
    ABSENT:  hours, phone, cuisine, price, ratings, reviews.
    Nothing in this UI may imply any of those.
    ========================================================================== */
-const subMeta = s => SUB_SCHEME[s.sub_scheme] || { label:(s.sub_scheme_text||"OTHER").toUpperCase(), color:"#8f8fa8" };
+const subMeta = s => SUB_SCHEME[s.sub_scheme] || { label:(s.sub_scheme_text||"Other"), color:"#475569" };
 
 
 

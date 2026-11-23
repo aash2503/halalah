@@ -2,6 +2,7 @@
    30 days of reminders are handed to the shell (HalalahApp.schedule), which rings them with the app closed and the
    phone offline. In a browser nothing can ring; the choices are still saved. */
 import { PRAYERS, LABEL, timesFor, fmt } from './data.js';
+import { place, placeNow, instantAt } from './place.js';
 
 const KEY = 'hl.remind', BELLS = 'hl.solat.bells', DAYS = 30;
 const app = () => (typeof window !== 'undefined' && window.HalalahApp && window.HalalahApp.schedule) ? window.HalalahApp : null;
@@ -25,23 +26,23 @@ export function setBell(p, on){
 }
 
 /* -> [{ t, id, title, text, ch }] in time order, from now on. Pure: tests call it with a fixed "now". */
-export function buildSchedule(now = new Date(), place = 'Singapore'){
-  const s = settings(), out = [];
-  if(!s.on) return out;
+export function buildSchedule(nowMs = Date.now()){
+  const s = settings(), out = [], pl = place(), base = placeNow();
+  if(!s.on || pl.needsFix) return out;
   for(let d = 0; d < DAYS; d++){
-    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
-    const { times, official } = timesFor(day);
+    const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + d);
+    const { times, official, calc } = timesFor(day);
     PRAYERS.forEach((p, i) => {
-      if(!bellOn(p)) return;
-      const at = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, times[i]).getTime();
-      const est = official ? '' : ' (estimated time)';
-      if(s.atTime && at > now.getTime())
+      if(!bellOn(p) || times[i] == null) return;
+      const at = instantAt(day, times[i]);
+      const how = official ? '' : calc ? ' (calculated)' : ' (estimated time)';
+      if(s.atTime && at > nowMs)
         out.push({ t: at, id: i, ch: s.style, title: LABEL[p] + ' · ' + fmt(times[i]),
-                   text: (p === 'syuruk' ? 'Sunrise in ' + place + '. Subuh has ended.' : 'It is time for ' + LABEL[p] + ' in ' + place + '.') + est });
+                   text: (p === 'syuruk' ? 'Sunrise in ' + pl.name + '. Subuh has ended.' : 'It is time for ' + LABEL[p] + ' in ' + pl.name + '.') + how });
       const pre = at - s.before * 60000;
-      if(s.before && pre > now.getTime())
+      if(s.before && pre > nowMs)
         out.push({ t: pre, id: i, ch: s.style, title: LABEL[p] + ' in ' + s.before + ' minutes',
-                   text: (p === 'syuruk' ? 'Sunrise is at ' : LABEL[p] + ' is at ') + fmt(times[i]) + est + '.' });
+                   text: (p === 'syuruk' ? 'Sunrise is at ' : LABEL[p] + ' is at ') + fmt(times[i]) + how + '.' });
     });
   }
   out.sort((a, b) => a.t - b.t);

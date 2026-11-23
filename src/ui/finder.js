@@ -40,6 +40,7 @@ let targets = [];            // nearby buildings, nearest first
 let idx = 0;
 let indoorGroup = null;      // set when we are inside a venue
 let indoorLevel = 'ALL';
+let pin = null;               // a single spot to walk to (set by openFinderTo)
 let raf = 0, rafFallback = 0;   // coalesces compass events into one paint
 
 /* ---- heading ---------------------------------------------------------- */
@@ -101,6 +102,10 @@ function schedule(){
 function paint(){
   if(!open) return;
   targets = nearbyBuildings();
+  if(pin){                                   // "Walk me there" from a place's page: one fixed target
+    const s = pin; targets = [{ key:s.lat + ',' + s.lng, lat:s.lat, lng:s.lng, dist:s._dist == null ? 0 : s._dist, items:[s] }]; idx = 0;
+    indoorGroup = null; paintWalk(); return;
+  }
   const forced = indoorGroup && indoorGroup.forced;
   const inside = forced ? null : detectIndoor(targets);
 
@@ -254,8 +259,9 @@ async function openFinder(){
   }
   paint();
 }
+function openFinderTo(spot){ pin = spot; return openFinder(); }
 function closeFinder(){
-  open = false;
+  open = false; pin = null;
   finderModal.classList.remove('open');
   if(orientHandler){
     window.removeEventListener('deviceorientationabsolute', orientHandler, true);
@@ -297,4 +303,4 @@ function _debug(){ return { open, heading, radius, idx,
   targets: nearbyBuildings().slice(0,3).map(g => ({ key:g.key, dist:Math.round(g.dist), n:g.items.length })),
   detected: (()=>{ const g = detectIndoor(nearbyBuildings()); return g && { key:g.key, n:g.items.length }; })() }; }
 
-export { openFinder, closeFinder, renderFinderIfOpen, nearbyBuildings, finderModal, _debug };
+export { openFinderTo, openFinder, closeFinder, renderFinderIfOpen, nearbyBuildings, finderModal, _debug };

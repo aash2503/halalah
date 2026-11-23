@@ -17,12 +17,27 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
   small count on top; locate button and zoom/key stack on the right; ONE dock of the five tools along the bottom; no title plate. Sheets and
   tools use plain rows and dividers, not boxes in boxes. `app.css` was de-chunked (1px lines, no hard shadows, one radius). App icon:
   the sun's path over the pixel skyline on olive (generated with PIL; `src/assets/icon-*.png`, Android mipmap).
+- **Food as a utility (23 Nov 2026, his call: drop the gamified look):** `src/ui/list.js`. Food opens on a nearest-first LIST with a List | Map
+  switch; no first screen, no dock. Category pills combine, plus a distance row and Saved; the same selection drives list, map and
+  "Pick for me" (the highlight runs down the rows on screen and stops on one: replaces the spin wheel). Place page: Get directions,
+  Walk me there (`openFinderTo`), Save, Share. Quests, ranks, badges, visited, the log, the card and proximity pop-ups are hidden, not
+  deleted (their modules still load; saved progress is untouched). List = olive and cream; colour lives on the MAP: Esri World Street Map
+  tiles and pins coloured by type (`SUB_SCHEME` colours in config.js, same dot in the list).
+- **Travel mode (23 Nov 2026):** `src/solat/place.js` (Singapore | Where I am | A city; method, Asar rule, buffer) and `src/solat/calc.js`
+  (methods table, `calcTimes`, `roundTimes`). Singapore stays the only OFFICIAL source. Elsewhere times are CALCULATED and say so: banner
+  "Calculated" + method, tap the banner for the explanation, a +N mark beside any time moved by the buffer, "(calculated)" in reminders,
+  and More > Place lists everything adjusting the numbers (`adjustments()`). Rule from him: every adjustment must be visible to the user.
+  JAKIM = 18 deg / 18 deg (Malaysia moved Subuh from 20 to 18 in 2020), no extra padding: checked against the official Sabah Mufti (Zon 8,
+  2024) and Labuan (2026) tables: 78 times, 61 exact, 17 one minute off, none worse. Dates and "now" use the place's clock (`placeNow`).
+- **Update pings (23 Nov 2026):** `Updater.java` + `UpdateJob.java` check the release about every six hours in the background and notify
+  "Halalah updated" with `notes.txt` (= `NEWS[0].title` in `src/whatsnew.js`); the tap opens More > What's new (`?whatsnew=1`).
+  ADD AN ENTRY AT THE TOP OF `src/whatsnew.js` WITH EVERY PUSH.
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an
   estimate as official. Hijri (`hijri.js`): Umm al-Qura with a -1/0/+1 adjustment; MUIS's own calendar is still to do.
 - **Still to do:** bundle the MUIS year table in the build;
-  month view; travel mode (location-based times, calculation method); the home-screen widget;
+  month view; official JAKIM zone times for Malaysia (e-solat) in place of calculation; the home-screen widget;
   iPhone web push (later).
 - **Reminders (22 Nov 2026; no azan, his call):** `src/solat/remind.js` builds 30 days of reminders (per-prayer bells, at the time and/or N
   minutes before, sound and vibrate / vibrate only / silent) and hands them to the shell (`HalalahApp.schedule`); `Reminders.java` keeps the

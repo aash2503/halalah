@@ -1,6 +1,6 @@
 # Builds the web app (one file) and the Android APK, and publishes both on the repo's "latest" release:
 #   halalah.apk    download once on the phone and install
-#   halalah.html + version.txt    what the installed app fetches at each start (self-update, no reinstall)
+#   halalah.html + version.txt + notes.txt    what the installed app fetches (self-update, no reinstall; notes = one line of what changed)
 # Signing: add these Actions secrets once so every APK can update the installed one: ANDROID_KEYSTORE_BASE64,
 # ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Without them the APK is signed with a debug key
 # kept in the Actions cache, which can be lost (then the app must be uninstalled once before installing a new APK).
@@ -28,6 +28,8 @@ jobs:
           echo "$GITHUB_RUN_NUMBER" > android/app/src/main/assets/www/build.txt
           cp dist/halalah-v*.html out/halalah.html
           echo "$GITHUB_RUN_NUMBER" > out/version.txt
+          node --input-type=module -e "import('./src/whatsnew.js').then(m => console.log(m.NEWS[0].title))" > out/notes.txt
+          cat out/notes.txt
           echo "HL_BUILD=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
           echo "HL_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
       - name: Debug key cache (only used without the ANDROID_* secrets)
@@ -68,4 +70,5 @@ jobs:
             out/halalah.apk
             out/halalah.html
             out/version.txt
+            out/notes.txt
           make_latest: true

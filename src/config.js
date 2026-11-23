@@ -18,11 +18,11 @@ export const SELECT_COLS = "id,name,cert_number,scheme,sub_scheme,scheme_text,su
 export const DB_NAME = 'halalah', STORE = 'cache', CACHE_KEY = 'establishments';
 
 export const SUB_SCHEME = {
-  103:{ label:"HAWKER", color:"#78C850" }, 106:{ label:"RESTAURANT", color:"#F08030" },
-  108:{ label:"BAKERY", color:"#F85888" }, 202:{ label:"CATERER", color:"#7038F8" },
-  201:{ label:"KITCHEN", color:"#6890F0" }, 109:{ label:"CANTEEN", color:"#A040A0" },
-  105:{ label:"FOOD STN", color:"#d8b310" }, 101:{ label:"CANTEEN", color:"#C03028" },
-  104:{ label:"KIOSK", color:"#E0C068" }, 102:{ label:"HALAL SECT", color:"#8f8fa8" },
+  103:{ label:"Hawker", color:"#2E7D32" }, 106:{ label:"Restaurant", color:"#C2410C" },
+  108:{ label:"Bakery", color:"#BE185D" }, 202:{ label:"Caterer", color:"#475569" },
+  201:{ label:"Kitchen", color:"#475569" }, 109:{ label:"Canteen", color:"#6D28D9" },
+  105:{ label:"Food station", color:"#475569" }, 101:{ label:"Canteen", color:"#6D28D9" },
+  104:{ label:"Kiosk", color:"#475569" }, 102:{ label:"Halal section", color:"#475569" },
 };
 
 export const SCHEME_EAT = 100, SCHEME_PREP = 200;

@@ -7,6 +7,10 @@ import { hijriAdjust, setHijriAdjust } from '../solat/hijri.js';
 import { renderSolat } from '../solat/solat.js';
 import { PRAYERS, LABEL } from '../solat/data.js';
 import * as R from '../solat/remind.js';
+import { initList, foodShown } from './list.js';
+import * as P from '../solat/place.js';
+import { METHODS } from '../solat/calc.js';
+import { NEWS } from '../whatsnew.js';
 
 const $ = id => document.getElementById(id);
 const TABS = [['solat','Solat','moon'],['kiblat','Kiblat','compass'],['food','Food','fork'],['more','More','dots']];
@@ -17,7 +21,7 @@ export function showTab(name){
     const b = document.querySelector('[data-tab="' + n + '"]'); if(b){ b.classList.toggle('on', n === name); b.setAttribute('aria-current', n === name ? 'page' : 'false'); }
   });
   try{ localStorage.setItem('hl.tab', name); }catch(e){}
-  if(name === 'food' && map) setTimeout(() => map.invalidateSize(), 60);
+  if(name === 'food'){ if(map) setTimeout(() => map.invalidateSize(), 60); foodShown(); }
   if(name === 'more') renderMore();
 }
 
@@ -58,7 +62,47 @@ function initReminders(){
   if(R.settings().on && R.state() === 'app-blocked') R.ask(() => renderReminders());   // first open: Android asks once
 }
 
+function renderPlace(){
+  const p = P.prefs(), pl = P.place();
+  document.querySelectorAll('[data-place="mode"] button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === p.mode)));
+  $('plNote').textContent = p.mode === 'sg' ? 'Official MUIS times for Singapore.'
+    : pl.needsFix ? 'Looking for your location. Until it is found the Solat screen shows Singapore, calculated.'
+    : 'Showing calculated times for ' + pl.name + (pl.detail ? ', ' + pl.detail : '') + '. Calculated times are a guide: check locally where it matters.';
+  $('plCalc').style.display = p.mode === 'sg' ? 'none' : '';
+  $('plCityRow').style.display = p.mode === 'city' ? '' : 'none';
+  $('plFix').style.display = p.mode === 'gps' ? '' : 'none';
+  $('plCity').value = p.city; $('plAsr').value = String(p.asr); $('plBuf').value = String(p.buffer);
+  $('plMethod').options[0].textContent = 'Automatic' + (pl.kind === 'calc' && pl.methodAuto ? ': ' + METHODS[pl.method].name : '');
+  $('plMethod').value = p.method;
+  $('plAdj').innerHTML = P.adjustments(hijriAdjust()).map(x => '<li>' + x + '</li>').join('');
+}
+function placeChanged(){ renderPlace(); document.dispatchEvent(new CustomEvent('place-changed')); }
+function findMe(){
+  if(!navigator.geolocation){ $('plNote').textContent = 'This phone cannot give a location. Pick a city instead.'; return; }
+  $('plNote').textContent = 'Looking for your location…';
+  navigator.geolocation.getCurrentPosition(g => { P.saveFix(g.coords.latitude, g.coords.longitude); placeChanged(); },
+    () => { $('plNote').textContent = 'Could not find your location. Allow location for Halalah, or pick a city instead.'; },
+    { maximumAge: 6e5, timeout: 15000 });
+}
+function initPlace(){
+  $('plCity').innerHTML = P.CITIES.map(c => `<option value="${c.name}">${c.name}, ${c.country}</option>`).join('');
+  $('plMethod').innerHTML = '<option value="auto">Automatic</option>' + Object.keys(METHODS).map(k => `<option value="${k}">${METHODS[k].name}</option>`).join('');
+  document.querySelector('[data-place="mode"]').addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    P.setPref('mode', b.dataset.v); placeChanged();
+    if(b.dataset.v === 'gps') findMe();
+  });
+  $('plCity').addEventListener('change', () => { P.setPref('city', $('plCity').value); placeChanged(); });
+  $('plMethod').addEventListener('change', () => { P.setPref('method', $('plMethod').value); placeChanged(); });
+  $('plAsr').addEventListener('change', () => { P.setPref('asr', +$('plAsr').value); placeChanged(); });
+  $('plBuf').addEventListener('change', () => { P.setPref('buffer', +$('plBuf').value); placeChanged(); });
+  $('plFix').addEventListener('click', findMe);
+  if(P.prefs().mode === 'gps') findMe();                     // refresh the fix at each start while travelling
+}
+
 function renderMore(){
+  $('newsBox').innerHTML = NEWS.map((n, i) => `<div class="news${i ? '' : ' latest'}"><div class="nd">${n.date}${i ? '' : ' · latest'}</div><div class="nt">${n.title}</div><ul class="adj">${n.items.map(x => '<li>' + x + '</li>').join('')}</ul></div>`).join('');
+  renderPlace();
   renderReminders();
   const s = status();
   $('moreData').textContent = s.count
@@ -79,6 +123,10 @@ export function initTabs(){
   });
   document.querySelectorAll('[data-hadj]').forEach(b => b.addEventListener('click', () => { setHijriAdjust(+b.dataset.hadj); renderMore(); renderSolat(); }));
   initReminders();
+  initPlace();
+  initList();
   const deep = /[?#].*(spot|venue|q)=/.test(location.href);            // shared food links open on Food
-  showTab(deep ? 'food' : 'solat');
+  const news = /[?&]whatsnew=/.test(location.search);                  // the "Halalah updated" notification opens here
+  showTab(news ? 'more' : deep ? 'food' : 'solat');
+  if(news) setTimeout(() => $('newsLbl').scrollIntoView({ block:'start' }), 80);
 }

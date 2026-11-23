@@ -3,6 +3,8 @@ import 'leaflet.markercluster';
 import { S, groupCleared, hasVisited } from '../state.js';
 import { ZONE_BOXES, HOTSPOT_MIN, VENUE_CHIP_ZOOM, SCHEME_EAT } from '../config.js';
 import { escapeHtml } from '../util.js';
+import { SUB_SCHEME } from '../config.js';
+const pinColor = s => (SUB_SCHEME[s.sub_scheme] || { color:'#475569' }).color;
 import { setStatus } from '../ui/toast.js';
 
 /* ==========================================================================
@@ -14,17 +16,9 @@ const map = L.map('map', { zoomControl:false, minZoom:11, maxZoom:18 }).setView(
    normal 200 PNG, so nothing errored, the map just grew a watermark. Esri's
    native tiles stop at zoom 16; Leaflet upscales 17–18 from them, which on a
    pixel-art map is a feature. */
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{
   attribution:'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors · Halal data &copy; MUIS',
-  maxNativeZoom:16, maxZoom:18 }).addTo(map);
-
-Object.entries(ZONE_BOXES).forEach(([name,z]) => {
-  L.rectangle(z.bounds,{ color:"#6E7A5C", weight:1, dashArray:"4 8", fillColor:z.color,
-                         fillOpacity:0, interactive:false }).addTo(map);
-  L.marker(L.latLngBounds(z.bounds).getCenter(),{ interactive:false,
-    icon:L.divIcon({ className:'', html:`<div class="zone-label">${name} zone</div>`, iconSize:[110,14] })
-  }).addTo(map);
-});
+  maxNativeZoom:18, maxZoom:19 }).addTo(map);
 
 const clusterGroup = L.markerClusterGroup({
   showCoverageOnHover:false, spiderfyOnMaxZoom:false,
@@ -43,7 +37,7 @@ map.addLayer(clusterGroup);
 function spotPinHtml(s){
   const cls = ['pix-pin', s.scheme===SCHEME_EAT?'':'prep',
                hasVisited(s.id)?'done':'', S.NEW_IDS.has(s.id)?'isnew':''].filter(Boolean).join(' ');
-  return `<div class="${cls}"><div class="body"></div><div class="pip"></div><div class="point"></div></div>`;
+  return `<div class="${cls}" style="--pc:${pinColor(s)}"><div class="body"></div><div class="pip"></div><div class="point"></div></div>`;
 }
 function groupIcon(g, zoom){
   const n = g.items.length;

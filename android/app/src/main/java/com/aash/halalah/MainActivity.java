@@ -48,7 +48,6 @@ import java.nio.charset.StandardCharsets;
 public class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/";
-    private static final String RELEASE = "https://github.com/aash2503/halalah/releases/latest/download/";
     private static final String MUIS = "https://data.gov.sg/api/action/datastore_search";
     private static final int REQ_LOCATION = 1, REQ_NOTIFY = 2;
     private WebView web;
@@ -86,7 +85,7 @@ public class MainActivity extends Activity {
                         return new WebResourceResponse("application/json", "utf-8", new ByteArrayInputStream(body));
                     }
                     if (path == null || path.equals("/") || path.equals("/index.html"))
-                        return new WebResourceResponse("text/html", "utf-8", page());
+                        return new WebResourceResponse("text/html", "utf-8", Updater.page(MainActivity.this));
                 } catch (Exception e) {
                     return new WebResourceResponse("text/plain", "utf-8", 502, "Unavailable", null,
                             new ByteArrayInputStream(String.valueOf(e.getMessage()).getBytes(StandardCharsets.UTF_8)));
@@ -114,8 +113,9 @@ public class MainActivity extends Activity {
         });
         setContentView(web);
         startedAt = SystemClock.elapsedRealtime();
-        web.loadUrl(HOME);
+        web.loadUrl(getIntent() != null && getIntent().getBooleanExtra("whatsnew", false) ? HOME + "?whatsnew=1" : HOME);
         new Thread(this::checkForUpdate).start();
+        Updater.scheduleBackgroundChecks(this);
     }
 
     @Override
@@ -132,67 +132,26 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null && intent.getBooleanExtra("whatsnew", false)) web.loadUrl(HOME + "?whatsnew=1");
+    }
+
+    @Override
     public void onBackPressed() { moveTaskToBack(true); }
 
-    /* ---- which copy of the app to show ---- */
-    private File savedPage() { return new File(getFilesDir(), "halalah.html"); }
-    private File savedBuild() { return new File(getFilesDir(), "build.txt"); }
-
-    private int bundledBuild() {
-        try (InputStream in = getAssets().open("www/build.txt")) { return number(new String(read(in), StandardCharsets.UTF_8)); }
-        catch (Exception e) { return 0; }
-    }
-    private int downloadedBuild() {
-        try (InputStream in = new FileInputStream(savedBuild())) { return savedPage().exists() ? number(new String(read(in), StandardCharsets.UTF_8)) : 0; }
-        catch (Exception e) { return 0; }
-    }
-    private int currentBuild() { return Math.max(bundledBuild(), downloadedBuild()); }
-
-    private InputStream page() throws Exception {
-        if (downloadedBuild() > bundledBuild()) return new FileInputStream(savedPage());
-        return getAssets().open("www/index.html");
-    }
-
+    /* ---- self-update while the app is open (the background check lives in UpdateJob) ---- */
     private void checkForUpdate() {
-        try {
-            int latest = number(new String(get(RELEASE + "version.txt", 15000), StandardCharsets.UTF_8));
-            if (latest <= currentBuild()) return;
-            byte[] html = get(RELEASE + "halalah.html", 60000);
-            String tail = new String(html, Math.max(0, html.length - 200), Math.min(200, html.length), StandardCharsets.UTF_8);
-            if (html.length < 100000 || !tail.contains("</html>")) return;          // a cut-off download is never kept
-            File tmp = new File(getFilesDir(), "halalah.html.tmp");
-            try (FileOutputStream out = new FileOutputStream(tmp)) { out.write(html); }
-            if (!tmp.renameTo(savedPage())) return;
-            try (FileOutputStream out = new FileOutputStream(savedBuild())) { out.write(String.valueOf(latest).getBytes(StandardCharsets.UTF_8)); }
-            final boolean justOpened = SystemClock.elapsedRealtime() - startedAt < 15000;
-            runOnUiThread(() -> {
-                if (justOpened) { web.reload(); Toast.makeText(this, "Halalah updated.", Toast.LENGTH_SHORT).show(); }
-                else Toast.makeText(this, "Halalah update ready. It shows the next time you open the app.", Toast.LENGTH_LONG).show();
-            });
-        } catch (Exception e) { /* offline or no release yet: keep what we have */ }
+        final int build = Updater.check(this);
+        if (build <= 0) return;
+        final boolean justOpened = SystemClock.elapsedRealtime() - startedAt < 15000;
+        runOnUiThread(() -> {
+            if (justOpened) { web.loadUrl(HOME + "?whatsnew=1"); Toast.makeText(this, "Halalah updated.", Toast.LENGTH_SHORT).show(); }
+            else Toast.makeText(this, "Halalah update ready. It shows the next time you open the app.", Toast.LENGTH_LONG).show();
+        });
     }
 
-    /* ---- small helpers ---- */
-    private static int number(String s) { try { return Integer.parseInt(s.trim()); } catch (Exception e) { return 0; } }
-
-    private static byte[] read(InputStream in) throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buf = new byte[16384]; int n;
-        while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-        return out.toByteArray();
-    }
-
-    private static byte[] get(String url, int timeoutMs) throws Exception {
-        HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
-        c.setConnectTimeout(timeoutMs); c.setReadTimeout(timeoutMs);
-        c.setInstanceFollowRedirects(true);
-        c.setRequestProperty("User-Agent", "Halalah-Android");
-        try {
-            int code = c.getResponseCode();
-            if (code != 200) throw new Exception("HTTP " + code);
-            try (InputStream in = c.getInputStream()) { return read(in); }
-        } finally { c.disconnect(); }
-    }
+    private static byte[] get(String url, int timeoutMs) throws Exception { return Updater.get(url, timeoutMs); }
 
     /** "granted" when notifications can be shown, otherwise "denied". */
     private String notifyState() {
@@ -203,7 +162,7 @@ public class MainActivity extends Activity {
     }
 
     private class Bridge {
-        @JavascriptInterface public String build() { return String.valueOf(currentBuild()); }
+        @JavascriptInterface public String build() { return String.valueOf(Updater.currentBuild(MainActivity.this)); }
         @JavascriptInterface public void schedule(String json) { Reminders.save(MainActivity.this, json); }
         @JavascriptInterface public String notifyState() { return MainActivity.this.notifyState(); }
         @JavascriptInterface public boolean exactOk() { return Reminders.exactOk(MainActivity.this); }

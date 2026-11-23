@@ -267,14 +267,9 @@ function handleDeepLink(){
   return false;
 }
 
-if(save.started || launchAction || launchSpot || launchVenue){
-  document.getElementById('landing').classList.add('hide');
-  refreshMapSize();                       // the fix for the blank second launch
-  beginLiveScan();                        // live scan is always on
-  window.addEventListener('pointerdown', function once(){
-    goFullscreen(); window.removeEventListener('pointerdown', once);
-  }, { once:true });
-}
+/* No first screen any more (23 Nov 2026): Food opens straight on the list. Location starts when the Food tab is first shown. */
+document.getElementById('landing').classList.add('hide');
+refreshMapSize();
 
 /* An installable app that asks for location and camera should say plainly what
    it does with them, and that it isn't the certifying authority. */

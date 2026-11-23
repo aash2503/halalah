@@ -29,7 +29,8 @@ function currentSelection(){
     else if(activeFilter === 'saved'){ if(!hasSaved(s.id)) return false; }
     else if(activeFilter === 'new'){ if(!S.NEW_IDS.has(s.id)) return false; }
     else if(activeFilter === 'hot' || activeFilter === 'all'){ if(s.scheme !== SCHEME_EAT) return false; }
-    else if(String(s.sub_scheme) !== activeFilter) return false;
+    else if(!activeFilter.split(',').includes(String(s.sub_scheme))) return false;
+    if(maxDist && s._dist != null && s._dist > maxDist) return false;
 
     if(exactName && nameKey(s) !== exactName) return false;
     /* A venue IS its set of coordinates. Re-deriving the key from each row's
@@ -52,23 +53,45 @@ function currentSelection(){
     return true;
   });
 }
+const listeners = [];
+function onFiltersApplied(fn){ listeners.push(fn); }
+let maxDist = 0;                       // metres; 0 = any distance
+function setMaxDist(m){ maxDist = m; }
 function applyFilters(){
   let groups = buildGroups(currentSelection());
   if(activeFilter === 'hot') groups = groups.filter(g => g.items.length >= HOTSPOT_MIN);
   renderGroups(groups);
   if(!groups.length) setStatus('No matches — clear a filter', 'err');
+  listeners.forEach(fn => fn());
 }
 
 
 
+/* Category pills combine (Hawker + Bakery); All eat-in, Saved and Kitchens each stand alone. */
+const CATS = ['103','106','108','109'];
 document.querySelectorAll('#filterRow .filter-pill').forEach(p => {
   p.addEventListener('click', () => {
-    document.querySelectorAll('#filterRow .filter-pill').forEach(x => x.dataset.active='false');
-    p.dataset.active='true'; activeFilter = p.dataset.filter; applyFilters();
+    const pills = [...document.querySelectorAll('#filterRow .filter-pill')], f = p.dataset.filter;
+    if(CATS.includes(f)){
+      p.dataset.active = String(p.dataset.active !== 'true');
+      pills.filter(x => !CATS.includes(x.dataset.filter)).forEach(x => x.dataset.active = 'false');
+      const on = pills.filter(x => CATS.includes(x.dataset.filter) && x.dataset.active === 'true').map(x => x.dataset.filter);
+      if(on.length) activeFilter = on.join(',');
+      else { activeFilter = 'all'; pills.find(x => x.dataset.filter === 'all').dataset.active = 'true'; }
+    } else {
+      pills.forEach(x => x.dataset.active = 'false'); p.dataset.active = 'true'; activeFilter = f;
+    }
+    applyFilters();
+  });
+});
+document.querySelectorAll('#distRow .filter-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#distRow .filter-pill').forEach(x => x.dataset.active = 'false');
+    p.dataset.active = 'true'; maxDist = +p.dataset.dist; applyFilters();
   });
 });
 
-export { activeFilter, searchTerm, areaFilter, exactName, venueFilter, nameKey, currentSelection, applyFilters, setFilter, setSearch, setArea, setExact, setVenue };
+export { onFiltersApplied, setMaxDist, maxDist, activeFilter, searchTerm, areaFilter, exactName, venueFilter, nameKey, currentSelection, applyFilters, setFilter, setSearch, setArea, setExact, setVenue };
 
 /* Setters — other modules must not reassign imported bindings. */
 function setFilter(v){ activeFilter = v; }

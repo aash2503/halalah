@@ -7,6 +7,7 @@ import { map, renderGroups, flyBounds, onGroupTap, clusterGroup, L } from '../ma
 import { applyFilters, setFilter, setArea, setSearch, setExact, setVenue } from '../filters.js';
 import { showToast } from './toast.js';
 import { shareShortlist } from './share.js';
+import { openFinderTo } from './finder.js';
 
 /* ==========================================================================
    10. BOTTOM SHEET
@@ -92,13 +93,13 @@ function openSpot(s, fromGroup){
   markSeen(s.id);
 
   const m = subMeta(s);
-  document.getElementById('sEntryNo').textContent = s.postal ? 'S' + s.postal : '';
-  document.getElementById('sName').textContent = (s.name || '').toUpperCase();
+  document.getElementById('sEntryNo').textContent = '';
+  document.getElementById('sName').textContent = titleCase(s.name || '');
   const badges = [`<span class="type-badge" style="background:${m.color}">${m.label}</span>`,
                   `<span class="status-chip">MUIS certified</span>`];
   if(S.NEW_IDS.has(s.id)) badges.push(`<span class="flag-badge fresh">New</span>`);
-  if(s.est_type === 1) badges.push(`<span class="flag-badge virtual">VIRTUAL BRAND</span>`);
-  if(s.scheme === SCHEME_PREP) badges.push(`<span class="flag-badge prep">NOT WALK-IN</span>`);
+  if(s.est_type === 1) badges.push(`<span class="flag-badge virtual">Delivery only</span>`);
+  if(s.scheme === SCHEME_PREP) badges.push(`<span class="flag-badge prep">Not walk-in</span>`);
   document.getElementById('sBadges').innerHTML = badges.join('');
 
   document.getElementById('sDist').textContent = fmtDist(s._dist);
@@ -120,6 +121,7 @@ function openSpot(s, fromGroup){
   btn.dataset.caught = v; btn.textContent = v ? '✔ Visited' : '◎ Mark visited';
   const sv = document.getElementById('sSave');
   sv.textContent = hasSaved(s.id) ? '★ Saved' : '☆ Save';
+  document.getElementById('sDist').textContent = s._dist == null ? 'Location off' : fmtDist(s._dist);
   sv.className = 'a btn ' + (hasSaved(s.id) ? 'btn-y' : 'btn-w');
 
   /* Other locations sharing this name. Deliberately worded as "same name" —
@@ -150,7 +152,6 @@ function openSpot(s, fromGroup){
 
   sheet.classList.add('open'); scrim.classList.add('open');
   map.panTo([s.lat,s.lng],{ animate:true });
-  if(first) showToast('New log entry registered');
 }
 
 /* Deep link back into the app for a single spot. */
@@ -189,7 +190,7 @@ document.getElementById('sheetBack').addEventListener('click', () => { if(curren
 /* Coordinates are building-level, so route on the ADDRESS text. */
 document.getElementById('sGo').addEventListener('click', () => {
   if(!currentSpot) return;
-  if(currentSpot.est_type === 1){ showToast('DELIVERY-ONLY — NO WALK-IN'); return; }
+  if(currentSpot.est_type === 1){ showToast('Delivery only — no walk-in'); return; }
   window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentSpot.address || currentSpot.name || '')}`,
               '_blank','noopener');
 });
@@ -226,6 +227,8 @@ document.getElementById('sSave').addEventListener('click', () => {
   showToast(on ? 'Added to saved' : 'Removed from saved');
   applyFilters();
 });
+document.getElementById('sShare2').addEventListener('click', () => document.getElementById('sShare').click());
+document.getElementById('sWalk').addEventListener('click', () => { if(currentSpot){ const s = currentSpot; closeSheet(); openFinderTo(s); } });
 document.getElementById('sShare').addEventListener('click', async () => {
   if(!currentSpot) return;
   const s = currentSpot;

@@ -4,17 +4,24 @@ import { PRAYERS, LABEL, timesFor, fmt, refresh, dkey, trust } from './data.js';
 import { hijri } from './hijri.js';
 import { pi } from '../ui/icons.js';
 import { bellOn, setBell, sync as syncReminders } from './remind.js';
+import { place, placeNow, adjustments } from './place.js';
+import { METHODS } from './calc.js';
+import { hijriAdjust } from './hijri.js';
 
 const $ = id => document.getElementById(id);
-let view = new Date();                       // the date on screen
-const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+/* All dates here carry the PLACE's calendar day and clock in their local fields (placeNow), so the screen is right
+   for Singapore even when the phone is abroad, and for a far-away city chosen from the list. */
+const today = () => { const n = placeNow(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+let view = today();                          // the date on screen
+const nowMin = () => { const n = placeNow(); return n.getHours() * 60 + n.getMinutes() + n.getSeconds() / 60; };
 const sameDay = (a, b) => dkey(a) === dkey(b);
 function nextPrayer(){
-  const n = new Date(), mins = n.getHours() * 60 + n.getMinutes() + n.getSeconds() / 60;
+  const mins = nowMin();
   const t = timesFor(today()).times;
-  for(let i = 0; i < 6; i++){ if(i !== 1 && t[i] > mins) return { i, at:t[i], wait:t[i] - mins, tomorrow:false }; }
+  for(let i = 0; i < 6; i++){ if(i !== 1 && t[i] != null && t[i] > mins) return { i, at:t[i], wait:t[i] - mins, tomorrow:false }; }
   const tm = new Date(today().getTime() + 864e5 + 36e5); const t2 = timesFor(tm).times;
-  return { i:0, at:t2[0], wait:t2[0] + 1440 - mins, tomorrow:true };
+  const j = t2[0] != null ? 0 : 2;                       // no Subuh angle that far north: the next one is Zohor
+  return { i:j, at:t2[j], wait:t2[j] + 1440 - mins, tomorrow:true };
 }
 function waitText(m){
   m = Math.max(0, Math.ceil(m)); const h = Math.floor(m / 60), r = m % 60;
@@ -24,34 +31,37 @@ function waitText(m){
 
 export function renderSolat(){
   const isToday = sameDay(view, today());
-  const { times, official } = timesFor(view);
+  const { times, raw, buffer } = timesFor(view), pl = place();
   $('solDate').textContent = view.toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
   $('solHijri').textContent = hijri(view);
   const nx = nextPrayer();
   $('solNextLbl').textContent = nx.tomorrow ? 'Next prayer, tomorrow' : 'Next prayer';
   $('solNextName').textContent = LABEL[PRAYERS[nx.i]].toUpperCase() + ' ' + fmt(nx.at);
   $('solNextWait').textContent = waitText(nx.wait);
-  const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+  const nowM = Math.floor(nowMin());
   $('solRows').innerHTML = PRAYERS.map((p, i) => {
     const isNext = isToday && !nx.tomorrow && nx.i === i;
-    const past = isToday && times[i] <= nowM;
+    const past = isToday && times[i] != null && times[i] <= nowM;
+    const buf = buffer && times[i] != null ? `<span class="buf" title="Calculated ${fmt(raw[i])}, moved by your ${buffer}-minute buffer">${i === 1 ? '−' : '+'}${buffer}</span>` : '';
     return `<div class="sol-row panel${isNext ? ' nx' : ''}${past ? ' past' : ''}">
       <span class="nm">${LABEL[p]}</span>${isNext ? '<span class="tag">Next</span>' : ''}
-      <span class="t">${fmt(times[i])}</span>
+      ${buf}<span class="t">${fmt(times[i])}</span>
       <button class="bell${bellOn(p) ? '' : ' off'}" data-bell="${p}" aria-pressed="${bellOn(p)}"
         aria-label="${LABEL[p]} reminder ${bellOn(p) ? 'on' : 'off'}">${pi('bell', 20)}</button></div>`;
   }).join('');
   $('solFoot').style.display = isToday ? 'none' : '';
-  $('solArc').innerHTML = arcSvg(times, isToday ? new Date().getHours() * 60 + new Date().getMinutes() : null);
+  $('solArc').innerHTML = times.some(v => v == null) ? '' : arcSvg(times, isToday ? nowMin() : null);
   const tr = trust(view);
-  $('solLoc').innerHTML = pi('pin', 16) + 'Singapore';
+  $('solLoc').innerHTML = pi('pin', 16) + '<span>' + pl.name + '</span>';
   $('solState').className = 'st ' + tr;
   $('solState').innerHTML = tr === 'live' ? '<i class="dot"></i>Live · MUIS'
     : tr === 'saved' ? '<i class="dot"></i>Saved · MUIS'
+    : tr === 'calc' ? '<i class="ring"></i>Calculated'
     : '<i class="bang">!</i>Estimated';
-  $('solState').title = tr === 'live' ? 'Official MUIS times, checked today.'
-    : tr === 'saved' ? 'Official MUIS times saved on this phone. Not checked today.'
-    : 'Calculated times. The official MUIS timetable for this date is not loaded.';
+  $('solSrc').textContent = tr === 'calc'
+    ? (pl.needsFix ? 'Waiting for your location. Showing Singapore, calculated.' : METHODS[pl.method].name + ' method' + (buffer ? ' · ' + buffer + ' min buffer' : '') + ' · tap for details')
+    : '';
+  $('solSrc').style.display = tr === 'calc' ? '' : 'none';
 }
 
 /* The banner picture: the sun's path over a pixel skyline. Time runs left to right from before Subuh to after Isyak;
@@ -77,12 +87,26 @@ function arcSvg(t, nowMin){
   </svg>`;
 }
 
+/* What the banner's words mean, and everything that is adjusting the numbers. */
+function showInfo(){
+  const tr = trust(view), pl = place();
+  const head = tr === 'live' ? 'Official MUIS times, checked with data.gov.sg in the last day.'
+    : tr === 'saved' ? 'Official MUIS times saved on this phone. They have not been re-checked today.'
+    : tr === 'est' ? 'Estimated. The official MUIS timetable for this date is not on this phone, so these times are calculated with MUIS\'s angles and may be a few minutes off.'
+    : 'Calculated for ' + pl.name + '. These are not from an official timetable and can differ by a minute or two from the local mosque. Where it matters, check locally.';
+  $('solInfoBody').innerHTML = '<p>' + head + '</p><ul>' + adjustments(hijriAdjust()).map(x => '<li>' + x + '</li>').join('') + '</ul>';
+  $('solInfo').classList.add('open');
+}
+
 function shift(n){ view = new Date(view.getFullYear(), view.getMonth(), view.getDate() + n); renderSolat(); }
 
 export function initSolat(){
   $('solPrev').addEventListener('click', () => shift(-1));
   $('solNext').addEventListener('click', () => shift(1));
   $('solToday').addEventListener('click', () => { view = today(); renderSolat(); });
+  document.querySelector('.sol-next').addEventListener('click', showInfo);
+  $('solInfoClose').addEventListener('click', () => $('solInfo').classList.remove('open'));
+  document.addEventListener('place-changed', () => { view = today(); renderSolat(); syncReminders(); });
   const pick = $('solPick');
   $('solPickBtn').addEventListener('click', () => { pick.value = dkey(view); if(pick.showPicker) pick.showPicker(); else pick.focus(); });
   pick.addEventListener('change', () => { const [y, m, d] = pick.value.split('-').map(Number); if(y){ view = new Date(y, m - 1, d); renderSolat(); } });

@@ -39,7 +39,7 @@ let denied = false;
 
 function setTrackingUi(){
   fab().dataset.tracking = S.tracking;
-  fab().querySelector('.lbl').textContent = S.tracking ? 'ME' : 'SCAN';
+  fab().querySelector('.lbl').textContent = 'Locate';
 }
 
 function startTracking({ silent = false } = {}){
@@ -115,6 +115,7 @@ const encountered = new Set();          // coordinate keys, not row ids
 let lastEncounterAt = 0;
 
 function scanForEncounters(){
+  return;                                    // proximity pop-ups went with the game layer (23 Nov 2026)
   if(!S.tracking) return;
   if(Date.now() - lastEncounterAt < ENCOUNTER_COOLDOWN_MS) return;
 

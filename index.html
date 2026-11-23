@@ -43,7 +43,7 @@
 
   <div class="hud-top">
     <div class="title-plate">
-      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V7.0</div>
+      <div class="mark"></div><h1>HALAL<span>AH</span></h1><div class="ver">V7.1</div>
     </div>
     <div class="offline-bar" id="offlineBar">Offline — showing saved data</div>
 
@@ -53,15 +53,21 @@
         <button class="find-btn btn btn-y" id="searchBtn">Find</button>
       </div>
       <div class="filters" id="filterRow">
-        <div class="filter-pill" data-filter="all"  data-active="true">Eat-in</div>
+        <div class="filter-pill" data-filter="all"  data-active="true">All eat-in</div>
         <div class="filter-pill" data-filter="103"  data-active="false">Hawker</div>
         <div class="filter-pill" data-filter="106"  data-active="false">Restaurant</div>
         <div class="filter-pill" data-filter="108"  data-active="false">Bakery</div>
         <div class="filter-pill" data-filter="109"  data-active="false">Canteen</div>
-        <div class="filter-pill" data-filter="hot"  data-active="false">★Hotspots</div>
-        <div class="filter-pill" data-filter="saved" data-active="false">★Saved</div>
-        <div class="filter-pill" data-filter="new"  data-active="false">New</div>
+        <div class="filter-pill" data-filter="saved" data-active="false">Saved</div>
         <div class="filter-pill" data-filter="prep" data-active="false">Kitchens</div>
+      </div>
+      <div class="filters dist" id="distRow">
+        <span class="fl-lbl">Within</span>
+        <div class="filter-pill" data-dist="0"    data-active="true">Any distance</div>
+        <div class="filter-pill" data-dist="500"  data-active="false">500 m</div>
+        <div class="filter-pill" data-dist="1000" data-active="false">1 km</div>
+        <div class="filter-pill" data-dist="2000" data-active="false">2 km</div>
+        <div class="filter-pill" data-dist="5000" data-active="false">5 km</div>
       </div>
       <div class="suggest" id="suggest"></div>
     </div>
@@ -71,11 +77,24 @@
     </div>
   </div>
 
+  <!-- ===== the list (default view): nearest first ===== -->
+  <div class="food-list" id="foodList">
+    <div class="fl-meta"><span id="flCount">Loading the halal registry…</span><button class="btn2 sm" id="flLocate">Use my location</button></div>
+    <div id="flRows"></div>
+    <button class="btn2" id="flMore">Show more</button>
+  </div>
+  <div class="food-foot" id="foodFoot">
+    <div class="seg" id="viewSeg"><button data-view="list" aria-pressed="true">List</button><button data-view="map" aria-pressed="false">Map</button></div>
+    <button class="btn1" id="pickBtn">Pick for me</button>
+  </div>
+
   <div class="legend" id="legend">
-    <div><i class="lg-pin"></i>Eat-in spot</div>
-    <div><i class="lg-prep"></i>Kitchen or caterer</div>
-    <div><i class="lg-num">5</i>Number of spots here</div>
-    <div><i class="lg-done"></i>Visited</div>
+    <div><i style="background:#2E7D32"></i>Hawker</div>
+    <div><i style="background:#C2410C"></i>Restaurant</div>
+    <div><i style="background:#BE185D"></i>Bakery</div>
+    <div><i style="background:#6D28D9"></i>Canteen</div>
+    <div><i style="background:#475569"></i>Other</div>
+    <div><i class="lg-num">5</i>Several in one place</div>
     <div><i class="lg-you"></i>You</div>
   </div>
 
@@ -129,8 +148,8 @@
         </div>
         <div class="badge-row" id="sBadges"></div>
         <div class="stats">
-          <div class="stat"><div class="v" id="sDist">—</div><div class="l">Dist</div></div>
-          <div class="stat"><div class="v" id="sZone">—</div><div class="l">Zone</div></div>
+          <div class="stat"><div class="v" id="sDist">—</div><div class="l">Distance from you</div></div>
+          <div class="stat" hidden><div class="v" id="sZone">—</div><div class="l">Zone</div></div>
         </div>
         <div class="sect"><h4>Cert number</h4><div class="cert-no" id="sCert">—</div></div>
         <div class="sect"><h4>Certified as</h4><p class="prose" id="sScheme">—</p></div>
@@ -141,13 +160,15 @@
         </div>
         <div class="acts">
           <div class="a btn btn-y" id="sGo">Get directions</div>
-          <div class="a catch btn btn-w" id="sCatch" data-caught="false">◎ Mark visited</div>
+          <div class="a btn btn-w" id="sWalk">Walk me there</div>
+          <div class="a catch btn btn-w" id="sCatch" data-caught="false" hidden>◎ Mark visited</div>
         </div>
         <div class="acts">
           <div class="a btn btn-w" id="sSave">☆ Save</div>
-          <div class="a btn btn-g" id="sMoreLike">More like this</div>
+          <div class="a btn btn-w" id="sShare2">Share</div>
+          <div class="a btn btn-g" id="sMoreLike" hidden>More like this</div>
         </div>
-        <div class="acts"><div class="a btn btn-b" id="sShare">⤴ Share this spot</div></div>
+        <div class="acts" hidden><div class="a btn btn-b" id="sShare">⤴ Share this spot</div></div>
       </div>
 
     </div>
@@ -372,11 +393,15 @@
     <button class="arr" id="solNext" aria-label="Next day"></button>
   </div>
   <div class="view-scroll sol-body">
-    <div class="sol-next panel"><div class="sol-where"><span class="loc" id="solLoc"></span><span class="st" id="solState"></span></div><div class="sol-arc" id="solArc" aria-hidden="true"></div><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
+    <div class="sol-next panel"><div class="sol-where"><span class="loc" id="solLoc"></span><span class="st" id="solState"></span></div><div class="sol-src" id="solSrc"></div><div class="sol-arc" id="solArc" aria-hidden="true"></div><div class="l" id="solNextLbl">Next prayer</div><div class="n" id="solNextName">—</div><div class="c" id="solNextWait"></div></div>
     <div id="solRows"></div>
     <input type="date" id="solPick" class="sol-pick" aria-label="Pick a date" tabindex="-1">
     <div class="sol-foot" id="solFoot"><button class="btn2" id="solToday">Back to today</button></div>
   </div>
+</div>
+
+<div class="sol-info" id="solInfo" role="dialog" aria-label="About these times">
+  <div class="sol-info-card"><h3>About these times</h3><div id="solInfoBody"></div><button class="btn1" id="solInfoClose">Close</button></div>
 </div>
 
 <!-- ===== Kiblat ===== -->
@@ -397,6 +422,19 @@
 <!-- ===== More ===== -->
 <div class="view view-off" id="view-more">
   <div class="view-scroll more">
+    <div class="lbl">Place</div>
+    <div class="panel more-p">
+      <div class="seg" data-place="mode"><button data-v="sg">Singapore</button><button data-v="gps">Where I am</button><button data-v="city">A city</button></div>
+      <p id="plNote" style="margin-top:12px"></p>
+      <div id="plCalc">
+        <div class="set-row" id="plCityRow"><label for="plCity">City</label><select id="plCity" class="sel"></select></div>
+        <button class="btn2" id="plFix" style="margin-top:12px;width:100%">Find my location again</button>
+        <div class="set-row"><label for="plMethod">Method</label><select id="plMethod" class="sel"></select></div>
+        <div class="set-row"><label for="plAsr">Asar</label><select id="plAsr" class="sel"><option value="1">Shafi'i</option><option value="2">Hanafi</option></select></div>
+        <div class="set-row"><label for="plBuf">Buffer</label><select id="plBuf" class="sel"><option value="0">None</option><option value="1">1 minute</option><option value="2">2 minutes</option><option value="3">3 minutes</option><option value="4">4 minutes</option><option value="5">5 minutes</option></select></div>
+      </div>
+      <div class="set-col"><span>What is adjusting the times now</span><ul id="plAdj" class="adj"></ul></div>
+    </div>
     <div class="lbl">Prayer times</div>
     <div class="panel more-p"><p id="moreData"></p><button class="btn2" id="moreRefresh">Check for new times</button></div>
     <div class="lbl">Hijri date</div>
@@ -420,6 +458,8 @@
         <button class="btn2" id="remSys">Open Android notification settings</button>
       </div>
     </div>
+    <div class="lbl" id="newsLbl">What's new</div>
+    <div class="panel more-p" id="newsBox"></div>
     <div class="lbl">About</div>
     <div class="panel more-p"><p>Prayer times: MUIS, through data.gov.sg. Halal food: MUIS halal registry. Always check the certificate on site.</p><p id="moreApp" style="margin-top:8px;color:var(--dim)"></p></div>
   </div>

@@ -4,6 +4,9 @@
    works offline after the first load. Where no official row exists for a date
    (first run offline, or a year MUIS has not published yet) the times are
    CALCULATED and the screen says so: never shown as official. */
+import { calcTimes, roundTimes } from './calc.js';
+import { place, tzOffset } from './place.js';
+
 const DATASET = 'd_a6a206cba471fe04b62dd886ef5eaf22';
 /* In the Android app the shell fetches for us (/muis), which avoids the browser's cross-site limits. */
 const API = (typeof window !== 'undefined' && window.HalalahApp ? '/muis' : 'https://data.gov.sg/api/action/datastore_search')
@@ -74,32 +77,32 @@ export function status(){
   return { count:ks.length, first:ks[0], last:ks[ks.length-1], fetchedAt:store.fetchedAt };
 }
 
-/* ---- calculated fallback (Singapore, Fajr 20 deg, Isha 18 deg, Shafi'i Asar) ---- */
-const LAT = 1.3521, LNG = 103.8198, TZ = 8, R = Math.PI / 180;
-function calc(d){
-  const jd = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 + 2440587.5 - LNG / 360;
-  const D = jd - 2451545, g = (357.529 + 0.98560028 * D) * R, q = 280.459 + 0.98564736 * D;
-  const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * R, e = (23.439 - 0.00000036 * D) * R;
-  const dec = Math.asin(Math.sin(e) * Math.sin(L));
-  let ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)) / R / 15; ra = ((ra % 24) + 24) % 24;
-  const eqt = ((q / 15 - ra) % 24 + 36) % 24 - 12;
-  const noon = 12 + TZ - LNG / 15 - eqt;
-  const ha = a => Math.acos((Math.sin(a * R) - Math.sin(LAT * R) * Math.sin(dec)) / (Math.cos(LAT * R) * Math.cos(dec))) / R / 15;
-  const asr = Math.atan(1 / (1 + Math.tan(Math.abs(LAT * R - dec)))) / R;
-  return [noon - ha(-20), noon - ha(-0.833), noon + 1/60, noon + ha(asr), noon + ha(-0.833), noon + ha(-18)].map(h => Math.round(h * 60));
-}
-
-/* -> { times:[minutes x6], official:boolean } */
+/* ---- which times to show ----
+   Singapore: the official row when the phone has it, else calculated with MUIS's angles and labelled Estimated.
+   Travel: always calculated for the place in use (place.js), with the user's buffer; never shown as official.
+   d carries the calendar day in its local fields. -> { times, raw, official, calc, buffer } (minutes after midnight there) */
+const SG = { lat:1.3521, lng:103.8198, tz:8, method:'MUIS', asr:1 };
 export function timesFor(d){
-  const row = store.days[dkey(d)];
-  return row ? { times:row, official:true } : { times:calc(d), official:false };
+  const pl = place();
+  if(pl.kind === 'sg'){
+    const row = store.days[dkey(d)];
+    if(row) return { times:row, raw:row, official:true, calc:false, buffer:0 };
+    const t = roundTimes(calcTimes(d.getFullYear(), d.getMonth(), d.getDate(), SG));
+    return { times:t, raw:t, official:false, calc:false, buffer:0 };
+  }
+  const noonUtc = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 4));
+  const tz = (pl.tzName ? tzOffset(pl.tzName, noonUtc) : -new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12).getTimezoneOffset()) / 60;
+  const raw = roundTimes(calcTimes(d.getFullYear(), d.getMonth(), d.getDate(), { lat:pl.lat, lng:pl.lng, tz, method:pl.method, asr:pl.asr }));
+  const times = raw.map((v, i) => v == null ? null : v + (i === 1 ? -pl.buffer : pl.buffer));
+  return { times, raw, official:false, calc:true, buffer:pl.buffer };
 }
-export const fmt = m => pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
+export const fmt = m => m == null ? '—' : pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
 
 /* How far to trust the times on screen (shown in the banner, never by colour alone):
    live = official and checked with data.gov.sg in the last 24 hours; saved = official, from this phone's copy;
-   est = calculated, no official row for that date. */
+   est = calculated, no official row for that date; calc = travel mode, calculated for another place. */
 export function trust(d){
+  if(place().kind !== 'sg') return 'calc';
   if(!store.days[dkey(d)]) return 'est';
   return Date.now() - store.fetchedAt < 864e5 ? 'live' : 'saved';
 }
