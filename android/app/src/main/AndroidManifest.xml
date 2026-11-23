@@ -33,6 +33,10 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_medium" />
         </receiver>
+        <receiver android:name=".WidgetBar" android:exported="true" android:label="@string/w_bar">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_bar" />
+        </receiver>
         <receiver android:name=".WidgetSquare" android:exported="true" android:label="@string/w_square">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_square" />

@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 2 x 1: the next prayer only. -->
+<!-- 2 x 1: place and source, then the next prayer and its time. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/widget_bg">
-    <ImageView android:layout_width="match_parent" android:layout_height="44dp" android:layout_gravity="bottom" android:scaleType="fitXY" android:src="@drawable/widget_sky" android:importantForAccessibility="no" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="10dp" android:gravity="center_vertical">
+    <ImageView android:layout_width="match_parent" android:layout_height="26dp" android:layout_gravity="bottom" android:scaleType="fitXY" android:src="@drawable/widget_sky" android:importantForAccessibility="no" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="10dp">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-            <TextView android:id="@+id/place" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            <TextView android:id="@+id/place" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:fontFamily="@font/outfit"
                 android:textColor="#F6F3E9" android:textSize="14sp" android:textStyle="bold" android:singleLine="true" android:ellipsize="end" />
-            <TextView android:id="@+id/src" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="6dp"
-                android:textColor="#DDE2CC" android:textSize="11sp" android:singleLine="true" />
+            <TextView android:id="@+id/src" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:fontFamily="@font/outfit"
+                android:textColor="#DDE2CC" android:textSize="12sp" android:singleLine="true" />
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:orientation="horizontal" android:gravity="center_vertical">
-            <TextView android:id="@+id/tag" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/widget_tag"
-                android:paddingStart="6dp" android:paddingEnd="6dp" android:paddingTop="2dp" android:paddingBottom="2dp" android:textColor="#DDE2CC" android:textSize="11sp" android:singleLine="true" />
-            <TextView android:id="@+id/nname" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp"
-                android:textColor="#F6F3E9" android:textSize="15sp" android:textStyle="bold" android:singleLine="true" android:ellipsize="end" />
-            <TextView android:id="@+id/ntime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/press_start"
-                android:textColor="#F6F3E9" android:textSize="13sp" android:singleLine="true" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal" android:gravity="bottom">
+            <TextView android:id="@+id/nl" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:fontFamily="@font/outfit"
+                android:textColor="#DDE2CC" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
+            <TextView android:id="@+id/ntime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/outfit_bold" android:includeFontPadding="false"
+                android:textColor="#F6F3E9" android:textSize="22sp" android:singleLine="true" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

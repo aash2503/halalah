@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Widget names: kept short, because some launchers print the name under the widget. -->
 <resources>
-    <string name="w_wide">Solat</string>
+    <string name="w_wide">Solat 4 × 2</string>
     <string name="w_medium">Solat 3 × 2</string>
     <string name="w_square">Solat 2 × 2</string>
+    <string name="w_bar">Solat 4 × 1</string>
     <string name="w_small">Next prayer</string>
 </resources>

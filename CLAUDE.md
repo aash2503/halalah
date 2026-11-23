@@ -32,11 +32,14 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
 - **Update pings (23 Nov 2026):** `Updater.java` + `UpdateJob.java` check the release about every six hours in the background and notify
   "Halalah updated" with `notes.txt` (= `NEWS[0].title` in `src/whatsnew.js`); the tap opens More > What's new (`?whatsnew=1`).
   ADD AN ENTRY AT THE TOP OF `src/whatsnew.js` WITH EVERY PUSH.
-- **Widgets (23 Nov 2026):** four home-screen widgets (a 3x2 was added, and all follow the app's style: skyline `widget_sky.xml`, pixel
-  font `res/font/press_start.ttf` for the next time; widget names stay short because some launchers print them). Originally three, all drawn by `Widgets.java` from a month of times the web app hands over
-  (`HalalahApp.widget`, built by `buildWidget` in remind.js): wide 4x2 and square 2x2 with all six times, small 2x1 with the next prayer.
-  Redrawn by one alarm at each prayer time and at midnight. Layouts `res/layout/widget_*.xml`. Singapore is also the first entry in the
-  city list and always means the official MUIS table.
+- **Widgets (23 Nov 2026, redesigned after a UI/UX pass he approved from mockups):** five, all drawn by `Widgets.java` from a month of
+  times the web app hands over (`HalalahApp.widget`, built by `buildWidget` in remind.js). 4x2 and 3x2: place + source, the sun's path
+  over the skyline (a bitmap drawn in `sunPath`, same maths as `arcSvg`), "Next · Asar" and a large time on the left; six rows on the
+  right. 2x2: six rows. 4x1: six times in a line. 2x1: next prayer. Type is Outfit (`res/font/`, bundled; the pixel font was dropped from
+  widgets because it overflowed at hero size). Source = mark + word (green dot MUIS, ring Calculated, red ! Estimated). No text under
+  12sp. Widget names stay short (some launchers print them). One alarm redraws at each prayer time and at midnight; Android's half-hourly
+  update moves the sun. Layouts live in the APK: any layout change needs a new APK. Singapore is also the first entry in the city list
+  and always means the official MUIS table.
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an

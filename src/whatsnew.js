@@ -1,6 +1,8 @@
 /* What's new, newest first. Add an entry at the TOP with every push: `title` is the one line shown in the phone's
    "Halalah updated" notification (the build writes NEWS[0].title to notes.txt), `items` is the list in More. */
 export const NEWS = [
+  { date:'23 Nov 2026', title:'Five redesigned widgets, with the sun\'s path on the 4 × 2 and 3 × 2.',
+    items:[ 'Widgets redrawn: clearer order, larger times, the source shown as a mark and a word, and the Outfit typeface.', 'The 4 × 2 and 3 × 2 show the sun\'s path over the skyline, as on the Solat screen.', 'New 4 × 1 widget: all six times in one line.', 'Needs the newest halalah.apk. Remove and re-add any widget already on the home screen.' ] },
   { date:'23 Nov 2026', title:'Widgets now match the app, and there is a new 3 × 2 Solat widget.',
     items:[ 'All widgets: the pixel skyline along the bottom and the pixel font for the next prayer\'s time, as on the Solat screen.', 'New 3 × 2 widget: the next prayer on top, six times in a grid.', 'Shorter widget names. Needs the newest halalah.apk.' ] },
   { date:'23 Nov 2026', title:'The wide widget has a new layout: next prayer on the left, all six times on the right.',
