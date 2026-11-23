@@ -8,7 +8,9 @@ import android.content.Intent;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent i) {
-        if (i != null && Reminders.ACTION.equals(i.getAction())) Reminders.fire(c);
-        else Reminders.arm(c);
+        String a = i == null ? null : i.getAction();
+        if (Reminders.ACTION.equals(a)) Reminders.fire(c);
+        else if (Widgets.ACTION.equals(a)) Widgets.refresh(c);
+        else { Reminders.arm(c); Widgets.refresh(c); }
     }
 }

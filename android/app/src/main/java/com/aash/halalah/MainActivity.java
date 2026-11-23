@@ -164,6 +164,7 @@ public class MainActivity extends Activity {
     private class Bridge {
         @JavascriptInterface public String build() { return String.valueOf(Updater.currentBuild(MainActivity.this)); }
         @JavascriptInterface public void schedule(String json) { Reminders.save(MainActivity.this, json); }
+        @JavascriptInterface public void widget(String json) { Widgets.save(MainActivity.this, json); }
         @JavascriptInterface public String notifyState() { return MainActivity.this.notifyState(); }
         @JavascriptInterface public boolean exactOk() { return Reminders.exactOk(MainActivity.this); }
         @JavascriptInterface public void askNotify() {

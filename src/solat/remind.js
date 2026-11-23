@@ -2,7 +2,7 @@
    30 days of reminders are handed to the shell (HalalahApp.schedule), which rings them with the app closed and the
    phone offline. In a browser nothing can ring; the choices are still saved. */
 import { PRAYERS, LABEL, timesFor, fmt } from './data.js';
-import { place, placeNow, instantAt } from './place.js';
+import { place, placeNow, instantAt, placeOffset } from './place.js';
 
 const KEY = 'hl.remind', BELLS = 'hl.solat.bells', DAYS = 30;
 const app = () => (typeof window !== 'undefined' && window.HalalahApp && window.HalalahApp.schedule) ? window.HalalahApp : null;
@@ -51,7 +51,22 @@ export function buildSchedule(nowMs = Date.now()){
   return out;
 }
 
+/* The month the home-screen widgets draw from: per day at the place, the six times as text and as instants. */
+export function buildWidget(){
+  const pl = place(), base = placeNow(), days = [], p2 = n => String(n).padStart(2, '0');
+  for(let d = -1; d < DAYS; d++){
+    const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + d);
+    const { times, official, calc } = timesFor(day);
+    days.push({ d: day.getFullYear() + '-' + p2(day.getMonth() + 1) + '-' + p2(day.getDate()),
+                off: placeOffset(new Date(instantAt(day, 720))), k: official ? 'o' : calc ? 'c' : 'e',
+                s: times.map(v => v == null ? null : fmt(v)), t: times.map(v => v == null ? null : instantAt(day, v)) });
+  }
+  return { place: pl.needsFix ? 'Singapore' : pl.name, days };
+}
+
 export function sync(){
+  const w = typeof window !== 'undefined' && window.HalalahApp && window.HalalahApp.widget ? window.HalalahApp : null;
+  if(w) try{ w.widget(JSON.stringify(buildWidget())); }catch(e){}
   const a = app(); if(!a) return false;
   try{ a.schedule(JSON.stringify(buildSchedule())); return true; }catch(e){ return false; }
 }

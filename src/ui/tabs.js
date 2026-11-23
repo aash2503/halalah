@@ -65,10 +65,12 @@ function initReminders(){
 function renderPlace(){
   const p = P.prefs(), pl = P.place();
   document.querySelectorAll('[data-place="mode"] button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === p.mode)));
-  $('plNote').textContent = p.mode === 'sg' ? 'Official MUIS times for Singapore.'
+  const sg = pl.kind === 'sg';
+  $('plNote').textContent = sg ? 'Official MUIS times for Singapore.'
     : pl.needsFix ? 'Looking for your location. Until it is found the Solat screen shows Singapore, calculated.'
     : 'Showing calculated times for ' + pl.name + (pl.detail ? ', ' + pl.detail : '') + '. Calculated times are a guide: check locally where it matters.';
   $('plCalc').style.display = p.mode === 'sg' ? 'none' : '';
+  ['plMethod','plAsr','plBuf'].forEach(id => { $(id).closest('.set-row').style.display = sg ? 'none' : ''; });   // nothing to adjust on official times
   $('plCityRow').style.display = p.mode === 'city' ? '' : 'none';
   $('plFix').style.display = p.mode === 'gps' ? '' : 'none';
   $('plCity').value = p.city; $('plAsr').value = String(p.asr); $('plBuf').value = String(p.buffer);
@@ -85,7 +87,7 @@ function findMe(){
     { maximumAge: 6e5, timeout: 15000 });
 }
 function initPlace(){
-  $('plCity').innerHTML = P.CITIES.map(c => `<option value="${c.name}">${c.name}, ${c.country}</option>`).join('');
+  $('plCity').innerHTML = '<option value="Singapore">Singapore (official MUIS times)</option>' + P.CITIES.map(c => `<option value="${c.name}">${c.name}, ${c.country}</option>`).join('');
   $('plMethod').innerHTML = '<option value="auto">Automatic</option>' + Object.keys(METHODS).map(k => `<option value="${k}">${METHODS[k].name}</option>`).join('');
   document.querySelector('[data-place="mode"]').addEventListener('click', e => {
     const b = e.target.closest('button'); if(!b) return;

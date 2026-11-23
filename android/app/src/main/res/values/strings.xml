@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="w_wide">Prayer times, wide (4 × 2)</string>
+    <string name="w_square">Prayer times, square (2 × 2)</string>
+    <string name="w_small">Next prayer (2 × 1)</string>
+</resources>

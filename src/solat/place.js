@@ -34,7 +34,7 @@ export const CITIES = [
 
 export function prefs(){
   let s = {}; try{ s = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){}
-  return { mode: ['sg','gps','city'].includes(s.mode) ? s.mode : 'sg', city: CITIES.some(c => c.name === s.city) ? s.city : 'Kota Kinabalu',
+  return { mode: ['sg','gps','city'].includes(s.mode) ? s.mode : 'sg', city: (s.city === 'Singapore' || CITIES.some(c => c.name === s.city)) ? s.city : 'Kota Kinabalu',
            method: METHODS[s.method] ? s.method : 'auto', asr: s.asr === 2 ? 2 : 1, buffer: [0,1,2,3,4,5].includes(s.buffer) ? s.buffer : 0 };
 }
 export function setPref(k, v){ const s = prefs(); s[k] = v; try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
@@ -58,7 +58,8 @@ export function tzOffset(tzName, date = new Date()){
    -> { kind:'sg' } | { kind:'calc', name, detail, lat, lng, tzName|null, method, methodAuto, asr, buffer, needsFix } */
 export function place(){
   const p = prefs();
-  if(p.mode === 'sg') return { kind:'sg', name:'Singapore', tzName:'Asia/Singapore', buffer:0 };
+  /* Singapore picked from the city list is the same as the Singapore tab: the official MUIS timetable, never calculated. */
+  if(p.mode === 'sg' || (p.mode === 'city' && p.city === 'Singapore')) return { kind:'sg', name:'Singapore', tzName:'Asia/Singapore', buffer:0 };
   let base;
   if(p.mode === 'city'){ const c = CITIES.find(x => x.name === p.city); base = { name:c.name, detail:c.country, lat:c.lat, lng:c.lng, tzName:c.tzName, auto:c.method }; }
   else {

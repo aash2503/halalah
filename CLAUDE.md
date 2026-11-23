@@ -32,12 +32,16 @@ Halal food map + prayer times (Solat), kiblat compass. Owner: Mr Aashiq. Used by
 - **Update pings (23 Nov 2026):** `Updater.java` + `UpdateJob.java` check the release about every six hours in the background and notify
   "Halalah updated" with `notes.txt` (= `NEWS[0].title` in `src/whatsnew.js`); the tap opens More > What's new (`?whatsnew=1`).
   ADD AN ENTRY AT THE TOP OF `src/whatsnew.js` WITH EVERY PUSH.
+- **Widgets (23 Nov 2026):** three home-screen widgets, all drawn by `Widgets.java` from a month of times the web app hands over
+  (`HalalahApp.widget`, built by `buildWidget` in remind.js): wide 4x2 and square 2x2 with all six times, small 2x1 with the next prayer.
+  Redrawn by one alarm at each prayer time and at midnight. Layouts `res/layout/widget_*.xml`. Singapore is also the first entry in the
+  city list and always means the official MUIS table.
 - **Tabs** (`src/ui/tabs.js`): Solat (opens first), Kiblat, Food (the original map, `#app`), More. Shared food links open on Food.
 - **Prayer times** (`src/solat/data.js`): MUIS timetable from data.gov.sg (dataset `d_a6a206cba471fe04b62dd886ef5eaf22`), fetched in
   the browser and cached (`hl.solat.v1`). No official row for a date = calculated times, always labelled "Estimated". Never show an
   estimate as official. Hijri (`hijri.js`): Umm al-Qura with a -1/0/+1 adjustment; MUIS's own calendar is still to do.
 - **Still to do:** bundle the MUIS year table in the build;
-  month view; official JAKIM zone times for Malaysia (e-solat) in place of calculation; the home-screen widget;
+  month view; official JAKIM zone times for Malaysia (e-solat) in place of calculation;
   iPhone web push (later).
 - **Reminders (22 Nov 2026; no azan, his call):** `src/solat/remind.js` builds 30 days of reminders (per-prayer bells, at the time and/or N
   minutes before, sound and vibrate / vibrate only / silent) and hands them to the shell (`HalalahApp.schedule`); `Reminders.java` keeps the
